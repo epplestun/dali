@@ -7,7 +7,7 @@ gulp.task('default', function () {
     return gulp.src('src/**/*.js')
         .pipe(sourcemaps.init())
         .pipe(babel({ optional: ["es7.decorators"] }))
-        .pipe(concat('all.js'))
+        .pipe(concat('dali.js'))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist'));
 });

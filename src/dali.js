@@ -1,4 +1,4 @@
-class Injector {
+export class Injector {
   static Inject(...values) {
     return function(target) {
       target.dependencies = values;
@@ -24,3 +24,9 @@ class Injector {
     return this.resolve(target);
   }
 }
+
+/*
+export function() {
+	return Injector.Inject(arguments);
+};
+*/
