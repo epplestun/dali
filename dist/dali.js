@@ -1,3 +1,8 @@
+export function bootstrap(target) {
+  var injector = new Injector();
+  var instance = injector.get(target);
+  instance.run();
+}
 export class Injector {  
   resolve(target) {
     var dependencies= [];
@@ -18,9 +23,13 @@ export class Injector {
     return this.resolve(target);
   }
 }
-
 export function Inject(...values) {
   return function(target) {
     target.dependencies = values;
   }
+}
+export class HTTP {
+	get() {
+		console.log('HTTP GET');
+	}
 }
