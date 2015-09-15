@@ -1,11 +1,26 @@
-export class Injector {  
-  resolve(target) {
-    var dependencies= [];
+export class Injector {
+  static instances = {};
+
+  static instantiate(target) {
+    var instance;
+
+    if(!!Injector.instances.hasOwnProperty(target.name)) {
+      instance = Injector.instances[target.name];
+    } else {
+      instance = Injector.resolve(target);
+      Injector.instances[target.name] = instance;
+    }
+
+    return instance;
+  }
+
+  static resolve(target) {
+    var dependencies = {};
     
     if(!!target.dependencies) {
       dependencies = target.dependencies.map(function(target) {
-        return this.resolve(target);
-      }.bind(this));
+        return Injector.instantiate(target);
+      });
     }
     
     var proto = target.prototype;
@@ -14,13 +29,7 @@ export class Injector {
     return Object(result) === result ? result : instance;  
   }
   
-  get(target) {
-    return this.resolve(target);
-  }
-}
-
-export function Inject(...values) {
-  return function(target) {
-    target.dependencies = values;
+  static get(target) {
+    return Injector.instantiate(target);
   }
 }

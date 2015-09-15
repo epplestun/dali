@@ -7,6 +7,10 @@ export class Service {
 	}
 
 	get() {
-		this.http.get();
+		this.http.get('data.json').then(function(data) {
+			console.log(data);
+		}, function(error) {
+			console.log('error', error);
+		});
 	}
 }

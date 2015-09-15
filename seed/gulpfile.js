@@ -2,9 +2,14 @@ var gulp = require('gulp');
 var del = require('del');
 var Builder = require('systemjs-builder');
 var builder = new Builder();
+var connect = require('gulp-connect');
+
+gulp.task('connect', function() {
+	connect.server();
+});
 
 gulp.task('clean', function(cb) {
-  return del(['dist'], cb);
+  return del(['dist/main.js'], cb);
 });
 
 gulp.task('builder', ['clean'], function (cb) {
@@ -16,7 +21,7 @@ gulp.task('builder', ['clean'], function (cb) {
 			transpiler: 'babel',
 			experimental: true,
 			babelOptions: {
-				optional: ["es7.decorators"]
+				optional: ["es7.decorators", "es7.classProperties", "es7.exportExtensions"]
 			}			
 		}
 	}).then( function() {

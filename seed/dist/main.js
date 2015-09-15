@@ -986,18 +986,44 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
   var _retrieveGlobal = $__System.get("@@global-helpers").prepareGlobal(__module.id, null, null);
   (function() {
     this["bootstrap"] = bootstrap;
-    this["_classCallCheck"] = _classCallCheck;
+    this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
     this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
+    this["Module"] = Module;
+    this["_classCallCheck"] = _classCallCheck;
+    this["_classCallCheck"] = _classCallCheck;
+    this["pathToRegexp"] = pathToRegexp;
+    this["RouterConfigHandlerDescriptor"] = RouterConfigHandlerDescriptor;
+    this["RouterConfig"] = RouterConfig;
+    this["ComponentHandlerDescriptor"] = ComponentHandlerDescriptor;
+    this["Component"] = Component;
+    this["_toConsumableArray"] = _toConsumableArray;
+    this["isDescriptor"] = isDescriptor;
+    this["decorate"] = decorate;
+    this["ViewHandlerDescriptor"] = ViewHandlerDescriptor;
+    this["View"] = View;
     var _createClass = this["_createClass"];
     var Injector = this["Injector"];
     var HTTP = this["HTTP"];
+    var Router = this["Router"];
+    var _slice = this["_slice"];
     'use strict';
     'use strict';
     function bootstrap(target) {
-      var injector = new Injector();
-      var instance = injector.get(target);
-      instance.run();
+      Injector.get(target).run();
+      Router.run();
+    }
+    'use strict';
+    function InjectHandlerDescriptor(target, values) {
+      target.dependencies = values;
+    }
+    function Inject() {
+      for (var _len = arguments.length,
+          args = Array(_len),
+          _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+      return decorate(InjectHandlerDescriptor, args);
     }
     "use strict";
     var _createClass = (function() {
@@ -1028,14 +1054,26 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       function Injector() {
         _classCallCheck(this, Injector);
       }
-      _createClass(Injector, [{
+      _createClass(Injector, null, [{
+        key: "instantiate",
+        value: function instantiate(target) {
+          var instance;
+          if (!!Injector.instances.hasOwnProperty(target.name)) {
+            instance = Injector.instances[target.name];
+          } else {
+            instance = Injector.resolve(target);
+            Injector.instances[target.name] = instance;
+          }
+          return instance;
+        }
+      }, {
         key: "resolve",
         value: function resolve(target) {
-          var dependencies = [];
+          var dependencies = {};
           if (!!target.dependencies) {
-            dependencies = target.dependencies.map((function(target) {
-              return this.resolve(target);
-            }).bind(this));
+            dependencies = target.dependencies.map(function(target) {
+              return Injector.instantiate(target);
+            });
           }
           var proto = target.prototype;
           var instance = Object(proto) === proto ? Object.create(proto) : {};
@@ -1045,21 +1083,161 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }, {
         key: "get",
         value: function get(target) {
-          return this.resolve(target);
+          return Injector.instantiate(target);
         }
+      }, {
+        key: "instances",
+        value: {},
+        enumerable: true
       }]);
       return Injector;
     })();
-    function Inject() {
-      for (var _len = arguments.length,
-          values = Array(_len),
-          _key = 0; _key < _len; _key++) {
-        values[_key] = arguments[_key];
+    "use strict";
+    function Module() {}
+    "use strict";
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ("value" in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
       }
-      return function(target) {
-        target.dependencies = values;
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
       };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
     }
+    var HTTP = (function() {
+      function HTTP() {
+        _classCallCheck(this, HTTP);
+      }
+      _createClass(HTTP, [{
+        key: "init",
+        value: function init() {
+          var options = arguments.length <= 0 || arguments[0] === undefined ? {
+            method: 'GET',
+            headers: {},
+            cache: false,
+            async: false,
+            timeout: 0
+          } : arguments[0];
+          function toQueryString(obj) {
+            var parts = [];
+            for (var i in obj) {
+              if (obj.hasOwnProperty(i)) {
+                parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+              }
+            }
+            return parts.join("&");
+          }
+          function appendQuery(url, query) {
+            if (query == '')
+              return url;
+            return (url + '&' + query).replace(/[&?]{1,2}/, '?');
+          }
+          function createCORSRequest(method, url) {
+            var xhr = new XMLHttpRequest();
+            if ("withCredentials" in xhr) {
+              xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+              xhr = new XDomainRequest();
+              xhr.open(method, url);
+            } else {
+              xhr = null;
+            }
+            return xhr;
+          }
+          if (!options.url) {
+            throw new Error("Url is needed");
+          }
+          if (options.params) {
+            options.url = appendQuery(options.url, toQueryString(options.params));
+          }
+          if (options && options.data) {
+            options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/x-www-form-urlencoded';
+            var queryString = options.data ? toQueryString(options.data) : null;
+            if (queryString) {
+              options.headers["Content-length"] = queryString.length;
+            }
+          }
+          if (options.cache) {
+            options.url = appendQuery(options.url, '_=' + +new Date());
+          }
+          var promise = new Promise(function(resolve, reject) {
+            var request = createCORSRequest(options.method, options.url);
+            if (options && options.headers) {
+              Object.keys(options.headers).forEach(function(key) {
+                request.setRequestHeader(key, options.headers[key]);
+              });
+            }
+            if (this.withCredentials) {
+              request.withCredentials = true;
+            }
+            request.onload = function() {
+              if (request.status === 200) {
+                resolve(request.responseText);
+              } else {
+                reject(new Error("Status code was " + request.status));
+              }
+            };
+            request.onerror = function() {
+              reject(new Error("Can't XHR " + JSON.stringify(options.url)));
+            };
+            if (options.timeout > 0) {
+              var timeout = setTimeout(function() {
+                xhr.onreadystatechange = function() {};
+                xhr.abort();
+                clearTimeout(timeout);
+              }, options.timeout);
+            }
+            request.send(options && options.data ? toQueryString(options.data) : null);
+          });
+          return promise;
+        }
+      }, {
+        key: "get",
+        value: function get(url) {
+          var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+          options.method = 'GET';
+          options.url = url;
+          return this.init(options);
+        }
+      }, {
+        key: "post",
+        value: function post() {}
+      }, {
+        key: "put",
+        value: function put() {}
+      }, {
+        key: "delete",
+        value: function _delete() {}
+      }, {
+        key: "head",
+        value: function head() {}
+      }, {
+        key: "trace",
+        value: function trace() {}
+      }, {
+        key: "options",
+        value: function options() {}
+      }, {
+        key: "patch",
+        value: function patch() {}
+      }]);
+      return HTTP;
+    })();
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -1085,59 +1263,414 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         throw new TypeError('Cannot call a class as a function');
       }
     }
-    var HTTP = (function() {
-      function HTTP() {
-        _classCallCheck(this, HTTP);
+    var Router = (function() {
+      function Router() {
+        _classCallCheck(this, Router);
       }
-      _createClass(HTTP, [{
-        key: 'get',
-        value: function get() {
-          console.log('HTTP GET');
+      _createClass(Router, null, [{
+        key: 'getHash',
+        value: function getHash() {
+          return window.location.hash.substring(1);
         }
+      }, {
+        key: 'route',
+        value: function route() {
+          Router.routes.forEach(function(route) {
+            var path = route.value.path;
+            if (!!path.test(Router.getHash())) {
+              Injector.get(route.target).run();
+            }
+          });
+        }
+      }, {
+        key: 'run',
+        value: function run() {
+          window.addEventListener('hashchange', Router.route, false);
+        }
+      }, {
+        key: 'routes',
+        value: [],
+        enumerable: true
       }]);
-      return HTTP;
+      return Router;
     })();
+    'use strict';
+    function pathToRegexp(path, keys, sensitive, strict) {
+      if (path instanceof RegExp)
+        return path;
+      if (path instanceof Array)
+        path = '(' + path.join('|') + ')';
+      path = path.concat(strict ? '' : '/?').replace(/\/\(/g, '(?:/').replace(/\+/g, '__plus__').replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_, slash, format, key, capture, optional) {
+        keys.push({
+          name: key,
+          optional: !!optional
+        });
+        slash = slash || '';
+        return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
+      }).replace(/([\/.])/g, '\\$1').replace(/__plus__/g, '(.+)').replace(/\*/g, '(.*)');
+      return new RegExp('^' + path + '$', sensitive ? '' : 'i');
+    }
+    function RouterConfigHandlerDescriptor(target, value) {
+      value.path = pathToRegexp(value.path, [], false, false);
+      Router.routes.push({
+        target: target,
+        value: value
+      });
+    }
+    function RouterConfig(arg) {
+      return decorate(RouterConfigHandlerDescriptor, arg);
+    }
+    'use strict';
+    function ComponentHandlerDescriptor(target, value) {
+      console.log('ComponentHandlerDescriptor', target, value);
+    }
+    function Component(arg) {
+      return decorate(ComponentHandlerDescriptor, arg);
+    }
+    'use strict';
+    var _slice = Array.prototype.slice;
+    function _toConsumableArray(arr) {
+      if (Array.isArray(arr)) {
+        for (var i = 0,
+            arr2 = Array(arr.length); i < arr.length; i++)
+          arr2[i] = arr[i];
+        return arr2;
+      } else {
+        return Array.from(arr);
+      }
+    }
+    function isDescriptor(desc) {
+      if (!desc || !desc.hasOwnProperty) {
+        return false;
+      }
+      var keys = ['value', 'get', 'set'];
+      for (var i = 0,
+          l = keys.length; i < l; i++) {
+        if (desc.hasOwnProperty(keys[i])) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function decorate(handleDescriptor, entryArgs) {
+      if (isDescriptor(entryArgs[entryArgs.length - 1])) {
+        return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
+      } else {
+        return function() {
+          return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
+        };
+      }
+    }
+    'use strict';
+    function ViewHandlerDescriptor(target, value) {
+      console.log('ViewHandlerDescriptor', target, value);
+    }
+    function View(arg) {
+      return decorate(ViewHandlerDescriptor, arg);
+    }
     this["_createClass"] = _createClass;
     this["Injector"] = Injector;
     this["HTTP"] = HTTP;
+    this["Router"] = Router;
+    this["_slice"] = _slice;
   })();
   return _retrieveGlobal();
 });
 
-$__System.register('0', ['1', '2'], function (_export) {
-	'use strict';
+$__System.register('0', ['1', '2', '3', '4'], function (_export) {
+  'use strict';
 
-	var bootstrap, Inject, Service, main;
-	return {
-		setters: [function (_) {
-			bootstrap = _.bootstrap;
-			Inject = _.Inject;
-		}, function (_2) {
-			Service = _2.Service;
-		}],
-		execute: function () {
-			main = (function () {
-				function main(service) {
-					babelHelpers.classCallCheck(this, _main);
+  var bootstrap, Inject, Component, View, Service, M1, M2, App;
+  return {
+    setters: [function (_) {
+      bootstrap = _.bootstrap;
+      Inject = _.Inject;
+      Component = _.Component;
+      View = _.View;
+    }, function (_2) {
+      Service = _2.Service;
+    }, function (_3) {
+      M1 = _3.M1;
+    }, function (_4) {
+      M2 = _4.M2;
+    }],
+    execute: function () {
+      App = (function () {
+        function App(m1, m2) {
+          babelHelpers.classCallCheck(this, _App);
 
-					this.service = service;
-				}
+          this.m1 = m1;
+          this.m2 = m2;
+        }
 
-				babelHelpers.createClass(main, [{
-					key: 'run',
-					value: function run() {
-						console.log('My test app');
-						this.service.get();
-					}
-				}]);
-				var _main = main;
-				main = Inject(Service)(main) || main;
-				return main;
-			})();
+        babelHelpers.createClass(App, [{
+          key: 'run',
+          value: function run() {
+            var modules = [this.m1, this.m2];
 
-			bootstrap(main);
-		}
-	};
+            modules.forEach(function (module) {
+              if (!!module.config) module.config();
+            });
+
+            //modules.forEach((module) => module.run());
+          }
+        }]);
+        var _App = App;
+        App = Inject(M1, M2)(App) || App;
+        App = View({
+          template: '<h1>App</h1>'
+        })(App) || App;
+        App = Component({
+          name: 'app'
+        })(App) || App;
+        return App;
+      })();
+
+      bootstrap(App);
+
+      /*
+      @Component({
+      	template:''
+      })
+      class Todo {
+      	constructor() {}
+      }
+      */
+
+      /*
+      @Filter({
+      	name: 'filterName'
+      })
+      class FilterName {
+      	transform(value) {
+      
+      	}
+      }
+      */
+
+      /*
+      @View({
+       templateUrl: '',
+       filters: [FilterName]
+      })
+      */
+
+      /*
+      @Component({
+      	tag: 'tabs',
+      	attributes: []
+      });
+      */
+
+      /*
+      @Inject(Target)
+      */
+
+      /*
+      @Route({
+      
+      })
+      */
+
+      //- login.html
+      //<login></login>
+
+      /*
+      
+      //- login
+      @Router({
+        name : 'login',
+        path : '/login'
+      })
+      class LoginRouter {
+        onEnter() {
+        }
+      
+        onExit() {
+        }
+      }
+      
+      @Component({
+        tag : 'login',
+        attributes : []
+      })
+      class LoginComponent {}
+      
+      @View({
+        templateUrl : 'login.html',
+        filters : []
+      })
+      class LoginView {}
+      
+      
+      @Module({
+        router: LoginRouter,
+        component: LoginComponent,
+        view: LoginView
+      })
+      @Inject(Log)
+      class Login {
+        constructor(log) {
+          this.log = log;
+        }
+      
+        config() {
+          this.log.debug('configuring Login');
+        }
+      
+        run() {
+          this.log.debug('running Login');
+        }
+      }
+      
+      bootstrap(Login);
+      
+      // Analysis.js
+      class Analysis {}
+      
+      // EndUses.js
+      class EndUses {}
+      
+      // LeakFinder.js
+      class LeakFinder {}
+      
+      import {Analysis} from 'analysis/Analysis';
+      import {EndUses} from 'end-uses/EndUses';
+      import {LeakFinder} from 'leak-finder/LeakFinder';
+      
+      @Inject(Analysis, EndUses, LeakFinder)
+      class BuntBrain {
+        constructor(analysis, endUses, leakFinder) {
+          this.analysis = analysis;
+          this.endUses = endUses;
+          this.leakFinder = leakFinder;
+        }
+      
+        run() {
+          let modules = [
+            this.analysis,
+            this.endUses,
+            this.leakFinder
+          ];
+      
+          modules.forEach((module) => module.config());
+          modules.forEach((module) => module.run());
+        }
+      }
+      
+      bootstrap(BuntBrain);
+      
+      
+      
+      @Inject(Service)
+      class main {
+      	constructor(service) {
+      		this.service = service;
+      	}
+      
+      	run() {
+      		console.log('My test app');
+      		this.service.get();
+      	}
+      }
+      
+      bootstrap(main);
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      function RouterConfig(...values) {
+        return function(target) {
+          var name = target.name;
+      
+          Router.configs.push({
+            name,
+            values
+          });
+        }
+      }
+      
+      function Inject(...values) {
+        return function(target) {
+          target.dependecies = values;
+        }
+      }
+      
+      class Router {
+        static configs = [];
+        static init() {
+          console.log(Router.configs);
+      
+          window.addEventListener('onhashchange', () => {
+            console.log(arguments);
+        }, false);
+      }
+      }
+      
+      function bootstrap(target) {
+        Router.init();
+      }
+      
+      
+      @RouterConfig({
+        path : '/m1'
+      })
+      class M1 {
+        constructor() {
+          console.log('m1');
+        }
+      }
+      
+      @RouterConfig({
+        path : '/m2'
+      })
+      class M2 {
+        constructor() {
+          console.log('m2');
+        }
+      }
+      
+      
+      @Inject(M1, M2)
+      class App {
+        constructor(m1, m2) {
+          console.log(m1, m2)
+        }
+      }
+      
+      
+      bootstrap(App);
+      
+      */
+    }
+  };
 });
 
 $__System.register('2', ['1'], function (_export) {
@@ -1160,7 +1693,11 @@ $__System.register('2', ['1'], function (_export) {
 				babelHelpers.createClass(Service, [{
 					key: 'get',
 					value: function get() {
-						this.http.get();
+						this.http.get('data.json').then(function (data) {
+							console.log(data);
+						}, function (error) {
+							console.log('error', error);
+						});
 					}
 				}]);
 				var _Service = Service;
@@ -1171,6 +1708,88 @@ $__System.register('2', ['1'], function (_export) {
 			_export('Service', Service);
 		}
 	};
+});
+
+$__System.register('3', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, M1;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+    }],
+    execute: function () {
+      M1 = (function () {
+        function M1() {
+          babelHelpers.classCallCheck(this, _M1);
+
+          console.log('m1');
+        }
+
+        babelHelpers.createClass(M1, [{
+          key: 'config',
+          value: function config() {
+            //this.log.debug('configuring Login');
+
+            console.log('config m1');
+          }
+        }, {
+          key: 'run',
+          value: function run() {
+            console.log('run m1');
+          }
+        }]);
+        var _M1 = M1;
+        M1 = RouterConfig({
+          path: '/m1'
+        })(M1) || M1;
+        return M1;
+      })();
+
+      _export('M1', M1);
+    }
+  };
+});
+
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, M2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+    }],
+    execute: function () {
+      M2 = (function () {
+        function M2() {
+          babelHelpers.classCallCheck(this, _M2);
+
+          console.log('m2');
+        }
+
+        babelHelpers.createClass(M2, [{
+          key: 'config',
+          value: function config() {
+            //this.log.debug('configuring Login');
+            console.log('config m2');
+          }
+        }, {
+          key: 'run',
+          value: function run() {
+            //this.log.debug('running Login');
+            console.log('run m2');
+          }
+        }]);
+        var _M2 = M2;
+        M2 = RouterConfig({
+          path: '/m2'
+        })(M2) || M2;
+        return M2;
+      })();
+
+      _export('M2', M2);
+    }
+  };
 });
 
 })

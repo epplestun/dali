@@ -10,7 +10,7 @@ gulp.task('clean', function(cb) {
 gulp.task('default', ['clean'], function () {
   return gulp.src('src/**/*.js')
       .pipe(babel({ 
-      	optional: ["es7.decorators"],
+      	optional: ["es7.decorators", "es7.classProperties", "es7.exportExtensions"],
       	modules: 'ignore'
       }))
       .pipe(concat('dali.js'))
