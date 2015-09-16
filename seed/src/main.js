@@ -8,7 +8,7 @@ import {M2} from 'm2/m2';
   name : 'app'
 })
 @View({
-  template : '<h1>App</h1>'
+  template : '<h1>App <strong>test</strong></h1><br/><p>App test</p>'
 })
 @Inject(M1, M2)
 class App {

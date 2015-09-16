@@ -993,12 +993,13 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
     this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
-    this["Module"] = Module;
     this["_classCallCheck"] = _classCallCheck;
     this["makeMap"] = makeMap;
     this["HTMLParser"] = HTMLParser;
     this["HTMLtoXML"] = HTMLtoXML;
     this["HTMLtoDOM"] = HTMLtoDOM;
+    this["Module"] = Module;
+    this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["pathToRegexp"] = pathToRegexp;
     this["RouterConfigHandlerDescriptor"] = RouterConfigHandlerDescriptor;
@@ -1024,6 +1025,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var closeSelf = this["closeSelf"];
     var fillAttrs = this["fillAttrs"];
     var special = this["special"];
+    var Render = this["Render"];
     var Router = this["Router"];
     var _slice = this["_slice"];
     var Views = this["Views"];
@@ -1224,12 +1226,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(Components, null, [{
         key: 'parse',
-        value: function parse(name, attrs) {
-          console.log('Components.parse', name, attrs);
+        value: function parse(node, name, attrs) {
           var component = Components.components.filter(function(component) {
             return component.value.name === name;
           });
-          Views.parse(first.call(component));
+          Views.parse(node, first.call(component));
         }
       }, {
         key: 'run',
@@ -1324,8 +1325,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return Injector;
     })();
-    "use strict";
-    function Module() {}
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -1356,11 +1355,20 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, DOM);
       }
       _createClass(DOM, null, [{
+        key: 'getHTML',
+        value: function getHTML(node) {
+          return node.innerHTML.toString();
+        }
+      }, {
         key: 'parse',
         value: function parse(node) {
-          HTMLParser(node.innerHTML.toString(), {start: function start(tag, attrs) {
-              Components.parse(tag, attrs);
-            }});
+          var items = node.getElementsByTagName("*");
+          for (var i = 0; i < items.length; i++) {
+            var n = items[i];
+            var tag = n.tagName.toLowerCase(),
+                attrs = [];
+            Components.parse(n, tag, attrs);
+          }
         }
       }]);
       return DOM;
@@ -1563,6 +1571,67 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       });
       return doc;
     }
+    "use strict";
+    function Module() {}
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var Render = (function() {
+      function Render() {
+        _classCallCheck(this, Render);
+      }
+      _createClass(Render, null, [{
+        key: 'render',
+        value: function render(html, options) {
+          var re = /{{([^}}]+)?}}/g,
+              reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+              code = 'var r=[];\n',
+              cursor = 0,
+              match;
+          var add = function add(line, js) {
+            js ? code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n' : code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '';
+            return add;
+          };
+          while (match = re.exec(html)) {
+            add(html.slice(cursor, match.index))('this.' + match[1], true);
+            cursor = match.index + match[0].length;
+          }
+          add(html.substr(cursor, html.length - cursor));
+          code += 'return r.join("");';
+          return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
+        }
+      }, {
+        key: 'getDOM',
+        value: function getDOM(parent) {
+          var nodes = parent.childNodes[0].childNodes[1].childNodes;
+          console.log(nodes);
+          return nodes;
+        }
+      }]);
+      return Render;
+    })();
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -1723,11 +1792,20 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(Views, null, [{
         key: 'parse',
-        value: function parse(component) {
-          var view = Views.views.filter(function(view) {
-            return view.target === component.target;
-          });
-          console.log(first.call(view));
+        value: function parse(node, component) {
+          if (!!component) {
+            var _context;
+            var view = Views.views.filter(function(view) {
+              return view.target === component.target;
+            });
+            view = (_context = view, first).call(_context);
+            if (!!view) {
+              var template = view.value.template;
+              var nodes = Render.getDOM(HTMLtoDOM(Render.render(template, {})));
+              console.log(nodes);
+              node.parentNode.replaceChild(first.call(nodes), node);
+            }
+          }
         }
       }, {
         key: 'views',
@@ -1750,6 +1828,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["closeSelf"] = closeSelf;
     this["fillAttrs"] = fillAttrs;
     this["special"] = special;
+    this["Render"] = Render;
     this["Router"] = Router;
     this["_slice"] = _slice;
     this["Views"] = Views;
@@ -1798,7 +1877,7 @@ $__System.register('0', ['1', '2', '3', '4'], function (_export) {
         var _App = App;
         App = Inject(M1, M2)(App) || App;
         App = View({
-          template: '<h1>App</h1>'
+          template: '<h1>App <strong>test</strong></h1><br/><p>App test</p>'
         })(App) || App;
         App = Component({
           name: 'app'
@@ -2053,43 +2132,43 @@ $__System.register('0', ['1', '2', '3', '4'], function (_export) {
   };
 });
 
-$__System.register('4', ['1'], function (_export) {
+$__System.register('3', ['1'], function (_export) {
   'use strict';
 
-  var RouterConfig, M2;
+  var RouterConfig, M1;
   return {
     setters: [function (_) {
       RouterConfig = _.RouterConfig;
     }],
     execute: function () {
-      M2 = (function () {
-        function M2() {
-          babelHelpers.classCallCheck(this, _M2);
+      M1 = (function () {
+        function M1() {
+          babelHelpers.classCallCheck(this, _M1);
 
-          console.log('m2');
+          console.log('m1');
         }
 
-        babelHelpers.createClass(M2, [{
+        babelHelpers.createClass(M1, [{
           key: 'config',
           value: function config() {
             //this.log.debug('configuring Login');
-            console.log('config m2');
+
+            console.log('config m1');
           }
         }, {
           key: 'run',
           value: function run() {
-            //this.log.debug('running Login');
-            console.log('run m2');
+            console.log('run m1');
           }
         }]);
-        var _M2 = M2;
-        M2 = RouterConfig({
-          path: '/m2'
-        })(M2) || M2;
-        return M2;
+        var _M1 = M1;
+        M1 = RouterConfig({
+          path: '/m1'
+        })(M1) || M1;
+        return M1;
       })();
 
-      _export('M2', M2);
+      _export('M1', M1);
     }
   };
 });
@@ -2131,43 +2210,43 @@ $__System.register('2', ['1'], function (_export) {
 	};
 });
 
-$__System.register('3', ['1'], function (_export) {
+$__System.register('4', ['1'], function (_export) {
   'use strict';
 
-  var RouterConfig, M1;
+  var RouterConfig, M2;
   return {
     setters: [function (_) {
       RouterConfig = _.RouterConfig;
     }],
     execute: function () {
-      M1 = (function () {
-        function M1() {
-          babelHelpers.classCallCheck(this, _M1);
+      M2 = (function () {
+        function M2() {
+          babelHelpers.classCallCheck(this, _M2);
 
-          console.log('m1');
+          console.log('m2');
         }
 
-        babelHelpers.createClass(M1, [{
+        babelHelpers.createClass(M2, [{
           key: 'config',
           value: function config() {
             //this.log.debug('configuring Login');
-
-            console.log('config m1');
+            console.log('config m2');
           }
         }, {
           key: 'run',
           value: function run() {
-            console.log('run m1');
+            //this.log.debug('running Login');
+            console.log('run m2');
           }
         }]);
-        var _M1 = M1;
-        M1 = RouterConfig({
-          path: '/m1'
-        })(M1) || M1;
-        return M1;
+        var _M2 = M2;
+        M2 = RouterConfig({
+          path: '/m2'
+        })(M2) || M2;
+        return M2;
       })();
 
-      _export('M1', M1);
+      _export('M2', M2);
     }
   };
 });

@@ -5,14 +5,14 @@ import {first} from 'core/util/util';
 export class Components {
   static components = [];
 
-  static parse(name, attrs) {
-    console.log('Components.parse', name, attrs);
+  static parse(node, name, attrs) {
+    //console.log('Components.parse', name, attrs);
 
     let component = Components.components.filter((component) => {
       return component.value.name === name;
     });
 
-    Views.parse(component::first());
+    Views.parse(node, component::first());
   }
 
   static run() {

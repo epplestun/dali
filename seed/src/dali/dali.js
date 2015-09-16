@@ -173,14 +173,14 @@ var Components = (function () {
 
   _createClass(Components, null, [{
     key: 'parse',
-    value: function parse(name, attrs) {
-      console.log('Components.parse', name, attrs);
+    value: function parse(node, name, attrs) {
+      //console.log('Components.parse', name, attrs);
 
       var component = Components.components.filter(function (component) {
         return component.value.name === name;
       });
 
-      Views.parse(first.call(component));
+      Views.parse(node, first.call(component));
     }
   }, {
     key: 'run',
@@ -264,9 +264,6 @@ var Injector = (function () {
 
   return Injector;
 })();
-"use strict";
-
-function Module() {}
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -279,13 +276,31 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
+    key: 'getHTML',
+    value: function getHTML(node) {
+      return node.innerHTML.toString();
+    }
+  }, {
     key: 'parse',
     value: function parse(node) {
-      HTMLParser(node.innerHTML.toString(), {
-        start: function start(tag, attrs) {
-          Components.parse(tag, attrs);
-        }
-      });
+      var items = node.getElementsByTagName("*");
+      for (var i = 0; i < items.length; i++) {
+        var n = items[i];
+
+        var tag = n.tagName.toLowerCase(),
+            attrs = [];
+
+        Components.parse(n, tag, attrs);
+
+        //counter++;
+      }
+
+      //
+      //HTMLParser(DOM.getHTML(node), {
+      //  start: function(tag, attrs) {
+      //    Components.parse(tag, attrs);
+      //  }
+      //});
     }
   }]);
 
@@ -573,6 +588,57 @@ function HTMLtoDOM(html, doc) {
 
   return doc;
 }
+"use strict";
+
+function Module() {}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Render = (function () {
+  function Render() {
+    _classCallCheck(this, Render);
+  }
+
+  _createClass(Render, null, [{
+    key: 'render',
+    value: function render(html, options) {
+      var re = /{{([^}}]+)?}}/g,
+          reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+          code = 'var r=[];\n',
+          cursor = 0,
+          match;
+
+      var add = function add(line, js) {
+        js ? code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n' : code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '';
+        return add;
+      };
+
+      while (match = re.exec(html)) {
+        add(html.slice(cursor, match.index))('this.' + match[1], true);
+        cursor = match.index + match[0].length;
+      }
+
+      add(html.substr(cursor, html.length - cursor));
+      code += 'return r.join("");';
+
+      return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
+    }
+  }, {
+    key: 'getDOM',
+    value: function getDOM(parent) {
+      var nodes = parent.childNodes[0].childNodes[1].childNodes;
+
+      console.log(nodes);
+
+      return nodes;
+    }
+  }]);
+
+  return Render;
+})();
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -692,12 +758,26 @@ var Views = (function () {
 
   _createClass(Views, null, [{
     key: 'parse',
-    value: function parse(component) {
-      var view = Views.views.filter(function (view) {
-        return view.target === component.target;
-      });
+    value: function parse(node, component) {
+      if (!!component) {
+        var _context;
 
-      console.log(first.call(view));
+        var view = Views.views.filter(function (view) {
+          return view.target === component.target;
+        });
+
+        view = (_context = view, first).call(_context);
+
+        if (!!view) {
+          var template = view.value.template;
+
+          var nodes = Render.getDOM(HTMLtoDOM(Render.render(template, {})));
+
+          console.log(nodes);
+
+          node.parentNode.replaceChild(first.call(nodes), node);
+        }
+      }
     }
   }, {
     key: 'views',
