@@ -21,7 +21,12 @@ gulp.task('builder', ['clean'], function (cb) {
 			transpiler: 'babel',
 			experimental: true,
 			babelOptions: {
-				optional: ["es7.decorators", "es7.classProperties", "es7.exportExtensions"]
+				optional: [
+					"es7.decorators",
+					"es7.classProperties",
+					"es7.exportExtensions",
+					"es7.functionBind"
+				]
 			}			
 		}
 	}).then( function() {

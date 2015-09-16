@@ -1,8 +1,8 @@
 import {decorate} from 'core/util/util';
+import {Views} from 'core/view/Views';
 
 function ViewHandlerDescriptor(target, value) {
-  console.log('ViewHandlerDescriptor', target, value);
-  //target.view = value;
+  Views.views.push({target, value});
 }
 
 export function View(arg) {

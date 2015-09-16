@@ -96,7 +96,12 @@ export class HTTP {
 		return this.init(options);
 	}
 
-	post() {}
+	post(url, options = {}) {
+		options.method = 'POST';
+		options.url = url;
+
+		return this.init(options);
+	}
 
 	put() {}
 
@@ -109,5 +114,4 @@ export class HTTP {
 	options() {}
 
 	patch() {}
-	
 }

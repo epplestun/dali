@@ -986,114 +986,54 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
   var _retrieveGlobal = $__System.get("@@global-helpers").prepareGlobal(__module.id, null, null);
   (function() {
     this["bootstrap"] = bootstrap;
+    this["_classCallCheck"] = _classCallCheck;
+    this["ComponentHandlerDescriptor"] = ComponentHandlerDescriptor;
+    this["Component"] = Component;
+    this["_classCallCheck"] = _classCallCheck;
     this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
     this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
     this["Module"] = Module;
     this["_classCallCheck"] = _classCallCheck;
+    this["makeMap"] = makeMap;
+    this["HTMLParser"] = HTMLParser;
+    this["HTMLtoXML"] = HTMLtoXML;
+    this["HTMLtoDOM"] = HTMLtoDOM;
     this["_classCallCheck"] = _classCallCheck;
     this["pathToRegexp"] = pathToRegexp;
     this["RouterConfigHandlerDescriptor"] = RouterConfigHandlerDescriptor;
     this["RouterConfig"] = RouterConfig;
-    this["ComponentHandlerDescriptor"] = ComponentHandlerDescriptor;
-    this["Component"] = Component;
     this["_toConsumableArray"] = _toConsumableArray;
     this["isDescriptor"] = isDescriptor;
     this["decorate"] = decorate;
+    this["first"] = first;
     this["ViewHandlerDescriptor"] = ViewHandlerDescriptor;
     this["View"] = View;
+    this["_classCallCheck"] = _classCallCheck;
     var _createClass = this["_createClass"];
-    var Injector = this["Injector"];
     var HTTP = this["HTTP"];
+    var Components = this["Components"];
+    var Injector = this["Injector"];
+    var DOM = this["DOM"];
+    var startTag = this["startTag"];
+    var endTag = this["endTag"];
+    var attr = this["attr"];
+    var empty = this["empty"];
+    var block = this["block"];
+    var inline = this["inline"];
+    var closeSelf = this["closeSelf"];
+    var fillAttrs = this["fillAttrs"];
+    var special = this["special"];
     var Router = this["Router"];
     var _slice = this["_slice"];
+    var Views = this["Views"];
     'use strict';
     'use strict';
     function bootstrap(target) {
       Injector.get(target).run();
       Router.run();
+      Components.run();
     }
-    'use strict';
-    function InjectHandlerDescriptor(target, values) {
-      target.dependencies = values;
-    }
-    function Inject() {
-      for (var _len = arguments.length,
-          args = Array(_len),
-          _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-      return decorate(InjectHandlerDescriptor, args);
-    }
-    "use strict";
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ("value" in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    var Injector = (function() {
-      function Injector() {
-        _classCallCheck(this, Injector);
-      }
-      _createClass(Injector, null, [{
-        key: "instantiate",
-        value: function instantiate(target) {
-          var instance;
-          if (!!Injector.instances.hasOwnProperty(target.name)) {
-            instance = Injector.instances[target.name];
-          } else {
-            instance = Injector.resolve(target);
-            Injector.instances[target.name] = instance;
-          }
-          return instance;
-        }
-      }, {
-        key: "resolve",
-        value: function resolve(target) {
-          var dependencies = {};
-          if (!!target.dependencies) {
-            dependencies = target.dependencies.map(function(target) {
-              return Injector.instantiate(target);
-            });
-          }
-          var proto = target.prototype;
-          var instance = Object(proto) === proto ? Object.create(proto) : {};
-          var result = Function.prototype.apply.call(target, instance, dependencies);
-          return Object(result) === result ? result : instance;
-        }
-      }, {
-        key: "get",
-        value: function get(target) {
-          return Injector.instantiate(target);
-        }
-      }, {
-        key: "instances",
-        value: {},
-        enumerable: true
-      }]);
-      return Injector;
-    })();
-    "use strict";
-    function Module() {}
     "use strict";
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -1216,7 +1156,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }, {
         key: "post",
-        value: function post() {}
+        value: function post(url) {
+          var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+          options.method = 'POST';
+          options.url = url;
+          return this.init(options);
+        }
       }, {
         key: "put",
         value: function put() {}
@@ -1238,6 +1183,386 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return HTTP;
     })();
+    'use strict';
+    function ComponentHandlerDescriptor(target, value) {
+      Components.components.push({
+        target: target,
+        value: value
+      });
+    }
+    function Component(arg) {
+      return decorate(ComponentHandlerDescriptor, arg);
+    }
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var Components = (function() {
+      function Components() {
+        _classCallCheck(this, Components);
+      }
+      _createClass(Components, null, [{
+        key: 'parse',
+        value: function parse(name, attrs) {
+          console.log('Components.parse', name, attrs);
+          var component = Components.components.filter(function(component) {
+            return component.value.name === name;
+          });
+          Views.parse(first.call(component));
+        }
+      }, {
+        key: 'run',
+        value: function run() {
+          document.addEventListener("DOMContentLoaded", function(event) {
+            DOM.parse(event.target.body);
+          });
+        }
+      }, {
+        key: 'components',
+        value: [],
+        enumerable: true
+      }]);
+      return Components;
+    })();
+    'use strict';
+    function InjectHandlerDescriptor(target, values) {
+      target.dependencies = values;
+    }
+    function Inject() {
+      for (var _len = arguments.length,
+          args = Array(_len),
+          _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+      return decorate(InjectHandlerDescriptor, args);
+    }
+    "use strict";
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ("value" in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    var Injector = (function() {
+      function Injector() {
+        _classCallCheck(this, Injector);
+      }
+      _createClass(Injector, null, [{
+        key: "instantiate",
+        value: function instantiate(target) {
+          var instance;
+          if (!!Injector.instances.hasOwnProperty(target.name)) {
+            instance = Injector.instances[target.name];
+          } else {
+            instance = Injector.resolve(target);
+            Injector.instances[target.name] = instance;
+          }
+          return instance;
+        }
+      }, {
+        key: "resolve",
+        value: function resolve(target) {
+          var dependencies = {};
+          if (!!target.dependencies) {
+            dependencies = target.dependencies.map(function(target) {
+              return Injector.instantiate(target);
+            });
+          }
+          var proto = target.prototype;
+          var instance = Object(proto) === proto ? Object.create(proto) : {};
+          var result = Function.prototype.apply.call(target, instance, dependencies);
+          return Object(result) === result ? result : instance;
+        }
+      }, {
+        key: "get",
+        value: function get(target) {
+          return Injector.instantiate(target);
+        }
+      }, {
+        key: "instances",
+        value: {},
+        enumerable: true
+      }]);
+      return Injector;
+    })();
+    "use strict";
+    function Module() {}
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var DOM = (function() {
+      function DOM() {
+        _classCallCheck(this, DOM);
+      }
+      _createClass(DOM, null, [{
+        key: 'parse',
+        value: function parse(node) {
+          HTMLParser(node.innerHTML.toString(), {start: function start(tag, attrs) {
+              Components.parse(tag, attrs);
+            }});
+        }
+      }]);
+      return DOM;
+    })();
+    "use strict";
+    function makeMap(str) {
+      var obj = {},
+          items = str.split(",");
+      for (var i = 0; i < items.length; i++)
+        obj[items[i]] = true;
+      return obj;
+    }
+    var startTag = /^<([-A-Za-z0-9_]+)((?:\s+\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
+        endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/,
+        attr = /([-A-Za-z0-9_]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+    var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed");
+    var block = makeMap("address,applet,blockquote,button,center,dd,del,dir,div,dl,dt,fieldset,form,frameset,hr,iframe,ins,isindex,li,map,menu,noframes,noscript,object,ol,p,pre,script,table,tbody,td,tfoot,th,thead,tr,ul");
+    var inline = makeMap("a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var");
+    var closeSelf = makeMap("colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr");
+    var fillAttrs = makeMap("checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected");
+    var special = makeMap("script,style");
+    function HTMLParser(html, handler) {
+      var index,
+          chars,
+          match,
+          stack = [],
+          last = html;
+      stack.last = function() {
+        return this[this.length - 1];
+      };
+      while (html) {
+        chars = true;
+        if (!stack.last() || !special[stack.last()]) {
+          if (html.indexOf("<!--") == 0) {
+            index = html.indexOf("-->");
+            if (index >= 0) {
+              if (handler.comment)
+                handler.comment(html.substring(4, index));
+              html = html.substring(index + 3);
+              chars = false;
+            }
+          } else if (html.indexOf("</") == 0) {
+            match = html.match(endTag);
+            if (match) {
+              html = html.substring(match[0].length);
+              match[0].replace(endTag, parseEndTag);
+              chars = false;
+            }
+          } else if (html.indexOf("<") == 0) {
+            match = html.match(startTag);
+            if (match) {
+              html = html.substring(match[0].length);
+              match[0].replace(startTag, parseStartTag);
+              chars = false;
+            }
+          }
+          if (chars) {
+            index = html.indexOf("<");
+            var text = index < 0 ? html : html.substring(0, index);
+            html = index < 0 ? "" : html.substring(index);
+            if (handler.chars)
+              handler.chars(text);
+          }
+        } else {
+          html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text) {
+            text = text.replace(/<!--(.*?)-->/g, "$1").replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
+            if (handler.chars)
+              handler.chars(text);
+            return "";
+          });
+          parseEndTag("", stack.last());
+        }
+        if (html == last)
+          throw "Parse Error: " + html;
+        last = html;
+      }
+      parseEndTag();
+      function parseStartTag(tag, tagName, rest, unary) {
+        tagName = tagName.toLowerCase();
+        if (block[tagName]) {
+          while (stack.last() && inline[stack.last()]) {
+            parseEndTag("", stack.last());
+          }
+        }
+        if (closeSelf[tagName] && stack.last() == tagName) {
+          parseEndTag("", tagName);
+        }
+        unary = empty[tagName] || !!unary;
+        if (!unary)
+          stack.push(tagName);
+        if (handler.start) {
+          var attrs = [];
+          rest.replace(attr, function(match, name) {
+            var value = arguments[2] ? arguments[2] : arguments[3] ? arguments[3] : arguments[4] ? arguments[4] : fillAttrs[name] ? name : "";
+            attrs.push({
+              name: name,
+              value: value,
+              escaped: value.replace(/(^|[^\\])"/g, '$1\\\"')
+            });
+          });
+          if (handler.start)
+            handler.start(tagName, attrs, unary);
+        }
+      }
+      function parseEndTag(tag, tagName) {
+        if (!tagName)
+          var pos = 0;
+        else
+          for (var pos = stack.length - 1; pos >= 0; pos--)
+            if (stack[pos] == tagName)
+              break;
+        if (pos >= 0) {
+          for (var i = stack.length - 1; i >= pos; i--)
+            if (handler.end)
+              handler.end(stack[i]);
+          stack.length = pos;
+        }
+      }
+    }
+    function HTMLtoXML(html) {
+      var results = "";
+      HTMLParser(html, {
+        start: function start(tag, attrs, unary) {
+          results += "<" + tag;
+          for (var i = 0; i < attrs.length; i++)
+            results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
+          results += (unary ? "/" : "") + ">";
+        },
+        end: function end(tag) {
+          results += "</" + tag + ">";
+        },
+        chars: function chars(text) {
+          results += text;
+        },
+        comment: function comment(text) {
+          results += "<!--" + text + "-->";
+        }
+      });
+      return results;
+    }
+    function HTMLtoDOM(html, doc) {
+      var one = makeMap("html,head,body,title");
+      var structure = {
+        link: "head",
+        base: "head"
+      };
+      if (!doc) {
+        if (typeof DOMDocument != "undefined")
+          doc = new DOMDocument();
+        else if (typeof document != "undefined" && document.implementation && document.implementation.createDocument)
+          doc = document.implementation.createDocument("", "", null);
+        else if (typeof ActiveX != "undefined")
+          doc = new ActiveXObject("Msxml.DOMDocument");
+      } else
+        doc = doc.ownerDocument || doc.getOwnerDocument && doc.getOwnerDocument() || doc;
+      var elems = [],
+          documentElement = doc.documentElement || doc.getDocumentElement && doc.getDocumentElement();
+      if (!documentElement && doc.createElement)
+        (function() {
+          var html = doc.createElement("html");
+          var head = doc.createElement("head");
+          head.appendChild(doc.createElement("title"));
+          html.appendChild(head);
+          html.appendChild(doc.createElement("body"));
+          doc.appendChild(html);
+        })();
+      if (doc.getElementsByTagName)
+        for (var i in one)
+          one[i] = doc.getElementsByTagName(i)[0];
+      var curParentNode = one.body;
+      HTMLParser(html, {
+        start: function start(tagName, attrs, unary) {
+          if (one[tagName]) {
+            curParentNode = one[tagName];
+            if (!unary) {
+              elems.push(curParentNode);
+            }
+            return;
+          }
+          var elem = doc.createElement(tagName);
+          for (var attr in attrs)
+            elem.setAttribute(attrs[attr].name, attrs[attr].value);
+          if (structure[tagName] && typeof one[structure[tagName]] != "boolean")
+            one[structure[tagName]].appendChild(elem);
+          else if (curParentNode && curParentNode.appendChild)
+            curParentNode.appendChild(elem);
+          if (!unary) {
+            elems.push(elem);
+            curParentNode = elem;
+          }
+        },
+        end: function end(tag) {
+          elems.length -= 1;
+          curParentNode = elems[elems.length - 1];
+        },
+        chars: function chars(text) {
+          curParentNode.appendChild(doc.createTextNode(text));
+        },
+        comment: function comment(text) {}
+      });
+      return doc;
+    }
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -1321,13 +1646,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return decorate(RouterConfigHandlerDescriptor, arg);
     }
     'use strict';
-    function ComponentHandlerDescriptor(target, value) {
-      console.log('ComponentHandlerDescriptor', target, value);
-    }
-    function Component(arg) {
-      return decorate(ComponentHandlerDescriptor, arg);
-    }
-    'use strict';
     var _slice = Array.prototype.slice;
     function _toConsumableArray(arr) {
       if (Array.isArray(arr)) {
@@ -1361,18 +1679,80 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         };
       }
     }
+    function first() {
+      return this[0];
+    }
     'use strict';
     function ViewHandlerDescriptor(target, value) {
-      console.log('ViewHandlerDescriptor', target, value);
+      Views.views.push({
+        target: target,
+        value: value
+      });
     }
     function View(arg) {
       return decorate(ViewHandlerDescriptor, arg);
     }
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var Views = (function() {
+      function Views() {
+        _classCallCheck(this, Views);
+      }
+      _createClass(Views, null, [{
+        key: 'parse',
+        value: function parse(component) {
+          var view = Views.views.filter(function(view) {
+            return view.target === component.target;
+          });
+          console.log(first.call(view));
+        }
+      }, {
+        key: 'views',
+        value: [],
+        enumerable: true
+      }]);
+      return Views;
+    })();
     this["_createClass"] = _createClass;
-    this["Injector"] = Injector;
     this["HTTP"] = HTTP;
+    this["Components"] = Components;
+    this["Injector"] = Injector;
+    this["DOM"] = DOM;
+    this["startTag"] = startTag;
+    this["endTag"] = endTag;
+    this["attr"] = attr;
+    this["empty"] = empty;
+    this["block"] = block;
+    this["inline"] = inline;
+    this["closeSelf"] = closeSelf;
+    this["fillAttrs"] = fillAttrs;
+    this["special"] = special;
     this["Router"] = Router;
     this["_slice"] = _slice;
+    this["Views"] = Views;
   })();
   return _retrieveGlobal();
 });
@@ -1673,6 +2053,47 @@ $__System.register('0', ['1', '2', '3', '4'], function (_export) {
   };
 });
 
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, M2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+    }],
+    execute: function () {
+      M2 = (function () {
+        function M2() {
+          babelHelpers.classCallCheck(this, _M2);
+
+          console.log('m2');
+        }
+
+        babelHelpers.createClass(M2, [{
+          key: 'config',
+          value: function config() {
+            //this.log.debug('configuring Login');
+            console.log('config m2');
+          }
+        }, {
+          key: 'run',
+          value: function run() {
+            //this.log.debug('running Login');
+            console.log('run m2');
+          }
+        }]);
+        var _M2 = M2;
+        M2 = RouterConfig({
+          path: '/m2'
+        })(M2) || M2;
+        return M2;
+      })();
+
+      _export('M2', M2);
+    }
+  };
+});
+
 $__System.register('2', ['1'], function (_export) {
 	'use strict';
 
@@ -1747,47 +2168,6 @@ $__System.register('3', ['1'], function (_export) {
       })();
 
       _export('M1', M1);
-    }
-  };
-});
-
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, M2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-    }],
-    execute: function () {
-      M2 = (function () {
-        function M2() {
-          babelHelpers.classCallCheck(this, _M2);
-
-          console.log('m2');
-        }
-
-        babelHelpers.createClass(M2, [{
-          key: 'config',
-          value: function config() {
-            //this.log.debug('configuring Login');
-            console.log('config m2');
-          }
-        }, {
-          key: 'run',
-          value: function run() {
-            //this.log.debug('running Login');
-            console.log('run m2');
-          }
-        }]);
-        var _M2 = M2;
-        M2 = RouterConfig({
-          path: '/m2'
-        })(M2) || M2;
-        return M2;
-      })();
-
-      _export('M2', M2);
     }
   };
 });

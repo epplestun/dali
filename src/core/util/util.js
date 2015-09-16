@@ -23,3 +23,7 @@ export function decorate(handleDescriptor, entryArgs) {
     };
   }
 }
+
+export function first() {
+  return this[0];
+}
