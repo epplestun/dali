@@ -990,13 +990,13 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["ComponentHandlerDescriptor"] = ComponentHandlerDescriptor;
     this["Component"] = Component;
     this["_classCallCheck"] = _classCallCheck;
-    this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
-    this["Inject"] = Inject;
-    this["_classCallCheck"] = _classCallCheck;
     this["makeMap"] = makeMap;
     this["HTMLParser"] = HTMLParser;
     this["HTMLtoXML"] = HTMLtoXML;
     this["HTMLtoDOM"] = HTMLtoDOM;
+    this["_classCallCheck"] = _classCallCheck;
+    this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
+    this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
@@ -1007,11 +1007,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["pathToRegexp"] = pathToRegexp;
     this["RouterConfigHandlerDescriptor"] = RouterConfigHandlerDescriptor;
     this["RouterConfig"] = RouterConfig;
+    this["Runnable"] = Runnable;
     this["_toConsumableArray"] = _toConsumableArray;
     this["isDescriptor"] = isDescriptor;
     this["decorate"] = decorate;
     this["first"] = first;
-    this["Runnable"] = Runnable;
     this["Bindable"] = Bindable;
     this["ViewHandlerDescriptor"] = ViewHandlerDescriptor;
     this["View"] = View;
@@ -1019,7 +1019,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var _createClass = this["_createClass"];
     var HTTP = this["HTTP"];
     var Components = this["Components"];
-    var Injector = this["Injector"];
     var startTag = this["startTag"];
     var endTag = this["endTag"];
     var attr = this["attr"];
@@ -1030,6 +1029,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var fillAttrs = this["fillAttrs"];
     var special = this["special"];
     var DOM = this["DOM"];
+    var Injector = this["Injector"];
     var _slicedToArray = this["_slicedToArray"];
     var EventBinder = this["EventBinder"];
     var EventBus = this["EventBus"];
@@ -1254,85 +1254,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         enumerable: true
       }]);
       return Components;
-    })();
-    'use strict';
-    function InjectHandlerDescriptor(target, values) {
-      target.dependencies = values;
-    }
-    function Inject() {
-      for (var _len = arguments.length,
-          args = Array(_len),
-          _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-      return decorate(InjectHandlerDescriptor, args);
-    }
-    "use strict";
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ("value" in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    var Injector = (function() {
-      function Injector() {
-        _classCallCheck(this, Injector);
-      }
-      _createClass(Injector, null, [{
-        key: "instantiate",
-        value: function instantiate(target) {
-          var instance;
-          if (!!Injector.instances.hasOwnProperty(target.name)) {
-            instance = Injector.instances[target.name];
-          } else {
-            instance = Injector.resolve(target);
-            Injector.instances[target.name] = instance;
-          }
-          return instance;
-        }
-      }, {
-        key: "resolve",
-        value: function resolve(target) {
-          var dependencies = {};
-          if (!!target.dependencies) {
-            dependencies = target.dependencies.map(function(target) {
-              return Injector.instantiate(target);
-            });
-          }
-          var proto = target.prototype;
-          var instance = Object(proto) === proto ? Object.create(proto) : {};
-          var result = Function.prototype.apply.call(target, instance, dependencies);
-          return Object(result) === result ? result : instance;
-        }
-      }, {
-        key: "get",
-        value: function get(target) {
-          return Injector.instantiate(target);
-        }
-      }, {
-        key: "instances",
-        value: {},
-        enumerable: true
-      }]);
-      return Injector;
     })();
     "use strict";
     function makeMap(str) {
@@ -1579,6 +1500,85 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }]);
       return DOM;
+    })();
+    'use strict';
+    function InjectHandlerDescriptor(target, values) {
+      target.dependencies = values;
+    }
+    function Inject() {
+      for (var _len = arguments.length,
+          args = Array(_len),
+          _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+      return decorate(InjectHandlerDescriptor, args);
+    }
+    "use strict";
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ("value" in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    var Injector = (function() {
+      function Injector() {
+        _classCallCheck(this, Injector);
+      }
+      _createClass(Injector, null, [{
+        key: "instantiate",
+        value: function instantiate(target) {
+          var instance;
+          if (!!Injector.instances.hasOwnProperty(target.name)) {
+            instance = Injector.instances[target.name];
+          } else {
+            instance = Injector.resolve(target);
+            Injector.instances[target.name] = instance;
+          }
+          return instance;
+        }
+      }, {
+        key: "resolve",
+        value: function resolve(target) {
+          var dependencies = {};
+          if (!!target.dependencies) {
+            dependencies = target.dependencies.map(function(target) {
+              return Injector.instantiate(target);
+            });
+          }
+          var proto = target.prototype;
+          var instance = Object(proto) === proto ? Object.create(proto) : {};
+          var result = Function.prototype.apply.call(target, instance, dependencies);
+          return Object(result) === result ? result : instance;
+        }
+      }, {
+        key: "get",
+        value: function get(target) {
+          return Injector.instantiate(target);
+        }
+      }, {
+        key: "instances",
+        value: {},
+        enumerable: true
+      }]);
+      return Injector;
     })();
     'use strict';
     var _slicedToArray = (function() {
@@ -1947,6 +1947,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     function RouterConfig(arg) {
       return decorate(RouterConfigHandlerDescriptor, arg);
     }
+    "use strict";
+    function Runnable(target) {
+      Object.assign(target.prototype, {run: function run() {}});
+    }
     'use strict';
     var _slice = Array.prototype.slice;
     function _toConsumableArray(arr) {
@@ -1984,17 +1988,13 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     function first() {
       return this[0];
     }
-    "use strict";
-    function Runnable(target) {
-      Object.assign(target.prototype, {run: function run() {}});
-    }
     'use strict';
     function Bindable(target, key, descriptor) {
       var setter = descriptor.set;
       var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
       descriptor.set = function(value) {
         setter.call(this, value);
-        EventBus.publish(eventName, {});
+        EventBus.publish(eventName);
       };
     }
     'use strict';
@@ -2090,7 +2090,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["_createClass"] = _createClass;
     this["HTTP"] = HTTP;
     this["Components"] = Components;
-    this["Injector"] = Injector;
     this["startTag"] = startTag;
     this["endTag"] = endTag;
     this["attr"] = attr;
@@ -2101,6 +2100,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["fillAttrs"] = fillAttrs;
     this["special"] = special;
     this["DOM"] = DOM;
+    this["Injector"] = Injector;
     this["_slicedToArray"] = _slicedToArray;
     this["EventBinder"] = EventBinder;
     this["EventBus"] = EventBus;

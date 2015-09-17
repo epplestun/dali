@@ -15,7 +15,8 @@ import {
   bindable: true
 })
 @Runnable
-class App {
+class App { 
+  
   @Bindable
   get value() { return this._value; };
   set value(value) { this._value = value; };
@@ -23,11 +24,11 @@ class App {
   @Bindable
   get name() { return this._name; }
   set name(name) { this._name = name; }
-
+  
   constructor() {
     this.value = 0;
     this.name = "My first App!";
-  }
+  } 
   
   start() {
     this.value = this.value + 1;

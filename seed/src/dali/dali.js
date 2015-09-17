@@ -195,73 +195,6 @@ var Components = (function () {
 
   return Components;
 })();
-'use strict';
-
-function InjectHandlerDescriptor(target, values) {
-  target.dependencies = values;
-}
-
-function Inject() {
-  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-
-  return decorate(InjectHandlerDescriptor, args);
-}
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Injector = (function () {
-  function Injector() {
-    _classCallCheck(this, Injector);
-  }
-
-  _createClass(Injector, null, [{
-    key: "instantiate",
-    value: function instantiate(target) {
-      var instance;
-
-      if (!!Injector.instances.hasOwnProperty(target.name)) {
-        instance = Injector.instances[target.name];
-      } else {
-        instance = Injector.resolve(target);
-        Injector.instances[target.name] = instance;
-      }
-
-      return instance;
-    }
-  }, {
-    key: "resolve",
-    value: function resolve(target) {
-      var dependencies = {};
-
-      if (!!target.dependencies) {
-        dependencies = target.dependencies.map(function (target) {
-          return Injector.instantiate(target);
-        });
-      }
-
-      var proto = target.prototype;
-      var instance = Object(proto) === proto ? Object.create(proto) : {};
-      var result = Function.prototype.apply.call(target, instance, dependencies);
-      return Object(result) === result ? result : instance;
-    }
-  }, {
-    key: "get",
-    value: function get(target) {
-      return Injector.instantiate(target);
-    }
-  }, {
-    key: "instances",
-    value: {},
-    enumerable: true
-  }]);
-
-  return Injector;
-})();
 /*
  * HTML Parser By John Resig (ejohn.org)
  * Original code by Erik Arvidsson, Mozilla Public License
@@ -580,6 +513,73 @@ var DOM = (function () {
 })();
 'use strict';
 
+function InjectHandlerDescriptor(target, values) {
+  target.dependencies = values;
+}
+
+function Inject() {
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  return decorate(InjectHandlerDescriptor, args);
+}
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Injector = (function () {
+  function Injector() {
+    _classCallCheck(this, Injector);
+  }
+
+  _createClass(Injector, null, [{
+    key: "instantiate",
+    value: function instantiate(target) {
+      var instance;
+
+      if (!!Injector.instances.hasOwnProperty(target.name)) {
+        instance = Injector.instances[target.name];
+      } else {
+        instance = Injector.resolve(target);
+        Injector.instances[target.name] = instance;
+      }
+
+      return instance;
+    }
+  }, {
+    key: "resolve",
+    value: function resolve(target) {
+      var dependencies = {};
+
+      if (!!target.dependencies) {
+        dependencies = target.dependencies.map(function (target) {
+          return Injector.instantiate(target);
+        });
+      }
+
+      var proto = target.prototype;
+      var instance = Object(proto) === proto ? Object.create(proto) : {};
+      var result = Function.prototype.apply.call(target, instance, dependencies);
+      return Object(result) === result ? result : instance;
+    }
+  }, {
+    key: "get",
+    value: function get(target) {
+      return Injector.instantiate(target);
+    }
+  }, {
+    key: "instances",
+    value: {},
+    enumerable: true
+  }]);
+
+  return Injector;
+})();
+'use strict';
+
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -840,6 +840,13 @@ function RouterConfigHandlerDescriptor(target, value) {
 function RouterConfig(arg) {
   return decorate(RouterConfigHandlerDescriptor, arg);
 }
+"use strict";
+
+function Runnable(target) {
+		Object.assign(target.prototype, {
+				run: function run() {}
+		});
+}
 'use strict';
 
 var _slice = Array.prototype.slice;
@@ -875,23 +882,27 @@ function decorate(handleDescriptor, entryArgs) {
 function first() {
   return this[0];
 }
-"use strict";
-
-function Runnable(target) {
-		Object.assign(target.prototype, {
-				run: function run() {}
-		});
-}
 'use strict';
 
 function Bindable(target, key, descriptor) {
-  var setter = descriptor.set;
-  var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
+	var setter = descriptor.set;
 
-  descriptor.set = function (value) {
-    setter.call(this, value);
-    EventBus.publish(eventName, {});
-  };
+	var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
+
+	/*
+ Object.defineProperty(target, key, {
+ 	value: function(value) {
+ 		console.log(value);
+ 		return value;
+ 	},
+ 	writable: true
+ });
+ */
+
+	descriptor.set = function (value) {
+		setter.call(this, value);
+		EventBus.publish(eventName);
+	};
 }
 'use strict';
 

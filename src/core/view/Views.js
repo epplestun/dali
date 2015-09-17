@@ -29,8 +29,8 @@ export class Views {
     
     HTMLParser(node.innerHTML, {
       start: (tag, attrs, unary) => {                
-        var childNode = childNodes.filter((element) => {
-          var nodeAttrs = element.hasAttributes() ? 
+        let childNode = childNodes.filter((element) => {
+          let nodeAttrs = element.hasAttributes() ? 
             Array.prototype.slice.call(element.attributes) : 
             [];
 
