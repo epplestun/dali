@@ -174,13 +174,11 @@ var Components = (function () {
   _createClass(Components, null, [{
     key: 'parse',
     value: function parse(node, name, attrs) {
-      //console.log('Components.parse', name, attrs);
-
       var component = Components.components.filter(function (component) {
         return component.value.name === name;
       });
 
-      Views.parse(node, first.call(component));
+      Views.parse(node, first.call(component), attrs);
     }
   }, {
     key: 'run',
@@ -263,48 +261,6 @@ var Injector = (function () {
   }]);
 
   return Injector;
-})();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var DOM = (function () {
-  function DOM() {
-    _classCallCheck(this, DOM);
-  }
-
-  _createClass(DOM, null, [{
-    key: 'getHTML',
-    value: function getHTML(node) {
-      return node.innerHTML.toString();
-    }
-  }, {
-    key: 'parse',
-    value: function parse(node) {
-      var items = node.getElementsByTagName("*");
-      for (var i = 0; i < items.length; i++) {
-        var n = items[i];
-
-        var tag = n.tagName.toLowerCase(),
-            attrs = [];
-
-        Components.parse(n, tag, attrs);
-
-        //counter++;
-      }
-
-      //
-      //HTMLParser(DOM.getHTML(node), {
-      //  start: function(tag, attrs) {
-      //    Components.parse(tag, attrs);
-      //  }
-      //});
-    }
-  }]);
-
-  return DOM;
 })();
 /*
  * HTML Parser By John Resig (ejohn.org)
@@ -588,6 +544,189 @@ function HTMLtoDOM(html, doc) {
 
   return doc;
 }
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var DOM = (function () {
+  function DOM() {
+    _classCallCheck(this, DOM);
+  }
+
+  _createClass(DOM, null, [{
+    key: 'getHTML',
+    value: function getHTML(node) {
+      return node.innerHTML.toString();
+    }
+  }, {
+    key: 'parse',
+    value: function parse(node) {
+      var items = node.getElementsByTagName("*");
+
+      for (var i = 0; i < items.length; i++) {
+        var element = items[i];
+
+        var tag = element.tagName.toLowerCase(),
+            attrs = Array.prototype.slice.call(element.attributes);
+
+        Components.parse(element, tag, attrs);
+      }
+    }
+  }]);
+
+  return DOM;
+})();
+'use strict';
+
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var EventBinder = (function () {
+	function EventBinder() {
+		_classCallCheck(this, EventBinder);
+	}
+
+	_createClass(EventBinder, null, [{
+		key: 'bind',
+		value: function bind(element, attrs, target) {
+
+			if (attrs.length > 0) {
+				(function () {
+					var instance = Injector.instances[target.name];
+
+					attrs.forEach(function (attr) {
+						var attrName = attr.name,
+						    attrValue = attr.value;
+
+						if (attrName.charAt(0) === '_') {
+							// event
+							var eventName = attrName.substring(1);
+
+							element.addEventListener(eventName, function (e) {
+								var _attrValue$match = attrValue.match(/(\w+)\((.*?)\)/);
+
+								var _attrValue$match2 = _slicedToArray(_attrValue$match, 2);
+
+								var methodName = _attrValue$match2[1];
+
+								instance[methodName](e);
+							}, false);
+						}
+					});
+				})();
+			}
+		}
+	}]);
+
+	return EventBinder;
+})();
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EventBus = (function () {
+  function EventBus() {
+    _classCallCheck(this, EventBus);
+  }
+
+  _createClass(EventBus, null, [{
+    key: "subscribe",
+    value: function subscribe(topic, callback) {
+      if (!EventBus.topics.hasOwnProperty(topic)) {
+        EventBus.topics[topic] = [];
+      }
+
+      var token = (++EventBus.lastUid).toString();
+
+      EventBus.topics[topic].push({ token: token, callback: callback });
+
+      return token;
+    }
+  }, {
+    key: "unsubscribe",
+    value: function unsubscribe(token) {
+      for (var m in EventBus.topics) {
+        if (EventBus.topics.hasOwnProperty(m)) {
+          for (var i = 0, j = EventBus.topics[m].length; i < j; i++) {
+            if (EventBus.topics[m][i].token === token) {
+              EventBus.topics[m].splice(i, 1);
+              return token;
+            }
+          }
+        }
+      }
+
+      return false;
+    }
+  }, {
+    key: "publish",
+    value: function publish(topic, data) {
+      if (!EventBus.topics.hasOwnProperty(topic)) {
+        return false;
+      }
+
+      function notify() {
+        var subscribers = EventBus.topics[topic],
+            throwException = function throwException(e) {
+          return function () {
+            throw e;
+          };
+        };
+
+        for (var i = 0, j = subscribers.length; i < j; i++) {
+          try {
+            subscribers[i].callback(topic, data);
+          } catch (e) {
+            setTimeout(throwException(e), 0);
+          }
+        }
+      };
+
+      setTimeout(notify, 0);
+
+      return true;
+    }
+  }, {
+    key: "topics",
+    value: {},
+    enumerable: true
+  }, {
+    key: "lastUid",
+    value: -1,
+    enumerable: true
+  }]);
+
+  return EventBus;
+})();
+
+EventBus.CHANGE_DETECTED = "CHANGE_DETECTED";
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var EventNameNormalizer = (function () {
+	function EventNameNormalizer() {
+		_classCallCheck(this, EventNameNormalizer);
+	}
+
+	_createClass(EventNameNormalizer, null, [{
+		key: 'normalize',
+		value: function normalize(target, eventName) {
+			return target.name.toUpperCase() + '_' + eventName;
+		}
+	}]);
+
+	return EventNameNormalizer;
+})();
 "use strict";
 
 function Module() {}
@@ -736,14 +875,32 @@ function decorate(handleDescriptor, entryArgs) {
 function first() {
   return this[0];
 }
+"use strict";
+
+function Runnable(target) {
+		Object.assign(target.prototype, {
+				run: function run() {}
+		});
+}
+'use strict';
+
+function Bindable(target, key, descriptor) {
+  var setter = descriptor.set;
+  var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
+
+  descriptor.set = function (value) {
+    setter.call(this, value);
+    EventBus.publish(eventName, {});
+  };
+}
 'use strict';
 
 function ViewHandlerDescriptor(target, value) {
-  Views.views.push({ target: target, value: value });
+  Views.views[target.name] = value;
 }
 
-function View(arg) {
-  return decorate(ViewHandlerDescriptor, arg);
+function View(viewConfig) {
+  return decorate(ViewHandlerDescriptor, viewConfig);
 }
 'use strict';
 
@@ -757,31 +914,66 @@ var Views = (function () {
   }
 
   _createClass(Views, null, [{
-    key: 'parse',
-    value: function parse(node, component) {
-      if (!!component) {
-        var _context;
-
-        var view = Views.views.filter(function (view) {
-          return view.target === component.target;
+    key: 'parseAll',
+    value: function parseAll(node, template, data, target) {
+      function sameAttributes(nodeAttrs, attrs) {
+        nodeAttrs = nodeAttrs.map(function (attribute) {
+          return {
+            name: attribute.name,
+            value: attribute.value,
+            escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"') //"
+          };
         });
 
-        view = (_context = view, first).call(_context);
+        return nodeAttrs.length === attrs.length && JSON.stringify(nodeAttrs) === JSON.stringify(attrs);
+      }
+
+      node.innerHTML = Render.render(template, data);
+
+      var childNodes = Array.prototype.slice.call(node.childNodes).filter(function (element) {
+        return element.nodeType === 1;
+      });
+
+      HTMLParser(node.innerHTML, {
+        start: function start(tag, attrs, unary) {
+          var childNode = childNodes.filter(function (element) {
+            var nodeAttrs = element.hasAttributes() ? Array.prototype.slice.call(element.attributes) : [];
+
+            return element.nodeName.toLowerCase() === tag.toLowerCase() && sameAttributes(nodeAttrs, attrs);
+          });
+
+          EventBinder.bind(first.call(childNode), attrs, target);
+        }
+      });
+    }
+  }, {
+    key: 'parse',
+    value: function parse(node, component, attrs) {
+      if (!!component) {
+        var view = Views.views[component.target.name];
 
         if (!!view) {
-          var template = view.value.template;
+          (function () {
+            var target = component.target;
+            var template = view.template;
+            var bindable = view.bindable;
+            var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+            var instance = Injector.instances[target.name];
 
-          var nodes = Render.getDOM(HTMLtoDOM(Render.render(template, {})));
+            Views.parseAll(node, template, instance, target);
 
-          console.log(nodes);
-
-          node.parentNode.replaceChild(first.call(nodes), node);
+            if (!!bindable) {
+              EventBus.subscribe(eventName, function () {
+                Views.parseAll(node, template, instance, target);
+              });
+            }
+          })();
         }
       }
     }
   }, {
     key: 'views',
-    value: [],
+    value: {},
     enumerable: true
   }]);
 

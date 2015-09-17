@@ -1,34 +1,42 @@
-import {bootstrap, Inject, Component, View} from 'dali/dali';
-import {Service} from 'Service';
-
-import {M1} from 'm1/m1';
-import {M2} from 'm2/m2';
+import {
+  bootstrap, 
+  Inject, 
+  Component, 
+  View, 
+  Bindable,
+  Runnable
+} from 'dali/dali';
 
 @Component({
   name : 'app'
 })
 @View({
-  template : '<h1>App <strong>test</strong></h1><br/><p>App test</p>'
+  template : '<h1>{{value}} <strong>{{name}}</strong></h1><br/><button _click="start()">Start</button> - <button _click="stop()">Stop</button><p>App test</p>',
+  bindable: true
 })
-@Inject(M1, M2)
+@Runnable
 class App {
-  constructor(m1, m2) {
-    this.m1 = m1;
-    this.m2 = m2;
+  @Bindable
+  get value() { return this._value; };
+  set value(value) { this._value = value; };
+
+  @Bindable
+  get name() { return this._name; }
+  set name(name) { this._name = name; }
+
+  constructor() {
+    this.value = 0;
+    this.name = "My first App!";
+  }
+  
+  start() {
+    this.value = this.value + 1;
+    this.name = "start!!!";
   }
 
-  run() {
-    let modules = [
-      this.m1,
-      this.m2
-    ];
-
-    modules.forEach((module) => {
-      if(!!module.config)
-        module.config()
-    });
-
-    //modules.forEach((module) => module.run());
+  stop() {
+    this.value = 0;
+    this.name = "stop!!!";
   }
 }
 

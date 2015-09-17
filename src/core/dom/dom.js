@@ -9,22 +9,14 @@ export class DOM {
 
   static parse(node) {
     let items = node.getElementsByTagName("*");
+
     for (let i = 0; i < items.length; i++) {
-      let n = items[i];
+      let element = items[i];
 
-      let tag = n.tagName.toLowerCase(),
-        attrs = [];
+      let tag = element.tagName.toLowerCase(),
+        attrs = Array.prototype.slice.call(element.attributes);
 
-      Components.parse(n, tag, attrs);
-
-      //counter++;
+      Components.parse(element, tag, attrs);
     }
-
-    //
-    //HTMLParser(DOM.getHTML(node), {
-    //  start: function(tag, attrs) {
-    //    Components.parse(tag, attrs);
-    //  }
-    //});
   }
 }

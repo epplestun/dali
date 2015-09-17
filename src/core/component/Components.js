@@ -6,17 +6,15 @@ export class Components {
   static components = [];
 
   static parse(node, name, attrs) {
-    //console.log('Components.parse', name, attrs);
-
     let component = Components.components.filter((component) => {
       return component.value.name === name;
     });
 
-    Views.parse(node, component::first());
+    Views.parse(node, component::first(), attrs);
   }
 
   static run() {
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", (event) => {
       DOM.parse(event.target.body);
     });
   }
