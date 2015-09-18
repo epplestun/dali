@@ -1,7 +1,7 @@
 import {RouterConfig} from 'dali/dali';
 
 @RouterConfig({
-  path : '/m1'
+  path: '/m1'
 })
 export class M1 {
   constructor() {

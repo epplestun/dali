@@ -14,143 +14,143 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var HTTP = (function () {
-	function HTTP() {
-		_classCallCheck(this, HTTP);
-	}
+  function HTTP() {
+    _classCallCheck(this, HTTP);
+  }
 
-	_createClass(HTTP, null, [{
-		key: "init",
-		value: function init() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? { method: 'GET', headers: {}, cache: false, async: false, timeout: 0 } : arguments[0];
+  _createClass(HTTP, null, [{
+    key: "init",
+    value: function init() {
+      var options = arguments.length <= 0 || arguments[0] === undefined ? { method: 'GET', headers: {}, cache: false, async: false, timeout: 0 } : arguments[0];
 
-			function toQueryString(obj) {
-				var parts = [];
-				for (var i in obj) {
-					if (obj.hasOwnProperty(i)) {
-						parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
-					}
-				}
-				return parts.join("&");
-			}
+      function toQueryString(obj) {
+        var parts = [];
+        for (var i in obj) {
+          if (obj.hasOwnProperty(i)) {
+            parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+          }
+        }
+        return parts.join("&");
+      }
 
-			function appendQuery(url, query) {
-				if (query == '') return url;
-				return (url + '&' + query).replace(/[&?]{1,2}/, '?');
-			}
+      function appendQuery(url, query) {
+        if (query == '') return url;
+        return (url + '&' + query).replace(/[&?]{1,2}/, '?');
+      }
 
-			function createCORSRequest(method, url) {
-				var xhr = new XMLHttpRequest();
+      function createCORSRequest(method, url) {
+        var xhr = new XMLHttpRequest();
 
-				if ("withCredentials" in xhr) {
-					xhr.open(method, url, true);
-				} else if (typeof XDomainRequest != "undefined") {
-					xhr = new XDomainRequest();
-					xhr.open(method, url);
-				} else {
-					xhr = null;
-				}
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          xhr = null;
+        }
 
-				return xhr;
-			}
+        return xhr;
+      }
 
-			if (!options.url) {
-				throw new Error("Url is needed");
-			}
+      if (!options.url) {
+        throw new Error("Url is needed");
+      }
 
-			if (options.params) {
-				options.url = appendQuery(options.url, toQueryString(options.params));
-			}
+      if (options.params) {
+        options.url = appendQuery(options.url, toQueryString(options.params));
+      }
 
-			if (options && options.data) {
-				options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/x-www-form-urlencoded';
-				var queryString = options.data ? toQueryString(options.data) : null;
-				if (queryString) {
-					options.headers["Content-length"] = queryString.length;
-				}
-			}
+      if (options && options.data) {
+        options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/x-www-form-urlencoded';
+        var queryString = options.data ? toQueryString(options.data) : null;
+        if (queryString) {
+          options.headers["Content-length"] = queryString.length;
+        }
+      }
 
-			if (options.cache) {
-				options.url = appendQuery(options.url, '_=' + +new Date());
-			}
+      if (options.cache) {
+        options.url = appendQuery(options.url, '_=' + +new Date());
+      }
 
-			var promise = new Promise(function (resolve, reject) {
-				var request = createCORSRequest(options.method, options.url);
+      var promise = new Promise(function (resolve, reject) {
+        var request = createCORSRequest(options.method, options.url);
 
-				if (options && options.headers) {
-					Object.keys(options.headers).forEach(function (key) {
-						request.setRequestHeader(key, options.headers[key]);
-					});
-				}
+        if (options && options.headers) {
+          Object.keys(options.headers).forEach(function (key) {
+            request.setRequestHeader(key, options.headers[key]);
+          });
+        }
 
-				if (this.withCredentials) {
-					request.withCredentials = true;
-				}
+        if (this.withCredentials) {
+          request.withCredentials = true;
+        }
 
-				request.onload = function () {
-					if (request.status === 200) {
-						resolve(request.responseText);
-					} else {
-						reject(new Error("Status code was " + request.status));
-					}
-				};
-				request.onerror = function () {
-					reject(new Error("Can't XHR " + JSON.stringify(options.url)));
-				};
+        request.onload = function () {
+          if (request.status === 200) {
+            resolve(request.responseText);
+          } else {
+            reject(new Error("Status code was " + request.status));
+          }
+        };
+        request.onerror = function () {
+          reject(new Error("Can't XHR " + JSON.stringify(options.url)));
+        };
 
-				if (options.timeout > 0) {
-					var timeout = setTimeout(function () {
-						xhr.onreadystatechange = function () {};
-						xhr.abort();
-						clearTimeout(timeout);
-					}, options.timeout);
-				}
+        if (options.timeout > 0) {
+          var timeout = setTimeout(function () {
+            xhr.onreadystatechange = function () {};
+            xhr.abort();
+            clearTimeout(timeout);
+          }, options.timeout);
+        }
 
-				request.send(options && options.data ? toQueryString(options.data) : null);
-			});
+        request.send(options && options.data ? toQueryString(options.data) : null);
+      });
 
-			return promise;
-		}
-	}, {
-		key: "get",
-		value: function get(url) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      return promise;
+    }
+  }, {
+    key: "get",
+    value: function get(url) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-			options.method = 'GET';
-			options.url = url;
+      options.method = 'GET';
+      options.url = url;
 
-			return this.init(options);
-		}
-	}, {
-		key: "post",
-		value: function post(url) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      return this.init(options);
+    }
+  }, {
+    key: "post",
+    value: function post(url) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-			options.method = 'POST';
-			options.url = url;
+      options.method = 'POST';
+      options.url = url;
 
-			return this.init(options);
-		}
-	}, {
-		key: "put",
-		value: function put() {}
-	}, {
-		key: "delete",
-		value: function _delete() {}
-	}, {
-		key: "head",
-		value: function head() {}
-	}, {
-		key: "trace",
-		value: function trace() {}
-	}, {
-		key: "options",
-		value: function options() {}
-	}, {
-		key: "patch",
-		value: function patch() {}
-	}]);
+      return this.init(options);
+    }
+  }, {
+    key: "put",
+    value: function put() {}
+  }, {
+    key: "delete",
+    value: function _delete() {}
+  }, {
+    key: "head",
+    value: function head() {}
+  }, {
+    key: "trace",
+    value: function trace() {}
+  }, {
+    key: "options",
+    value: function options() {}
+  }, {
+    key: "patch",
+    value: function patch() {}
+  }]);
 
-	return HTTP;
+  return HTTP;
 })();
 'use strict';
 
@@ -264,6 +264,188 @@ var Injector = (function () {
   }]);
 
   return Injector;
+})();
+'use strict';
+
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var DataFor = (function () {
+  function DataFor() {
+    _classCallCheck(this, DataFor);
+  }
+
+  _createClass(DataFor, [{
+    key: 'render',
+    value: function render(data, element, value, target) {
+      var cloneElement = element.cloneNode(true);
+      var parentNode = element.parentNode;
+
+      var _value$match = value.match(/([$a-zA-Z0-9]+)/g);
+
+      var _value$match2 = _slicedToArray(_value$match, 6);
+
+      var iterator = _value$match2[0];
+      var list = _value$match2[2];
+      var track = _value$match2[3];
+      var by = _value$match2[4];
+      var trackBy = _value$match2[5];
+
+      parentNode.removeChild(element);
+
+      data[list].forEach(function (item, index) {
+        var contextData = {};
+        contextData[iterator] = item;
+
+        if (!!trackBy) {
+          contextData[trackBy] = index;
+        }
+
+        var childElement = cloneElement.cloneNode(true);
+        var args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+        args = args.length > 0 ? args.split(/,/) : [];
+        oldArgs = '(' + args.join(',') + ')';
+        newArgs = '(' + args.map(function (item) {
+          return '{{' + item + '}}';
+        }).join(',') + ')';
+
+        childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
+
+        childElement.innerHTML = Render.render(childElement.innerHTML, contextData);
+
+        parentNode.appendChild(childElement);
+      });
+    }
+  }]);
+
+  return DataFor;
+})();
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DataIf = (function () {
+  function DataIf() {
+    _classCallCheck(this, DataIf);
+  }
+
+  _createClass(DataIf, [{
+    key: "render",
+    value: function render(data, element, value) {
+      if (!data[value]) {
+        element.parentNode.removeChild(element);
+      }
+    }
+  }]);
+
+  return DataIf;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var DataModel = (function () {
+  function DataModel() {
+    _classCallCheck(this, DataModel);
+  }
+
+  _createClass(DataModel, [{
+    key: 'render',
+    value: function render(data, element, value, target) {
+      var instance = Injector.instances[target.name];
+      var eventName = EventNameNormalizer.normalize(target, EventBus.MODEL_CHANGE_DETECTED);
+
+      Object.defineProperty(instance, value, {
+        get: function get() {
+          return bValue;
+        },
+        set: function set(newValue) {
+          bValue = newValue;
+
+          var data = {};
+          data[value] = newValue;
+
+          EventBus.publish(eventName, data);
+        },
+        enumerable: true,
+        configurable: true
+      });
+
+      instance[value] = element.value;
+
+      EventBus.subscribe(eventName, function (e, data) {
+        var _context;
+
+        var key = (_context = Object.keys(data), first).call(_context);
+
+        Views.parseModel(key, data, target);
+      });
+    }
+  }]);
+
+  return DataModel;
+})();
+'use strict';
+
+function Directive(target) {
+
+  console.log('Directive', Directives, target.name);
+  //Directives.directives[target.name] = target;
+}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function normalizeDirectiveName(name) {
+  name = name.charAt(0).toLowerCase() + name.slice(1);
+  return name.replace(/([A-Z])/g, function ($1) {
+    return "-" + $1.toLowerCase();
+  });
+}
+
+var Directives = (function () {
+  function Directives() {
+    _classCallCheck(this, Directives);
+  }
+
+  _createClass(Directives, null, [{
+    key: 'add',
+    value: function add(name, directive) {
+      Directives.directives[normalizeDirectiveName(name)] = directive;
+    }
+  }, {
+    key: 'get',
+    value: function get(name) {
+      return Directives.directives[name];
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      var directives = [{ name: DataIf.name, directive: Injector.get(DataIf) }, { name: DataFor.name, directive: Injector.get(DataFor) }, { name: DataModel.name, directive: Injector.get(DataModel) }];
+
+      directives.forEach(function (item) {
+        var name = item.name;
+        var directive = item.directive;
+
+        Directives.add(name, directive);
+      });
+    }
+  }, {
+    key: 'directives',
+    value: {},
+    enumerable: true
+  }]);
+
+  return Directives;
 })();
 /*
  * HTML Parser By John Resig (ejohn.org)
@@ -583,251 +765,69 @@ var DOM = (function () {
 })();
 'use strict';
 
-var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var DataFor = (function () {
-	function DataFor() {
-		_classCallCheck(this, DataFor);
-	}
-
-	_createClass(DataFor, [{
-		key: 'render',
-		value: function render(data, element, value, target) {
-			var cloneElement = element.cloneNode(true);
-			var parentNode = element.parentNode;
-
-			var _value$match = value.match(/([$a-zA-Z0-9]+)/g);
-
-			var _value$match2 = _slicedToArray(_value$match, 6);
-
-			var iterator = _value$match2[0];
-			var list = _value$match2[2];
-			var track = _value$match2[3];
-			var by = _value$match2[4];
-			var trackBy = _value$match2[5];
-
-			parentNode.removeChild(element);
-
-			data[list].forEach(function (item, index) {
-				var contextData = {};
-				contextData[iterator] = item;
-
-				if (!!trackBy) {
-					contextData[trackBy] = index;
-				}
-
-				var childElement = cloneElement.cloneNode(true);
-				var args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-				args = args.length > 0 ? args.split(/,/) : [];
-				oldArgs = '(' + args.join(',') + ')';
-				newArgs = '(' + args.map(function (item) {
-					return '{{' + item + '}}';
-				}).join(',') + ')';
-
-				childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
-
-				childElement.innerHTML = Render.render(childElement.innerHTML, contextData);
-
-				parentNode.appendChild(childElement);
-			});
-		}
-	}]);
-
-	return DataFor;
-})();
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var DataIf = (function () {
-	function DataIf() {
-		_classCallCheck(this, DataIf);
-	}
-
-	_createClass(DataIf, [{
-		key: "render",
-		value: function render(data, element, value) {
-			if (!data[value]) {
-				element.parentNode.removeChild(element);
-			}
-		}
-	}]);
-
-	return DataIf;
-})();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var DataModel = (function () {
-	function DataModel() {
-		_classCallCheck(this, DataModel);
-	}
-
-	_createClass(DataModel, [{
-		key: 'render',
-		value: function render(data, element, value, target) {
-			var instance = Injector.instances[target.name];
-			var eventName = EventNameNormalizer.normalize(target, EventBus.MODEL_CHANGE_DETECTED);
-
-			Object.defineProperty(instance, value, {
-				get: function get() {
-					return bValue;
-				},
-				set: function set(newValue) {
-					bValue = newValue;
-
-					var data = {};
-					data[value] = newValue;
-
-					EventBus.publish(eventName, data);
-				},
-				enumerable: true,
-				configurable: true
-			});
-
-			instance[value] = element.value;
-
-			EventBus.subscribe(eventName, function (e, data) {
-				var _context;
-
-				var key = (_context = Object.keys(data), first).call(_context);
-
-				Views.parseModel(key, data, target);
-			});
-		}
-	}]);
-
-	return DataModel;
-})();
-'use strict';
-
-function Directive(target) {
-
-	console.log('Directive', Directives, target.name);
-	//Directives.directives[target.name] = target;
-}
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function normalizeDirectiveName(name) {
-  name = name.charAt(0).toLowerCase() + name.slice(1);
-  return name.replace(/([A-Z])/g, function ($1) {
-    return "-" + $1.toLowerCase();
-  });
-}
-
-var Directives = (function () {
-  function Directives() {
-    _classCallCheck(this, Directives);
-  }
-
-  _createClass(Directives, null, [{
-    key: 'add',
-    value: function add(name, directive) {
-      Directives.directives[normalizeDirectiveName(name)] = directive;
-    }
-  }, {
-    key: 'get',
-    value: function get(name) {
-      return Directives.directives[name];
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      var directives = [{ name: DataIf.name, directive: Injector.get(DataIf) }, { name: DataFor.name, directive: Injector.get(DataFor) }, { name: DataModel.name, directive: Injector.get(DataModel) }];
-
-      directives.forEach(function (item) {
-        var name = item.name;
-        var directive = item.directive;
-
-        Directives.add(name, directive);
-      });
-    }
-  }, {
-    key: 'directives',
-    value: {},
-    enumerable: true
-  }]);
-
-  return Directives;
-})();
-'use strict';
-
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function setPrimitive(value) {
-	if (!isNaN(value)) {
-		// check integer
-		if (/[0-9]+/.test(value)) {
-			return parseInt(value, 10);
-		}
+  if (!isNaN(value)) {
+    // check integer
+    if (/[0-9]+/.test(value)) {
+      return parseInt(value, 10);
+    }
 
-		// check float
-		if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
-			return parseFloat(value);
-		}
-	}
+    // check float
+    if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
+      return parseFloat(value);
+    }
+  }
 
-	return value;
+  return value;
 }
 
 var EventBinder = (function () {
-	function EventBinder() {
-		_classCallCheck(this, EventBinder);
-	}
+  function EventBinder() {
+    _classCallCheck(this, EventBinder);
+  }
 
-	_createClass(EventBinder, null, [{
-		key: 'bind',
-		value: function bind(element, attrs, target) {
-			if (attrs.length > 0) {
-				(function () {
-					var instance = Injector.instances[target.name];
+  _createClass(EventBinder, null, [{
+    key: 'bind',
+    value: function bind(element, attrs, target) {
+      if (attrs.length > 0) {
+        (function () {
+          var instance = Injector.instances[target.name];
 
-					attrs.forEach(function (attr) {
-						var attrName = attr.name,
-						    attrValue = attr.value;
+          attrs.forEach(function (attr) {
+            var attrName = attr.name,
+                attrValue = attr.value;
 
-						if (attrName.charAt(0) === '_') {
-							var eventName = attrName.substring(1);
+            if (attrName.charAt(0) === '_') {
+              var eventName = attrName.substring(1);
 
-							element.addEventListener(eventName, function (e) {
-								var methodName = attrValue.match(/^(.*)\(/mi)[1];
-								var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-								args = args.length > 0 ? args.split(/,/) : [];
-								args = args.map(function (arg) {
-									return setPrimitive(arg);
-								});
+              element.addEventListener(eventName, function (e) {
+                var methodName = attrValue.match(/^(.*)\(/mi)[1];
+                var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+                args = args.length > 0 ? args.split(/,/) : [];
+                args = args.map(function (arg) {
+                  return setPrimitive(arg);
+                });
 
-								instance[methodName].apply(instance, args);
-							}, false);
-						}
+                instance[methodName].apply(instance, args);
+              }, false);
+            }
 
-						if (attrName === 'data-model') {
-							element.addEventListener('input', function (e) {
-								instance[attrValue] = element.value;
-							}, false);
-						}
-					});
-				})();
-			}
-		}
-	}]);
+            if (attrName === 'data-model') {
+              element.addEventListener('input', function (e) {
+                instance[attrValue] = element.value;
+              }, false);
+            }
+          });
+        })();
+      }
+    }
+  }]);
 
-	return EventBinder;
+  return EventBinder;
 })();
 "use strict";
 
@@ -919,18 +919,18 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var EventNameNormalizer = (function () {
-	function EventNameNormalizer() {
-		_classCallCheck(this, EventNameNormalizer);
-	}
+  function EventNameNormalizer() {
+    _classCallCheck(this, EventNameNormalizer);
+  }
 
-	_createClass(EventNameNormalizer, null, [{
-		key: 'normalize',
-		value: function normalize(target, eventName) {
-			return target.name.toUpperCase() + '_' + eventName;
-		}
-	}]);
+  _createClass(EventNameNormalizer, null, [{
+    key: 'normalize',
+    value: function normalize(target, eventName) {
+      return target.name.toUpperCase() + '_' + eventName;
+    }
+  }]);
 
-	return EventNameNormalizer;
+  return EventNameNormalizer;
 })();
 "use strict";
 
@@ -1057,9 +1057,9 @@ function RouterConfig(arg) {
 "use strict";
 
 function Runnable(target) {
-		Object.assign(target.prototype, {
-				run: function run() {}
-		});
+  Object.assign(target.prototype, {
+    run: function run() {}
+  });
 }
 'use strict';
 
@@ -1099,71 +1099,71 @@ function first() {
 'use strict';
 
 /*
-Object.defineProperty(Array.prototype, "push", {
-  configurable: false,
-  enumerable: false, // hide from for...in
-  writable: false,
-  value: function () {
-  	
-    for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
-    	this[n] = arguments[i];
-      //console.log(this, n, this[n] = arguments[i]); // assign/raise your event
-    }
+ Object.defineProperty(Array.prototype, "push", {
+ configurable: false,
+ enumerable: false, // hide from for...in
+ writable: false,
+ value: function () {
 
-    console.log(this, n);
+ for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
+ this[n] = arguments[i];
+ //console.log(this, n, this[n] = arguments[i]); // assign/raise your event
+ }
 
-    //EventBus.publish(eventName);
+ console.log(this, n);
 
-    return n;
-  }
-});
-*/
+ //EventBus.publish(eventName);
+
+ return n;
+ }
+ });
+ */
 
 /*
-var observer = new MutationObserver(function(mutations) {
-	  mutations.forEach(function(mutation) {
-	    console.log(mutation);
-	  });    
-	});
+ var observer = new MutationObserver(function(mutations) {
+ mutations.forEach(function(mutation) {
+ console.log(mutation);
+ });
+ });
 
-	var config = { attributes: true, childList: true, characterData: true };
- 
-	// pass in the target node, as well as the observer options
-	observer.observe(target, config);
-*/
+ var config = { attributes: true, childList: true, characterData: true };
+
+ // pass in the target node, as well as the observer options
+ observer.observe(target, config);
+ */
 
 function BindableArray(target, key, descriptor) {
-	//console.log(target, key, descriptor);
-	var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
+  //console.log(target, key, descriptor);
+  var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
 
-	//console.log(eventName, descriptor.set);
+  //console.log(eventName, descriptor.set);
 
-	/*
- Object.defineProperty(Array.prototype, "push", {
+  /*
+   Object.defineProperty(Array.prototype, "push", {
    configurable: false,
    enumerable: false, // hide from for...in
    writable: false,
    value: function () {
-     for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
-     	this[n] = arguments[i];
-       //console.log(this, n, this[n] = arguments[i]); // assign/raise your event
-     }
- 	    console.log(this, n, eventName);
- 	    //EventBus.publish(eventName);
- 	    return n;
+   for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
+   this[n] = arguments[i];
+   //console.log(this, n, this[n] = arguments[i]); // assign/raise your event
    }
- });
- */
+    console.log(this, n, eventName);
+    //EventBus.publish(eventName);
+    return n;
+   }
+   });
+   */
 }
 
 function Bindable(target, key, descriptor) {
-	var setter = descriptor.set;
-	var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
+  var setter = descriptor.set;
+  var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
 
-	descriptor.set = function (value) {
-		setter.call(this, value);
-		EventBus.publish(eventName);
-	};
+  descriptor.set = function (value) {
+    setter.call(this, value);
+    EventBus.publish(eventName);
+  };
 }
 'use strict';
 

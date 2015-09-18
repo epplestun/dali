@@ -4,34 +4,36 @@ import {EventBus, EventNameNormalizer} from 'core/event/EventBus';
 import {Views} from 'core/view/Views';
 
 export class DataModel {
-	render(data, element, value, target) {
-		let instance = Injector.instances[target.name];
-		let eventName = EventNameNormalizer.normalize(
-			target, EventBus.MODEL_CHANGE_DETECTED
-		);
-		
-		Object.defineProperty(instance, value, {
-			get: function() { 
-				return bValue; 
-			},
-		  set: function(newValue) { 
-		  	bValue = newValue;
+  render(data, element, value, target) {
+    let instance = Injector.instances[target.name];
+    let eventName = EventNameNormalizer.normalize(
+      target, EventBus.MODEL_CHANGE_DETECTED
+    );
 
-		  	let data = {};
-		  	data[value] = newValue;
+    Object.defineProperty(instance, value, {
+      get: function () {
+        return bValue;
+      },
+      set: function (newValue) {
+        bValue = newValue;
 
-		  	EventBus.publish(eventName, data);
-		  },
-		  enumerable: true,
-		  configurable: true
-		});
+        let data = {};
+        data[value] = newValue;
 
-		instance[value] = element.value;
-		
-		EventBus.subscribe(eventName, (e, data) => {
-			let key = Object.keys(data)::first();
+        EventBus.publish(eventName, data);
+      },
+      enumerable: true,
+      configurable: true
+    });
 
-			Views.parseModel(key, data, target);
-		});
-	}
+    instance[value] = element.value;
+
+    EventBus.subscribe(eventName, (e, data) => {
+      let key = Object.keys(data)
+      ::
+      first();
+
+      Views.parseModel(key, data, target);
+    });
+  }
 }

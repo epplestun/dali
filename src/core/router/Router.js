@@ -11,7 +11,7 @@ export class Router {
     Router.routes.forEach((route) => {
       let {path} = route.value;
 
-      if(!!path.test(Router.getHash())) {
+      if (!!path.test(Router.getHash())) {
         Injector.get(route.target).run();
       }
     });

@@ -1,7 +1,7 @@
 export class EventBus {
   static topics = {};
   static lastUid = -1;
-  
+
   static subscribe(topic, callback) {
     if (!EventBus.topics.hasOwnProperty(topic)) {
       EventBus.topics[topic] = [];
@@ -13,7 +13,7 @@ export class EventBus {
 
     return token;
   }
-  
+
   static unsubscribe(token) {
     for (var m in EventBus.topics) {
       if (EventBus.topics.hasOwnProperty(m)) {
@@ -28,7 +28,7 @@ export class EventBus {
 
     return false;
   }
-  
+
   static publish(topic, data) {
     if (!EventBus.topics.hasOwnProperty(topic)) {
       return false;
@@ -36,11 +36,11 @@ export class EventBus {
 
     function notify() {
       var subscribers = EventBus.topics[topic],
-          throwException = function (e) {
-            return function () {
-              throw e;
-            };
+        throwException = function (e) {
+          return function () {
+            throw e;
           };
+        };
 
       for (var i = 0, j = subscribers.length; i < j; i++) {
         try {

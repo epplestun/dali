@@ -1,1 +1,2 @@
-export function Module() {}
+export function Module() {
+}

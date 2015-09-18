@@ -23,10 +23,10 @@
  *
  */
 
-function makeMap(str){
+function makeMap(str) {
   var obj = {}, items = str.split(",");
-  for ( var i = 0; i < items.length; i++ )
-    obj[ items[i] ] = true;
+  for (var i = 0; i < items.length; i++)
+    obj[items[i]] = true;
   return obj;
 }
 
@@ -56,73 +56,73 @@ var special = makeMap("script,style");
 
 export function HTMLParser(html, handler) {
   var index, chars, match, stack = [], last = html;
-  stack.last = function(){
-    return this[ this.length - 1 ];
+  stack.last = function () {
+    return this[this.length - 1];
   };
 
-  while ( html ) {
+  while (html) {
     chars = true;
 
     // Make sure we're not in a script or style element
-    if ( !stack.last() || !special[ stack.last() ] ) {
+    if (!stack.last() || !special[stack.last()]) {
 
       // Comment
-      if ( html.indexOf("<!--") == 0 ) {
+      if (html.indexOf("<!--") == 0) {
         index = html.indexOf("-->");
 
-        if ( index >= 0 ) {
-          if ( handler.comment )
-            handler.comment( html.substring( 4, index ) );
-          html = html.substring( index + 3 );
+        if (index >= 0) {
+          if (handler.comment)
+            handler.comment(html.substring(4, index));
+          html = html.substring(index + 3);
           chars = false;
         }
 
         // end tag
-      } else if ( html.indexOf("</") == 0 ) {
-        match = html.match( endTag );
+      } else if (html.indexOf("</") == 0) {
+        match = html.match(endTag);
 
-        if ( match ) {
-          html = html.substring( match[0].length );
-          match[0].replace( endTag, parseEndTag );
+        if (match) {
+          html = html.substring(match[0].length);
+          match[0].replace(endTag, parseEndTag);
           chars = false;
         }
 
         // start tag
-      } else if ( html.indexOf("<") == 0 ) {
-        match = html.match( startTag );
+      } else if (html.indexOf("<") == 0) {
+        match = html.match(startTag);
 
-        if ( match ) {
-          html = html.substring( match[0].length );
-          match[0].replace( startTag, parseStartTag );
+        if (match) {
+          html = html.substring(match[0].length);
+          match[0].replace(startTag, parseStartTag);
           chars = false;
         }
       }
 
-      if ( chars ) {
+      if (chars) {
         index = html.indexOf("<");
 
-        var text = index < 0 ? html : html.substring( 0, index );
-        html = index < 0 ? "" : html.substring( index );
+        var text = index < 0 ? html : html.substring(0, index);
+        html = index < 0 ? "" : html.substring(index);
 
-        if ( handler.chars )
-          handler.chars( text );
+        if (handler.chars)
+          handler.chars(text);
       }
 
     } else {
-      html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text){
+      html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function (all, text) {
         text = text.replace(/<!--(.*?)-->/g, "$1")
           .replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
 
-        if ( handler.chars )
-          handler.chars( text );
+        if (handler.chars)
+          handler.chars(text);
 
         return "";
       });
 
-      parseEndTag( "", stack.last() );
+      parseEndTag("", stack.last());
     }
 
-    if ( html == last )
+    if (html == last)
       throw "Parse Error: " + html;
     last = html;
   }
@@ -130,28 +130,28 @@ export function HTMLParser(html, handler) {
   // Clean up any remaining tags
   parseEndTag();
 
-  function parseStartTag( tag, tagName, rest, unary ) {
+  function parseStartTag(tag, tagName, rest, unary) {
     tagName = tagName.toLowerCase();
 
-    if ( block[ tagName ] ) {
-      while ( stack.last() && inline[ stack.last() ] ) {
-        parseEndTag( "", stack.last() );
+    if (block[tagName]) {
+      while (stack.last() && inline[stack.last()]) {
+        parseEndTag("", stack.last());
       }
     }
 
-    if ( closeSelf[ tagName ] && stack.last() == tagName ) {
-      parseEndTag( "", tagName );
+    if (closeSelf[tagName] && stack.last() == tagName) {
+      parseEndTag("", tagName);
     }
 
-    unary = empty[ tagName ] || !!unary;
+    unary = empty[tagName] || !!unary;
 
-    if ( !unary )
-      stack.push( tagName );
+    if (!unary)
+      stack.push(tagName);
 
-    if ( handler.start ) {
+    if (handler.start) {
       var attrs = [];
 
-      rest.replace(attr, function(match, name) {
+      rest.replace(attr, function (match, name) {
         var value = arguments[2] ? arguments[2] :
           arguments[3] ? arguments[3] :
             arguments[4] ? arguments[4] :
@@ -164,27 +164,27 @@ export function HTMLParser(html, handler) {
         });
       });
 
-      if ( handler.start )
-        handler.start( tagName, attrs, unary );
+      if (handler.start)
+        handler.start(tagName, attrs, unary);
     }
   }
 
-  function parseEndTag( tag, tagName ) {
+  function parseEndTag(tag, tagName) {
     // If no tag name is provided, clean shop
-    if ( !tagName )
+    if (!tagName)
       var pos = 0;
 
     // Find the closest opened tag of the same type
     else
-      for ( var pos = stack.length - 1; pos >= 0; pos-- )
-        if ( stack[ pos ] == tagName )
+      for (var pos = stack.length - 1; pos >= 0; pos--)
+        if (stack[pos] == tagName)
           break;
 
-    if ( pos >= 0 ) {
+    if (pos >= 0) {
       // Close all the open elements, up the stack
-      for ( var i = stack.length - 1; i >= pos; i-- )
-        if ( handler.end )
-          handler.end( stack[ i ] );
+      for (var i = stack.length - 1; i >= pos; i--)
+        if (handler.end)
+          handler.end(stack[i]);
 
       // Remove the open elements from the stack
       stack.length = pos;
@@ -196,21 +196,21 @@ export function HTMLtoXML(html) {
   var results = "";
 
   HTMLParser(html, {
-    start: function( tag, attrs, unary ) {
+    start: function (tag, attrs, unary) {
       results += "<" + tag;
 
-      for ( var i = 0; i < attrs.length; i++ )
+      for (var i = 0; i < attrs.length; i++)
         results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
 
       results += (unary ? "/" : "") + ">";
     },
-    end: function( tag ) {
+    end: function (tag) {
       results += "</" + tag + ">";
     },
-    chars: function( text ) {
+    chars: function (text) {
       results += text;
     },
-    comment: function( text ) {
+    comment: function (text) {
       results += "<!--" + text + "-->";
     }
   });
@@ -228,12 +228,12 @@ export function HTMLtoDOM(html, doc) {
     base: "head"
   };
 
-  if ( !doc ) {
-    if ( typeof DOMDocument != "undefined" )
+  if (!doc) {
+    if (typeof DOMDocument != "undefined")
       doc = new DOMDocument();
-    else if ( typeof document != "undefined" && document.implementation && document.implementation.createDocument )
+    else if (typeof document != "undefined" && document.implementation && document.implementation.createDocument)
       doc = document.implementation.createDocument("", "", null);
-    else if ( typeof ActiveX != "undefined" )
+    else if (typeof ActiveX != "undefined")
       doc = new ActiveXObject("Msxml.DOMDocument");
 
   } else
@@ -247,62 +247,62 @@ export function HTMLtoDOM(html, doc) {
 
   // If we're dealing with an empty document then we
   // need to pre-populate it with the HTML document structure
-  if ( !documentElement && doc.createElement ) (function(){
+  if (!documentElement && doc.createElement) (function () {
     var html = doc.createElement("html");
     var head = doc.createElement("head");
-    head.appendChild( doc.createElement("title") );
-    html.appendChild( head );
-    html.appendChild( doc.createElement("body") );
-    doc.appendChild( html );
+    head.appendChild(doc.createElement("title"));
+    html.appendChild(head);
+    html.appendChild(doc.createElement("body"));
+    doc.appendChild(html);
   })();
 
   // Find all the unique elements
-  if ( doc.getElementsByTagName )
-    for ( var i in one )
-      one[ i ] = doc.getElementsByTagName( i )[0];
+  if (doc.getElementsByTagName)
+    for (var i in one)
+      one[i] = doc.getElementsByTagName(i)[0];
 
   // If we're working with a document, inject contents into
   // the body element
   var curParentNode = one.body;
 
-  HTMLParser( html, {
-    start: function( tagName, attrs, unary ) {
+  HTMLParser(html, {
+    start: function (tagName, attrs, unary) {
       // If it's a pre-built element, then we can ignore
       // its construction
-      if ( one[ tagName ] ) {
-        curParentNode = one[ tagName ];
-        if ( !unary ) {
-          elems.push( curParentNode );
+      if (one[tagName]) {
+        curParentNode = one[tagName];
+        if (!unary) {
+          elems.push(curParentNode);
         }
         return;
       }
 
-      var elem = doc.createElement( tagName );
+      var elem = doc.createElement(tagName);
 
-      for ( var attr in attrs )
-        elem.setAttribute( attrs[ attr ].name, attrs[ attr ].value );
+      for (var attr in attrs)
+        elem.setAttribute(attrs[attr].name, attrs[attr].value);
 
-      if ( structure[ tagName ] && typeof one[ structure[ tagName ] ] != "boolean" )
-        one[ structure[ tagName ] ].appendChild( elem );
+      if (structure[tagName] && typeof one[structure[tagName]] != "boolean")
+        one[structure[tagName]].appendChild(elem);
 
-      else if ( curParentNode && curParentNode.appendChild )
-        curParentNode.appendChild( elem );
+      else if (curParentNode && curParentNode.appendChild)
+        curParentNode.appendChild(elem);
 
-      if ( !unary ) {
-        elems.push( elem );
+      if (!unary) {
+        elems.push(elem);
         curParentNode = elem;
       }
     },
-    end: function( tag ) {
+    end: function (tag) {
       elems.length -= 1;
 
       // Init the new parentNode
-      curParentNode = elems[ elems.length - 1 ];
+      curParentNode = elems[elems.length - 1];
     },
-    chars: function( text ) {
-      curParentNode.appendChild( doc.createTextNode( text ) );
+    chars: function (text) {
+      curParentNode.appendChild(doc.createTextNode(text));
     },
-    comment: function( text ) {
+    comment: function (text) {
       // create comment node
     }
   });

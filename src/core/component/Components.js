@@ -12,7 +12,11 @@ export class Components {
 
     //console.log(attrs);
 
-    Views.parse(node, component::first());
+    Views.parse(node, component
+  ::
+    first()
+  )
+    ;
   }
 
   static run() {

@@ -27,8 +27,8 @@ export class Views {
 
   static parseModel(key, data, target) {
     let view = Views.views[target.name]
-        node = view.nodeCached,
-        template = view.templateCached;
+    node = view.nodeCached,
+      template = view.templateCached;
 
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
@@ -46,12 +46,12 @@ export class Views {
       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
       let childNode = childNodes.filter((element) => {
         let nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-        return element.nodeName.toLowerCase() === wrapperChildNode.nodeName.toLowerCase() && sameAttributes(nodeAttrs, attrs);     
+        return element.nodeName.toLowerCase() === wrapperChildNode.nodeName.toLowerCase() && sameAttributes(nodeAttrs, attrs);
       });
 
       childNode.forEach((cn) => {
         cn.innerHTML = Render.render(
-          wrapperChildNode.innerHTML, 
+          wrapperChildNode.innerHTML,
           data
         );
       });
@@ -67,26 +67,26 @@ export class Views {
     ).filter((element) => element.nodeType === 1);
 
     wrapperChildNodes.forEach((element) => {
-      if(!!element.hasAttributes()) {
+      if (!!element.hasAttributes()) {
         let attrs = elementAttrs(element);
 
         attrs.forEach(attr => {
           let directive = Directives.get(attr.name);
 
-          if(!!directive) {
+          if (!!directive) {
             directive.render(data, element, attr.value, target);
-          }          
+          }
         });
       }
     });
 
     node.innerHTML = Render.render(
-      wrapper.innerHTML, 
+      wrapper.innerHTML,
       data
     );
 
     var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-    
+
     childNodes.forEach((cn) => {
       let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
       EventBinder.bind(cn, attrs, target);
@@ -94,21 +94,21 @@ export class Views {
   }
 
   static parse(node, component) {
-    if(!!component) {
+    if (!!component) {
       let view = Views.views[component.target.name];
 
-      if(!!view) {
+      if (!!view) {
         var promise;
 
-        if(!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
+        if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
           promise = HTTP.get(view[Views.TEMPLATE_URL]);
-        } else if(!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
+        } else if (!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
           promise = Promise.resolve(view[Views.TEMPLATE]);
         } else {
           throw new Exception("View need templateUrl or template attributes");
         }
 
-        promise.then(function(template) {
+        promise.then(function (template) {
           view.templateCached = template;
           view.nodeCached = node;
 
@@ -119,9 +119,9 @@ export class Views {
             instance = Injector.instances[target.name];
 
           Views.parseAll(
-            node, 
-            template, 
-            instance, 
+            node,
+            template,
+            instance,
             target
           );
 

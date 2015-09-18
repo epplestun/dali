@@ -8,8 +8,8 @@ function pathToRegexp(path, keys, sensitive, strict) {
     .concat(strict ? '' : '/?')
     .replace(/\/\(/g, '(?:/')
     .replace(/\+/g, '__plus__')
-    .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_, slash, format, key, capture, optional){
-      keys.push({ name: key, optional: !! optional });
+    .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function (_, slash, format, key, capture, optional) {
+      keys.push({name: key, optional: !!optional});
       slash = slash || '';
       return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
     })
