@@ -13,8 +13,14 @@ export class EventBinder {
 					let eventName = attrName.substring(1);
 
 					element.addEventListener(eventName, (e) => {
-						var [,methodName] = attrValue.match(/(\w+)\((.*?)\)/)
-						instance[methodName](e);
+						let methodName = attrValue.match(/^(.*)\(/mi)[1];
+						let args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+						args = args.length > 0 ? args.split(/,/) : [];
+						
+						//console.log(instance, element, args);
+
+						//var [,methodName] = attrValue.match(/(\w+)\((.*?)\)/);
+						instance[methodName].apply(instance, args);
 					}, false);
 				}
 				

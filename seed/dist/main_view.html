@@ -12,15 +12,19 @@
 
 <ul>
 	<li *for="todo in todos track by $index">
-		{{todo}} <button _click="remove($index)">Remove</button>
+		{{todo}} {{$index}}<button _click="remove(todo,$index)">Remove</button>
 	</li>
 </ul>
 
 <hr/>
-
 
 <p>{{item}}</p>
 <input type="text" name="item" *model="item"/>
 
 <button _click="add()">Add</button>
 <button _click="clean()">Clean</button>
+
+<p>{{item}}</p>
+
+
+<h2>{{item}}</h2>

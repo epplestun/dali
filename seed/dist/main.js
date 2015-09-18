@@ -1416,7 +1416,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(DataFor, [{
         key: 'render',
-        value: function render(data, element, value) {
+        value: function render(data, element, value, target) {
           var cloneElement = element.cloneNode(true);
           var parentNode = element.parentNode;
           var _value$match = value.match(/([$a-zA-Z0-9]+)/g);
@@ -1430,6 +1430,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           data[list].forEach(function(item, index) {
             var contextData = {};
             contextData[iterator] = item;
+            if (!!trackBy) {
+              contextData[trackBy] = index;
+            }
             var childElement = cloneElement.cloneNode(true);
             childElement.innerHTML = Render.render(childElement.innerHTML, contextData);
             parentNode.appendChild(childElement);
@@ -1857,43 +1860,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return DOM;
     })();
     'use strict';
-    var _slicedToArray = (function() {
-      function sliceIterator(arr, i) {
-        var _arr = [];
-        var _n = true;
-        var _d = false;
-        var _e = undefined;
-        try {
-          for (var _i = arr[Symbol.iterator](),
-              _s; !(_n = (_s = _i.next()).done); _n = true) {
-            _arr.push(_s.value);
-            if (i && _arr.length === i)
-              break;
-          }
-        } catch (err) {
-          _d = true;
-          _e = err;
-        } finally {
-          try {
-            if (!_n && _i['return'])
-              _i['return']();
-          } finally {
-            if (_d)
-              throw _e;
-          }
-        }
-        return _arr;
-      }
-      return function(arr, i) {
-        if (Array.isArray(arr)) {
-          return arr;
-        } else if (Symbol.iterator in Object(arr)) {
-          return sliceIterator(arr, i);
-        } else {
-          throw new TypeError('Invalid attempt to destructure non-iterable instance');
-        }
-      };
-    })();
     var _createClass = (function() {
       function defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
@@ -1934,10 +1900,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
                 if (attrName.charAt(0) === '_') {
                   var eventName = attrName.substring(1);
                   element.addEventListener(eventName, function(e) {
-                    var _attrValue$match = attrValue.match(/(\w+)\((.*?)\)/);
-                    var _attrValue$match2 = _slicedToArray(_attrValue$match, 2);
-                    var methodName = _attrValue$match2[1];
-                    instance[methodName](e);
+                    var methodName = attrValue.match(/^(.*)\(/mi)[1];
+                    var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+                    args = args.length > 0 ? args.split(/,/) : [];
+                    instance[methodName].apply(instance, args);
                   }, false);
                 }
                 if (attrName === 'data-model') {
@@ -2389,13 +2355,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
             return element.nodeType === 1;
           });
-          HTMLParser(node.innerHTML, {start: function start(tag, attrs, unary) {
-              var childNode = childNodes.filter(function(element) {
-                var nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-                return element.nodeName.toLowerCase() === tag.toLowerCase() && sameAttributes(nodeAttrs, attrs);
-              });
-              EventBinder.bind(first.call(childNode), attrs, target);
-            }});
+          childNodes.forEach(function(cn) {
+            var attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
+            EventBinder.bind(cn, attrs, target);
+          });
         }
       }, {
         key: 'parse',
@@ -2515,25 +2478,23 @@ $__System.register('0', ['1'], function (_export) {
         babelHelpers.createDecoratedClass(App, [{
           key: 'add',
           value: function add() {
-            this.name = this.name + "";
+            this.name = this.name;
             this.todos.push(this.item);
           }
         }, {
           key: 'remove',
-          value: function remove(item) {
-            console.log('remove', item);
+          value: function remove() {
+            console.log('remove', arguments);
           }
         }, {
           key: 'clean',
           value: function clean() {
-            this.name = this.name + "";
             this.todos = [];
           }
         }]);
         var _App = App;
         App = Runnable(App) || App;
         App = View({
-          //template: '<div>My template example</div>'
           templateUrl: 'main_view.html',
           bindable: true
         })(App) || App;

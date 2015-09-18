@@ -85,15 +85,9 @@ export class Views {
 
     var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
     
-    HTMLParser(node.innerHTML, {
-      start: (tag, attrs, unary) => {
-        let childNode = childNodes.filter((element) => {
-          let nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-          return element.nodeName.toLowerCase() === tag.toLowerCase() && sameAttributes(nodeAttrs, attrs);     
-        });
-
-        EventBinder.bind(childNode::first(), attrs, target);
-      }
+    childNodes.forEach((cn) => {
+      let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
+      EventBinder.bind(cn, attrs, target);
     });
   }
 
