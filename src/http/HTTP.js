@@ -1,5 +1,5 @@
 export class HTTP {
-	init(options = { method: 'GET', headers: {}, cache: false, async: false, timeout: 0}) {
+	static init(options = { method: 'GET', headers: {}, cache: false, async: false, timeout: 0}) {
 		function toQueryString(obj) {
 			var parts = [];
 			for (var i in obj) {
@@ -89,29 +89,29 @@ export class HTTP {
 		return promise;
 	}
 
-	get(url, options = {}) {
+	static get(url, options = {}) {
 		options.method = 'GET';
 		options.url = url;
 
 		return this.init(options);
 	}
 
-	post(url, options = {}) {
+	static post(url, options = {}) {
 		options.method = 'POST';
 		options.url = url;
 
 		return this.init(options);
 	}
 
-	put() {}
+	static put() {}
 
-	delete() {}
+	static delete() {}
 
-	head() {}
+	static head() {}
 
-	trace() {}
+	static trace() {}
 
-	options() {}
+	static options() {}
 
-	patch() {}
+	static patch() {}
 }

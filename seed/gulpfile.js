@@ -12,7 +12,12 @@ gulp.task('clean', function(cb) {
   return del(['dist/main.js'], cb);
 });
 
-gulp.task('builder', ['clean'], function (cb) {
+gulp.task('copy-html', function() {
+   return gulp.src('src/**/*.html')
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('builder', ['clean', 'copy-html'], function (cb) {
 	builder.buildSFX('main', 'dist/main.js', {
 		sourceMaps: false,
 		config: {

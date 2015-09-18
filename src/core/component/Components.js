@@ -2,6 +2,8 @@ import {DOM} from 'core/dom/DOM';
 import {Views} from 'core/view/Views';
 import {first} from 'core/util/util';
 
+//import {Directives} from 'core/directives/Directives';
+
 export class Components {
   static components = [];
 

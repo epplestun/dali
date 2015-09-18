@@ -2,7 +2,7 @@ export class Injector {
   static instances = {};
 
   static instantiate(target) {
-    var instance;
+    let instance;
 
     if(!!Injector.instances.hasOwnProperty(target.name)) {
       instance = Injector.instances[target.name];
@@ -15,7 +15,7 @@ export class Injector {
   }
 
   static resolve(target) {
-    var dependencies = {};
+    let dependencies = {};
     
     if(!!target.dependencies) {
       dependencies = target.dependencies.map(function(target) {
@@ -23,9 +23,9 @@ export class Injector {
       });
     }
     
-    var proto = target.prototype;
-    var instance = (Object(proto) === proto) ? Object.create(proto) : {};
-    var result = Function.prototype.apply.call(target, instance, dependencies);
+    let proto = target.prototype;
+    let instance = (Object(proto) === proto) ? Object.create(proto) : {};
+    let result = Function.prototype.apply.call(target, instance, dependencies);
     return Object(result) === result ? result : instance;  
   }
   

@@ -1,0 +1,26 @@
+<h1>{{name}}</h1>
+
+<pre>{{todos}}</pre>
+
+<ul>
+	<li *for="todo in todos">
+		{{todo}} <button _click="remove(todo)">Remove</button>
+	</li>
+</ul>
+
+<hr/>
+
+<ul>
+	<li *for="todo in todos track by $index">
+		{{todo}} <button _click="remove($index)">Remove</button>
+	</li>
+</ul>
+
+<hr/>
+
+
+<p>{{item}}</p>
+<input type="text" name="item" *model="item"/>
+
+<button _click="add()">Add</button>
+<button _click="clean()">Clean</button>
