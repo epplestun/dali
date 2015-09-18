@@ -2,8 +2,6 @@ import {DOM} from 'core/dom/DOM';
 import {Views} from 'core/view/Views';
 import {first} from 'core/util/util';
 
-//import {Directives} from 'core/directives/Directives';
-
 export class Components {
   static components = [];
 
@@ -12,7 +10,9 @@ export class Components {
       return component.value.name === name;
     });
 
-    Views.parse(node, component::first(), attrs);
+    //console.log(attrs);
+
+    Views.parse(node, component::first());
   }
 
   static run() {

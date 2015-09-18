@@ -1,18 +1,8 @@
 <h1>{{name}}</h1>
 
-<pre>{{todos}}</pre>
-
-<ul>
-	<li *for="todo in todos">
-		{{todo}} <button _click="remove(todo)">Remove</button>
-	</li>
-</ul>
-
-<hr/>
-
 <ul>
 	<li *for="todo in todos track by $index">
-		{{todo}} {{$index}}<button _click="remove(todo,$index)">Remove</button>
+		{{todo}} <button _click="remove(todo,$index)">Remove</button>
 	</li>
 </ul>
 

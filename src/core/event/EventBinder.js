@@ -1,5 +1,21 @@
 import {Injector} from 'core/di/Injector';
 
+function setPrimitive(value) {
+  if(!isNaN(value)) {
+    // check integer
+    if (/[0-9]+/.test(value)) {
+      return parseInt(value, 10);
+    }
+
+    // check float
+    if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
+      return parseFloat(value);
+    }
+  }
+
+  return value;
+}
+
 export class EventBinder {
 	static bind(element, attrs, target) {
 		if(attrs.length > 0) {
@@ -16,10 +32,8 @@ export class EventBinder {
 						let methodName = attrValue.match(/^(.*)\(/mi)[1];
 						let args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
 						args = args.length > 0 ? args.split(/,/) : [];
-						
-						//console.log(instance, element, args);
+						args = args.map((arg) => setPrimitive(arg));
 
-						//var [,methodName] = attrValue.match(/(\w+)\((.*?)\)/);
 						instance[methodName].apply(instance, args);
 					}, false);
 				}

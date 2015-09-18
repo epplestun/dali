@@ -12,8 +12,7 @@ import {
   name : 'app'
 })
 @View({
-  templateUrl : 'main_view.html',
-  bindable: true
+  templateUrl : 'main_view.html'
 })
 @Runnable
 class App { 
@@ -36,11 +35,13 @@ class App {
     this.todos.push(this.item);
   }
 
-  remove() {
-    console.log('remove', arguments);
+  remove(item, index) {
+    this.name = this.name;
+    this.todos.splice(index, 1);
   }
 
   clean() {
+    this.name = this.name;
     this.todos = [];
   }
 }

@@ -29,10 +29,9 @@ export class DataModel {
 		instance[value] = element.value;
 		
 		EventBus.subscribe(eventName, (e, data) => {
-			let key = Object.keys(data)::first(),
-					value = data[key];
+			let key = Object.keys(data)::first();
 
-			Views.parseModel(key, value, data, target);
+			Views.parseModel(key, data, target);
 		});
 	}
 }

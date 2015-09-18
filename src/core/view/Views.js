@@ -25,7 +25,7 @@ function sameAttributes(elementAttrs, attrs) {
 export class Views {
   static views = {};
 
-  static parseModel(key, value, data, target) {
+  static parseModel(key, data, target) {
     let view = Views.views[target.name]
         node = view.nodeCached,
         template = view.templateCached;
@@ -62,7 +62,9 @@ export class Views {
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
-    var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+    var wrapperChildNodes = Array.prototype.slice.call(
+      wrapper.getElementsByTagName("*")
+    ).filter((element) => element.nodeType === 1);
 
     wrapperChildNodes.forEach((element) => {
       if(!!element.hasAttributes()) {
@@ -91,7 +93,7 @@ export class Views {
     });
   }
 
-  static parse(node, component, attrs) {
+  static parse(node, component) {
     if(!!component) {
       let view = Views.views[component.target.name];
 
@@ -111,7 +113,6 @@ export class Views {
           view.nodeCached = node;
 
           let target = component.target,
-            {bindable} = view,
             eventName = EventNameNormalizer.normalize(
               target, EventBus.CHANGE_DETECTED
             ),
@@ -124,16 +125,14 @@ export class Views {
             target
           );
 
-          if(!!bindable) {
-            EventBus.subscribe(eventName, () => {
-              Views.parseAll(
-                node, 
-                template, 
-                instance, 
-                target
-              );
-            });  
-          }
+          EventBus.subscribe(eventName, () => {
+            Views.parseAll(
+              node,
+              template,
+              instance,
+              target
+            );
+          });
         });
       }
     }

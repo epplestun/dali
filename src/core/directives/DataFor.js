@@ -17,9 +17,12 @@ export class DataFor {
 			}
 
 			let childElement = cloneElement.cloneNode(true);
-			//childElement.setAttribute('for-iterator', iterator);
-			//childElement.setAttribute('for-value', item);
-			//childElement.setAttribute('for-index', index);
+      let args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+      args = args.length > 0 ? args.split(/,/) : [];
+      oldArgs = '(' + args.join(',') + ')';
+      newArgs = '(' + args.map((item) => '{{' + item + '}}').join(',') + ')';
+
+      childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
 
 			childElement.innerHTML = Render.render(
 				childElement.innerHTML, 
