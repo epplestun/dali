@@ -1019,7 +1019,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["isDescriptor"] = isDescriptor;
     this["decorate"] = decorate;
     this["first"] = first;
-    this["BindableArray"] = BindableArray;
+    this["_classCallCheck"] = _classCallCheck;
     this["Bindable"] = Bindable;
     this["ViewHandlerDescriptor"] = ViewHandlerDescriptor;
     this["View"] = View;
@@ -1051,6 +1051,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var Render = this["Render"];
     var Router = this["Router"];
     var _slice = this["_slice"];
+    var Binder = this["Binder"];
     var Views = this["Views"];
     'use strict';
     'use strict';
@@ -1059,6 +1060,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       Router.run();
       Directives.run();
       Components.run();
+      Binder.run();
     }
     "use strict";
     var _createClass = (function() {
@@ -2265,17 +2267,112 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return this[0];
     }
     'use strict';
-    function BindableArray(target, key, descriptor) {
-      var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
-    }
-    function Bindable(target, key, descriptor) {
-      var setter = descriptor.set;
-      var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
-      descriptor.set = function(value) {
-        setter.call(this, value);
-        EventBus.publish(eventName);
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
       };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
     }
+    function Bindable(target, key) {
+      if (target.bindableFields) {
+        target.bindableFields.push(key);
+      } else {
+        target.bindableFields = [key];
+      }
+    }
+    var Binder = (function() {
+      function Binder() {
+        _classCallCheck(this, Binder);
+      }
+      _createClass(Binder, null, [{
+        key: 'bindArray',
+        value: function bindArray(target, eventName) {
+          Object.defineProperty(target, "push", {
+            configurable: false,
+            enumerable: false,
+            writable: false,
+            value: function value() {
+              for (var i = 0,
+                  n = this.length,
+                  l = arguments.length; i < l; i++, n++) {
+                this[n] = arguments[i];
+              }
+              EventBus.publish(eventName);
+              return n;
+            }
+          });
+          Object.defineProperty(target, "splice", {
+            configurable: false,
+            enumerable: false,
+            writable: false,
+            value: function value(index, howMany) {
+              console.log(this);
+              for (var i = index; i < howMany; i++) {
+                console.log(i, this[i]);
+                delete this[i];
+              }
+              console.log(this);
+              return this;
+            }
+          });
+        }
+      }, {
+        key: 'bindOther',
+        value: function bindOther(target, eventName) {
+          Object.defineProperty(target, {
+            get: function get() {
+              return bValue;
+            },
+            set: function set(newValue) {
+              bValue = newValue;
+              EventBus.publish(eventName);
+            }
+          });
+        }
+      }, {
+        key: 'run',
+        value: function run() {
+          var _loop = function() {
+            var instance = Injector.instances[instanceName];
+            if (!!instance.bindableFields) {
+              instance.bindableFields.forEach(function(key) {
+                var target = {name: instanceName};
+                var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+                if (instance[key] instanceof Array) {
+                  Binder.bindArray(instance[key], eventName);
+                } else {
+                  if (instance[key] instanceof Array) {
+                    Binder.bindOther(instance[key], eventName);
+                  }
+                }
+              });
+            }
+          };
+          for (var instanceName in Injector.instances) {
+            _loop();
+          }
+        }
+      }]);
+      return Binder;
+    })();
     'use strict';
     function ViewHandlerDescriptor(target, value) {
       Views.views[target.name] = value;
@@ -2445,6 +2542,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["Render"] = Render;
     this["Router"] = Router;
     this["_slice"] = _slice;
+    this["Binder"] = Binder;
     this["Views"] = Views;
   })();
   return _retrieveGlobal();
@@ -2466,52 +2564,51 @@ $__System.register('0', ['1'], function (_export) {
     }],
     execute: function () {
       App = (function () {
+        var _instanceInitializers = {};
+        var _instanceInitializers = {};
         babelHelpers.createDecoratedClass(App, [{
           key: 'name',
           decorators: [Bindable],
-          get: function get() {
-            return this._name;
+          initializer: function initializer() {
+            return "My First App!!";
           },
-          set: function set(name) {
-            this._name = name;
-          }
+          enumerable: true
         }, {
           key: 'todos',
-          decorators: [BindableArray],
-          get: function get() {
-            return this._todos;
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [];
           },
-          set: function set(todos) {
-            this._todos = todos;
-          }
-        }]);
+          enumerable: true
+        }], null, _instanceInitializers);
 
         function App() {
           babelHelpers.classCallCheck(this, _App);
-
-          this.name = "My first App!";
-          this.todos = [];
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
         }
 
         babelHelpers.createDecoratedClass(App, [{
           key: 'add',
           value: function add() {
-            this.name = this.name;
+            //this.name = this.name;
             this.todos.push(this.item);
+
+            this.name = this.todos.length;
           }
         }, {
           key: 'remove',
           value: function remove(item, index) {
-            this.name = this.name;
             this.todos.splice(index, 1);
+            this.name = this.todos.length;
           }
         }, {
           key: 'clean',
           value: function clean() {
-            this.name = this.name;
+            this.name = "My First App!!";
             this.todos = [];
           }
-        }]);
+        }], null, _instanceInitializers);
         var _App = App;
         App = Runnable(App) || App;
         App = View({

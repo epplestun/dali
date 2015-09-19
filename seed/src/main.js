@@ -14,43 +14,32 @@ import {
 @View({
   templateUrl: 'main_view.html'
 })
-@Runnable class App {
+@Runnable
+class App {
 
   @Bindable
-  get name() {
-    return this._name;
-  }
+  name = "My First App!!";
 
-  set name(name) {
-    this._name = name;
-  }
-
-  @BindableArray
-  get todos() {
-    return this._todos;
-  }
-
-  set todos(todos) {
-    this._todos = todos;
-  }
+  @Bindable
+  todos = [];
 
   constructor() {
-    this.name = "My first App!";
-    this.todos = [];
   }
 
   add() {
-    this.name = this.name;
+    //this.name = this.name;
     this.todos.push(this.item);
+
+    this.name = this.todos.length;
   }
 
   remove(item, index) {
-    this.name = this.name;
     this.todos.splice(index, 1);
+    this.name = this.todos.length;
   }
 
   clean() {
-    this.name = this.name;
+    this.name = "My First App!!";
     this.todos = [];
   }
 }

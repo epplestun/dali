@@ -6,6 +6,7 @@ function bootstrap(target) {
   Router.run();
   Directives.run();
   Components.run();
+  Binder.run();
 }
 "use strict";
 
@@ -1098,6 +1099,10 @@ function first() {
 }
 'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
 /*
  Object.defineProperty(Array.prototype, "push", {
  configurable: false,
@@ -1132,39 +1137,116 @@ function first() {
  observer.observe(target, config);
  */
 
-function BindableArray(target, key, descriptor) {
-  //console.log(target, key, descriptor);
-  var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
-
-  //console.log(eventName, descriptor.set);
-
+function Bindable(target, key) {
+  if (target.bindableFields) {
+    target.bindableFields.push(key);
+  } else {
+    target.bindableFields = [key];
+  }
   /*
-   Object.defineProperty(Array.prototype, "push", {
-   configurable: false,
-   enumerable: false, // hide from for...in
-   writable: false,
-   value: function () {
-   for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
-   this[n] = arguments[i];
-   //console.log(this, n, this[n] = arguments[i]); // assign/raise your event
-   }
-    console.log(this, n, eventName);
-    //EventBus.publish(eventName);
-    return n;
-   }
-   });
-   */
-}
-
-function Bindable(target, key, descriptor) {
-  var setter = descriptor.set;
-  var eventName = EventNameNormalizer.normalize(target.constructor, EventBus.CHANGE_DETECTED);
-
-  descriptor.set = function (value) {
+  let setter = descriptor.set;
+  let eventName = EventNameNormalizer.normalize(
+    target.constructor, EventBus.CHANGE_DETECTED
+  );
+   descriptor.set = function (value) {
     setter.call(this, value);
     EventBus.publish(eventName);
   };
+  */
 }
+
+var Binder = (function () {
+  function Binder() {
+    _classCallCheck(this, Binder);
+  }
+
+  _createClass(Binder, null, [{
+    key: 'bindArray',
+    value: function bindArray(target, eventName) {
+      //
+      // override array methods
+      // http://stackoverflow.com/questions/5100376/how-to-watch-for-array-changes
+      //
+
+      Object.defineProperty(target, "push", {
+        configurable: false,
+        enumerable: false, // hide from for...in
+        writable: false,
+        value: function value() {
+          for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
+            this[n] = arguments[i];
+          }
+
+          EventBus.publish(eventName);
+
+          return n;
+        }
+      });
+
+      Object.defineProperty(target, "splice", {
+        configurable: false,
+        enumerable: false, // hide from for...in
+        writable: false,
+        value: function value(index, howMany) {
+          console.log(this);
+
+          for (var i = index; i < howMany; i++) {
+            console.log(i, this[i]);
+            delete this[i];
+          }
+
+          console.log(this);
+
+          //EventBus.publish(eventName);
+          return this;
+        }
+      });
+    }
+  }, {
+    key: 'bindOther',
+    value: function bindOther(target, eventName) {
+      Object.defineProperty(target, {
+        get: function get() {
+          return bValue;
+        },
+        set: function set(newValue) {
+          bValue = newValue;
+          EventBus.publish(eventName);
+        }
+      });
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      var _loop = function () {
+        var instance = Injector.instances[instanceName];
+
+        if (!!instance.bindableFields) {
+          instance.bindableFields.forEach(function (key) {
+            var target = {
+              name: instanceName
+            };
+            var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+
+            if (instance[key] instanceof Array) {
+              Binder.bindArray(instance[key], eventName);
+            } else {
+              if (instance[key] instanceof Array) {
+                Binder.bindOther(instance[key], eventName);
+              }
+            }
+          });
+        }
+      };
+
+      for (var instanceName in Injector.instances) {
+        _loop();
+      }
+    }
+  }]);
+
+  return Binder;
+})();
 'use strict';
 
 function ViewHandlerDescriptor(target, value) {
