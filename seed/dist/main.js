@@ -2305,33 +2305,18 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       _createClass(Binder, null, [{
         key: 'bindArray',
         value: function bindArray(target, eventName) {
-          Object.defineProperty(target, "push", {
-            configurable: false,
-            enumerable: false,
-            writable: false,
-            value: function value() {
-              for (var i = 0,
-                  n = this.length,
-                  l = arguments.length; i < l; i++, n++) {
-                this[n] = arguments[i];
+          var methods = ['push', 'pop', 'reverse', 'shift', 'unshift', 'splice'];
+          methods.forEach(function(name) {
+            Object.defineProperty(target, name, {
+              configurable: false,
+              enumerable: false,
+              writable: false,
+              value: function value() {
+                Array.prototype[name].apply(this, arguments);
+                EventBus.publish(eventName);
+                return this.length;
               }
-              EventBus.publish(eventName);
-              return n;
-            }
-          });
-          Object.defineProperty(target, "splice", {
-            configurable: false,
-            enumerable: false,
-            writable: false,
-            value: function value(index, howMany) {
-              console.log(this);
-              for (var i = index; i < howMany; i++) {
-                console.log(i, this[i]);
-                delete this[i];
-              }
-              console.log(this);
-              return this;
-            }
+            });
           });
         }
       }, {

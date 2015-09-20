@@ -65,38 +65,18 @@ export class Binder {
     // http://stackoverflow.com/questions/5100376/how-to-watch-for-array-changes
     //
 
-    Object.defineProperty(target, "push", {
-      configurable: false,
-      enumerable: false, // hide from for...in
-      writable: false,
-      value: function () {
-        for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
-          this[n] = arguments[i];
+    let methods = ['push', 'pop', 'reverse', 'shift', 'unshift', 'splice'];
+    methods.forEach((name) => {
+      Object.defineProperty(target, name, {
+        configurable: false,
+        enumerable: false, // hide from for...in
+        writable: false,
+        value: function () {
+          Array.prototype[name].apply(this, arguments);
+          EventBus.publish(eventName);
+          return this.length;
         }
-
-        EventBus.publish(eventName);
-
-        return n;
-      }
-    });
-
-    Object.defineProperty(target, "splice", {
-      configurable: false,
-      enumerable: false, // hide from for...in
-      writable: false,
-      value: function (index, howMany) {
-        console.log(this);
-
-        for(var i = index; i < howMany; i++) {
-          console.log(i, this[i]);
-          delete this[i];
-        }
-
-        console.log(this);
-
-        //EventBus.publish(eventName);
-        return this;
-      }
+      });
     });
   }
 
