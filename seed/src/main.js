@@ -23,10 +23,6 @@ class App {
   @Bindable
   todos = [];
 
-  constructor() {
-    this.name = "My First App!!";
-  }
-
   add() {
     this.todos.push(this.item);
   }

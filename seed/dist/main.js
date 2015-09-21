@@ -2558,29 +2558,11 @@ $__System.register('0', ['1'], function (_export) {
     execute: function () {
       App = (function () {
         var _instanceInitializers = {};
-        var _instanceInitializers = {};
-        babelHelpers.createDecoratedClass(App, [{
-          key: 'name',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return "My First App!!";
-          },
-          enumerable: true
-        }, {
-          key: 'todos',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
 
         function App() {
           babelHelpers.classCallCheck(this, _App);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
-
-          this.name = "My First App!!";
         }
 
         babelHelpers.createDecoratedClass(App, [{
@@ -2600,6 +2582,20 @@ $__System.register('0', ['1'], function (_export) {
               this.todos.splice(0, 1);
             }
           }
+        }, {
+          key: 'name',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return "My First App!!";
+          },
+          enumerable: true
+        }, {
+          key: 'todos',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [];
+          },
+          enumerable: true
         }], null, _instanceInitializers);
         var _App = App;
         App = Runnable(App) || App;
