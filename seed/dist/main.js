@@ -996,6 +996,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["Directive"] = Directive;
     this["_classCallCheck"] = _classCallCheck;
     this["normalizeDirectiveName"] = normalizeDirectiveName;
+    this["denormalizeDirectiveName"] = denormalizeDirectiveName;
     this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
     this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
@@ -1362,7 +1363,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
             args = args.length > 0 ? args.split(/,/) : [];
             oldArgs = '(' + args.join(',') + ')';
             newArgs = '(' + args.map(function(item) {
-              return '{{' + item + '}}';
+              return Render.START_DELIMITER + item + Render.END_DELIMITER;
             }).join(',') + ')';
             childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
             childElement.innerHTML = Render.render(childElement.innerHTML, contextData);
@@ -1503,6 +1504,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         return "-" + $1.toLowerCase();
       });
     }
+    function denormalizeDirectiveName(name) {
+      name = name.charAt(0).toLowerCase() + name.slice(1);
+      return name.replace(/([A-Z])/g, function($1) {
+        return "-" + $1.toLowerCase();
+      });
+    }
     var Directives = (function() {
       function Directives() {
         _classCallCheck(this, Directives);
@@ -1543,6 +1550,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return Directives;
     })();
+    Directives.PREFIX = "data-";
     'use strict';
     function InjectHandlerDescriptor(target, values) {
       target.dependencies = values;
@@ -2109,14 +2117,20 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       _createClass(Render, null, [{
         key: 'normalize',
         value: function normalize(html) {
-          return html.replace(/\*(for|if|model)/gm, function(p1, p2) {
-            return 'data-' + p2;
+          var coreDirectives = [];
+          for (var directive in Directives.directives) {
+            coreDirectives.push(directive.replace(Directives.PREFIX, ''));
+          }
+          var pattern = '\\*(' + coreDirectives.join('|') + ')';
+          var regExp = new RegExp(pattern, "gm");
+          return html.replace(regExp, function(p1, p2) {
+            return Directives.PREFIX + p2;
           });
         }
       }, {
         key: 'render',
         value: function render(html, options) {
-          var re = /{{([^}}]+)?}}/g,
+          var re = new RegExp(Render.START_DELIMITER + '([^' + Render.END_DELIMITER + ']+)?' + Render.END_DELIMITER, 'g'),
               reExp = /^( )?({|})(.*)*/g,
               code = 'var r=[];\n',
               cursor = 0,
@@ -2143,6 +2157,8 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return Render;
     })();
+    Render.START_DELIMITER = "{{";
+    Render.END_DELIMITER = "}}";
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {

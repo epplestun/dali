@@ -20,7 +20,7 @@ export class DataFor {
       let args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
       args = args.length > 0 ? args.split(/,/) : [];
       oldArgs = '(' + args.join(',') + ')';
-      newArgs = '(' + args.map((item) => '{{' + item + '}}').join(',') + ')';
+      newArgs = '(' + args.map((item) => Render.START_DELIMITER + item + Render.END_DELIMITER).join(',') + ')';
 
       childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
 

@@ -243,7 +243,7 @@ var DataFor = (function () {
         args = args.length > 0 ? args.split(/,/) : [];
         oldArgs = '(' + args.join(',') + ')';
         newArgs = '(' + args.map(function (item) {
-          return '{{' + item + '}}';
+          return Render.START_DELIMITER + item + Render.END_DELIMITER;
         }).join(',') + ')';
 
         childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
@@ -346,6 +346,13 @@ function normalizeDirectiveName(name) {
   });
 }
 
+function denormalizeDirectiveName(name) {
+  name = name.charAt(0).toLowerCase() + name.slice(1);
+  return name.replace(/([A-Z])/g, function ($1) {
+    return "-" + $1.toLowerCase();
+  });
+}
+
 var Directives = (function () {
   function Directives() {
     _classCallCheck(this, Directives);
@@ -381,6 +388,8 @@ var Directives = (function () {
 
   return Directives;
 })();
+
+Directives.PREFIX = "data-";
 'use strict';
 
 function InjectHandlerDescriptor(target, values) {
@@ -950,14 +959,22 @@ var Render = (function () {
   _createClass(Render, null, [{
     key: 'normalize',
     value: function normalize(html) {
-      return html.replace(/\*(for|if|model)/gm, function (p1, p2) {
-        return 'data-' + p2;
+      var coreDirectives = [];
+      for (var directive in Directives.directives) {
+        coreDirectives.push(directive.replace(Directives.PREFIX, ''));
+      }
+
+      var pattern = '\\*(' + coreDirectives.join('|') + ')';
+      var regExp = new RegExp(pattern, "gm");
+
+      return html.replace(regExp, function (p1, p2) {
+        return Directives.PREFIX + p2;
       });
     }
   }, {
     key: 'render',
     value: function render(html, options) {
-      var re = /{{([^}}]+)?}}/g,
+      var re = new RegExp(Render.START_DELIMITER + '([^' + Render.END_DELIMITER + ']+)?' + Render.END_DELIMITER, 'g'),
 
       //reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
       reExp = /^( )?({|})(.*)*/g,
@@ -993,6 +1010,9 @@ var Render = (function () {
 
   return Render;
 })();
+
+Render.START_DELIMITER = "{{";
+Render.END_DELIMITER = "}}";
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();

@@ -1,10 +1,21 @@
+import {Directives} from 'core/directives/Directives';
+
 export class Render {
+  
   static normalize(html) {
-    return html.replace(/\*(for|if|model)/gm, (p1, p2) => 'data-' + p2);
+    let coreDirectives = [];
+    for(let directive in Directives.directives) {
+      coreDirectives.push(directive.replace(Directives.PREFIX, ''));
+    }
+
+    let pattern = '\\*(' + coreDirectives.join('|') + ')';
+    let regExp = new RegExp(pattern, "gm");
+
+    return html.replace(regExp, (p1, p2) => Directives.PREFIX + p2);
   }
 
   static render(html, options) {
-    var re = /{{([^}}]+)?}}/g,
+    var re = new RegExp(Render.START_DELIMITER + '([^' + Render.END_DELIMITER + ']+)?' + Render.END_DELIMITER, 'g'),
     //reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
       reExp = /^( )?({|})(.*)*/g,
       code = 'var r=[];\n',
@@ -36,3 +47,6 @@ export class Render {
     return nodes;
   }
 }
+
+Render.START_DELIMITER = "{{";
+Render.END_DELIMITER = "}}";

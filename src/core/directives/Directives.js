@@ -9,6 +9,13 @@ function normalizeDirectiveName(name) {
   });
 }
 
+export function denormalizeDirectiveName(name) {
+  name = name.charAt(0).toLowerCase() + name.slice(1);
+  return name.replace(/([A-Z])/g, function ($1) {
+    return "-" + $1.toLowerCase();
+  });
+}
+
 export class Directives {
   static directives = {};
 
@@ -33,3 +40,5 @@ export class Directives {
     });
   }
 }
+
+Directives.PREFIX = "data-";
