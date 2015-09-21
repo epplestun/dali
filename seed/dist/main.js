@@ -987,6 +987,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
   (function() {
     this["bootstrap"] = bootstrap;
     this["_classCallCheck"] = _classCallCheck;
+    this["ComponentHandlerDescriptor"] = ComponentHandlerDescriptor;
+    this["Component"] = Component;
+    this["_classCallCheck"] = _classCallCheck;
     this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
     this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
@@ -996,9 +999,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["Directive"] = Directive;
-    this["_classCallCheck"] = _classCallCheck;
-    this["ComponentHandlerDescriptor"] = ComponentHandlerDescriptor;
-    this["Component"] = Component;
     this["_classCallCheck"] = _classCallCheck;
     this["makeMap"] = makeMap;
     this["HTMLParser"] = HTMLParser;
@@ -1035,6 +1035,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["sameAttributes"] = sameAttributes;
     var _createClass = this["_createClass"];
     var HTTP = this["HTTP"];
+    var Components = this["Components"];
     var Injector = this["Injector"];
     var DataDirective = this["DataDirective"];
     var _slicedToArray = this["_slicedToArray"];
@@ -1042,7 +1043,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var DataIf = this["DataIf"];
     var DataModel = this["DataModel"];
     var Directives = this["Directives"];
-    var Components = this["Components"];
     var startTag = this["startTag"];
     var endTag = this["endTag"];
     var attr = this["attr"];
@@ -1220,6 +1220,67 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         value: function patch() {}
       }]);
       return HTTP;
+    })();
+    'use strict';
+    function ComponentHandlerDescriptor(target, value) {
+      Components.components.push({
+        target: target,
+        value: value
+      });
+    }
+    function Component(arg) {
+      return decorate(ComponentHandlerDescriptor, arg);
+    }
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var Components = (function() {
+      function Components() {
+        _classCallCheck(this, Components);
+      }
+      _createClass(Components, null, [{
+        key: 'parse',
+        value: function parse(node, name, attrs) {
+          var component = Components.components.filter(function(component) {
+            return component.value.name === name;
+          });
+          Views.parse(node, first.call(component));
+        }
+      }, {
+        key: 'run',
+        value: function run() {
+          document.addEventListener("DOMContentLoaded", function(event) {
+            DOM.parse(event.target.body);
+          });
+        }
+      }, {
+        key: 'components',
+        value: [],
+        enumerable: true
+      }]);
+      return Components;
     })();
     'use strict';
     function InjectHandlerDescriptor(target, values) {
@@ -1606,67 +1667,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return Directives;
     })();
     Directives.PREFIX = "data-";
-    'use strict';
-    function ComponentHandlerDescriptor(target, value) {
-      Components.components.push({
-        target: target,
-        value: value
-      });
-    }
-    function Component(arg) {
-      return decorate(ComponentHandlerDescriptor, arg);
-    }
-    'use strict';
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ('value' in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
-      }
-    }
-    var Components = (function() {
-      function Components() {
-        _classCallCheck(this, Components);
-      }
-      _createClass(Components, null, [{
-        key: 'parse',
-        value: function parse(node, name, attrs) {
-          var component = Components.components.filter(function(component) {
-            return component.value.name === name;
-          });
-          Views.parse(node, first.call(component));
-        }
-      }, {
-        key: 'run',
-        value: function run() {
-          document.addEventListener("DOMContentLoaded", function(event) {
-            DOM.parse(event.target.body);
-          });
-        }
-      }, {
-        key: 'components',
-        value: [],
-        enumerable: true
-      }]);
-      return Components;
-    })();
     "use strict";
     function makeMap(str) {
       var obj = {},
@@ -2730,6 +2730,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     Views.TEMPLATE = "template";
     this["_createClass"] = _createClass;
     this["HTTP"] = HTTP;
+    this["Components"] = Components;
     this["Injector"] = Injector;
     this["DataDirective"] = DataDirective;
     this["_slicedToArray"] = _slicedToArray;
@@ -2737,7 +2738,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["DataIf"] = DataIf;
     this["DataModel"] = DataModel;
     this["Directives"] = Directives;
-    this["Components"] = Components;
     this["startTag"] = startTag;
     this["endTag"] = endTag;
     this["attr"] = attr;
@@ -2840,37 +2840,6 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
   };
 });
 
-$__System.register('3', ['1'], function (_export) {
-  'use strict';
-
-  var Filter, DateFilter;
-  return {
-    setters: [function (_) {
-      Filter = _.Filter;
-    }],
-    execute: function () {
-      DateFilter = (function () {
-        function DateFilter() {
-          babelHelpers.classCallCheck(this, _DateFilter);
-        }
-
-        babelHelpers.createClass(DateFilter, [{
-          key: 'render',
-          value: function render(value, extra) {
-            console.log(value, extra);
-            return value.toJSON();
-          }
-        }]);
-        var _DateFilter = DateFilter;
-        DateFilter = Filter(DateFilter) || DateFilter;
-        return DateFilter;
-      })();
-
-      _export('DateFilter', DateFilter);
-    }
-  };
-});
-
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -2902,6 +2871,37 @@ $__System.register('2', ['1'], function (_export) {
         })(DataShow) || DataShow;
         return DataShow;
       })();
+    }
+  };
+});
+
+$__System.register('3', ['1'], function (_export) {
+  'use strict';
+
+  var Filter, DateFilter;
+  return {
+    setters: [function (_) {
+      Filter = _.Filter;
+    }],
+    execute: function () {
+      DateFilter = (function () {
+        function DateFilter() {
+          babelHelpers.classCallCheck(this, _DateFilter);
+        }
+
+        babelHelpers.createClass(DateFilter, [{
+          key: 'render',
+          value: function render(value, extra) {
+            console.log(value, extra);
+            return value.toJSON();
+          }
+        }]);
+        var _DateFilter = DateFilter;
+        DateFilter = Filter(DateFilter) || DateFilter;
+        return DateFilter;
+      })();
+
+      _export('DateFilter', DateFilter);
     }
   };
 });

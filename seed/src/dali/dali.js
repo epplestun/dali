@@ -154,6 +154,52 @@ var HTTP = (function () {
 })();
 'use strict';
 
+function ComponentHandlerDescriptor(target, value) {
+  Components.components.push({ target: target, value: value });
+}
+
+function Component(arg) {
+  return decorate(ComponentHandlerDescriptor, arg);
+}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Components = (function () {
+  function Components() {
+    _classCallCheck(this, Components);
+  }
+
+  _createClass(Components, null, [{
+    key: 'parse',
+    value: function parse(node, name, attrs) {
+      var component = Components.components.filter(function (component) {
+        return component.value.name === name;
+      });
+
+      //console.log(attrs);
+
+      Views.parse(node, first.call(component));
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      document.addEventListener("DOMContentLoaded", function (event) {
+        DOM.parse(event.target.body);
+      });
+    }
+  }, {
+    key: 'components',
+    value: [],
+    enumerable: true
+  }]);
+
+  return Components;
+})();
+'use strict';
+
 function InjectHandlerDescriptor(target, values) {
   target.dependencies = values;
 }
@@ -431,52 +477,6 @@ var Directives = (function () {
 })();
 
 Directives.PREFIX = "data-";
-'use strict';
-
-function ComponentHandlerDescriptor(target, value) {
-  Components.components.push({ target: target, value: value });
-}
-
-function Component(arg) {
-  return decorate(ComponentHandlerDescriptor, arg);
-}
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var Components = (function () {
-  function Components() {
-    _classCallCheck(this, Components);
-  }
-
-  _createClass(Components, null, [{
-    key: 'parse',
-    value: function parse(node, name, attrs) {
-      var component = Components.components.filter(function (component) {
-        return component.value.name === name;
-      });
-
-      //console.log(attrs);
-
-      Views.parse(node, first.call(component));
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      document.addEventListener("DOMContentLoaded", function (event) {
-        DOM.parse(event.target.body);
-      });
-    }
-  }, {
-    key: 'components',
-    value: [],
-    enumerable: true
-  }]);
-
-  return Components;
-})();
 /*
  * HTML Parser By John Resig (ejohn.org)
  * Original code by Erik Arvidsson, Mozilla Public License
