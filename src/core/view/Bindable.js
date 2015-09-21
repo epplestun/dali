@@ -11,7 +11,7 @@ export function Bindable(target, key) {
 
 export class Binder {
 
-  static bindArray(target, eventName) {
+  static bindArray(target, key, eventName) {
     //
     // override array methods
     // http://stackoverflow.com/questions/5100376/how-to-watch-for-array-changes
@@ -19,9 +19,9 @@ export class Binder {
 
     let methods = ['push', 'pop', 'reverse', 'shift', 'unshift', 'splice'];
     methods.forEach((name) => {
-      Object.defineProperty(target, name, {
+      Object.defineProperty(target[key], name, {
         configurable: false,
-        enumerable: false, // hide from for...in
+        enumerable: false,
         writable: false,
         value: function () {
           Array.prototype[name].apply(this, arguments);
@@ -30,6 +30,8 @@ export class Binder {
         }
       });
     });
+
+    //Binder.bindOther(target, key, eventName);
   }
 
   static bindOther(target, key, eventName) {
@@ -67,9 +69,9 @@ export class Binder {
 
         instance.bindableFields.forEach((key) => {
           if(instance[key] instanceof Array) {
-            Binder.bindArray(instance[key], eventName);
+            Binder.bindArray(instance, key, eventName);
           } else {
-            Binder.bindOther(instance, key, eventName);
+            Binder.bindOther(instance, key, eventName);  
           }
         });
       }

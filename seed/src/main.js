@@ -18,8 +18,6 @@ import {
 class App {
 
   @Bindable
-  //get name() { return this._name; }
-  //set name(value) { this._name = value; }
   name = "My First App!!";
 
   @Bindable
@@ -30,20 +28,17 @@ class App {
   }
 
   add() {
-    //this.name = this.name;
     this.todos.push(this.item);
-
-    this.name = this.todos.length;
   }
 
   remove(item, index) {
     this.todos.splice(index, 1);
-    this.name = this.todos.length;
   }
 
   clean() {
-    this.name = "My First App!!";
-    //this.todos = [];
+    while(this.todos.length > 0) {
+      this.todos.splice(0, 1);
+    }
   }
 }
 
