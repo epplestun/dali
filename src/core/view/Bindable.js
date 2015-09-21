@@ -32,16 +32,27 @@ export class Binder {
     });
   }
 
-  static bindOther(target, eventName) {
-    Object.defineProperty(target, {
-      get: function() {
-        return bValue;
-      },
+  static bindOther(target, key, eventName) {
+    let value = target[key],
+        privateProperty = key + '_' + (+new Date());
+
+    Object.defineProperty(target, privateProperty, {
+      enumerable: false,
+      configurable: false,
+      writable: true
+    });
+
+    Object.defineProperty(target, key, {
       set: function(newValue) {
-        bValue = newValue;
+        this[privateProperty] = newValue;
         EventBus.publish(eventName);
+      },
+      get: function() {
+        return this[privateProperty];
       }
     });
+
+    target[key] = value;
   }
 
   static run() {
@@ -49,18 +60,16 @@ export class Binder {
       let instance = Injector.instances[instanceName];
 
       if(!!instance.bindableFields) {
-        instance.bindableFields.forEach((key) => {
-          let target = {
-            name : instanceName
-          };
-          let eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+        let target = {
+          name : instanceName
+        };
+        let eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
 
+        instance.bindableFields.forEach((key) => {
           if(instance[key] instanceof Array) {
             Binder.bindArray(instance[key], eventName);
           } else {
-            if(instance[key] instanceof Array) {
-              Binder.bindOther(instance[key], eventName);
-            }
+            Binder.bindOther(instance, key, eventName);
           }
         });
       }

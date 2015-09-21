@@ -448,6 +448,175 @@ var Directives = (function () {
 
   return Directives;
 })();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function setPrimitive(value) {
+  if (!isNaN(value)) {
+    // check integer
+    if (/[0-9]+/.test(value)) {
+      return parseInt(value, 10);
+    }
+
+    // check float
+    if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
+      return parseFloat(value);
+    }
+  }
+
+  return value;
+}
+
+var EventBinder = (function () {
+  function EventBinder() {
+    _classCallCheck(this, EventBinder);
+  }
+
+  _createClass(EventBinder, null, [{
+    key: 'bind',
+    value: function bind(element, attrs, target) {
+      if (attrs.length > 0) {
+        (function () {
+          var instance = Injector.instances[target.name];
+
+          attrs.forEach(function (attr) {
+            var attrName = attr.name,
+                attrValue = attr.value;
+
+            if (attrName.charAt(0) === '_') {
+              var eventName = attrName.substring(1);
+
+              element.addEventListener(eventName, function (e) {
+                var methodName = attrValue.match(/^(.*)\(/mi)[1];
+                var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+                args = args.length > 0 ? args.split(/,/) : [];
+                args = args.map(function (arg) {
+                  return setPrimitive(arg);
+                });
+
+                instance[methodName].apply(instance, args);
+              }, false);
+            }
+
+            if (attrName === 'data-model') {
+              element.addEventListener('input', function (e) {
+                instance[attrValue] = element.value;
+              }, false);
+            }
+          });
+        })();
+      }
+    }
+  }]);
+
+  return EventBinder;
+})();
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EventBus = (function () {
+  function EventBus() {
+    _classCallCheck(this, EventBus);
+  }
+
+  _createClass(EventBus, null, [{
+    key: "subscribe",
+    value: function subscribe(topic, callback) {
+      if (!EventBus.topics.hasOwnProperty(topic)) {
+        EventBus.topics[topic] = [];
+      }
+
+      var token = (++EventBus.lastUid).toString();
+
+      EventBus.topics[topic].push({ token: token, callback: callback });
+
+      return token;
+    }
+  }, {
+    key: "unsubscribe",
+    value: function unsubscribe(token) {
+      for (var m in EventBus.topics) {
+        if (EventBus.topics.hasOwnProperty(m)) {
+          for (var i = 0, j = EventBus.topics[m].length; i < j; i++) {
+            if (EventBus.topics[m][i].token === token) {
+              EventBus.topics[m].splice(i, 1);
+              return token;
+            }
+          }
+        }
+      }
+
+      return false;
+    }
+  }, {
+    key: "publish",
+    value: function publish(topic, data) {
+      if (!EventBus.topics.hasOwnProperty(topic)) {
+        return false;
+      }
+
+      function notify() {
+        var subscribers = EventBus.topics[topic],
+            throwException = function throwException(e) {
+          return function () {
+            throw e;
+          };
+        };
+
+        for (var i = 0, j = subscribers.length; i < j; i++) {
+          try {
+            subscribers[i].callback(topic, data);
+          } catch (e) {
+            setTimeout(throwException(e), 0);
+          }
+        }
+      };
+
+      setTimeout(notify, 0);
+
+      return true;
+    }
+  }, {
+    key: "topics",
+    value: {},
+    enumerable: true
+  }, {
+    key: "lastUid",
+    value: -1,
+    enumerable: true
+  }]);
+
+  return EventBus;
+})();
+
+EventBus.CHANGE_DETECTED = "CHANGE_DETECTED";
+EventBus.MODEL_CHANGE_DETECTED = "MODEL_CHANGE_DETECTED";
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var EventNameNormalizer = (function () {
+  function EventNameNormalizer() {
+    _classCallCheck(this, EventNameNormalizer);
+  }
+
+  _createClass(EventNameNormalizer, null, [{
+    key: 'normalize',
+    value: function normalize(target, eventName) {
+      return target.name.toUpperCase() + '_' + eventName;
+    }
+  }]);
+
+  return EventNameNormalizer;
+})();
 /*
  * HTML Parser By John Resig (ejohn.org)
  * Original code by Erik Arvidsson, Mozilla Public License
@@ -764,175 +933,6 @@ var DOM = (function () {
 
   return DOM;
 })();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function setPrimitive(value) {
-  if (!isNaN(value)) {
-    // check integer
-    if (/[0-9]+/.test(value)) {
-      return parseInt(value, 10);
-    }
-
-    // check float
-    if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
-      return parseFloat(value);
-    }
-  }
-
-  return value;
-}
-
-var EventBinder = (function () {
-  function EventBinder() {
-    _classCallCheck(this, EventBinder);
-  }
-
-  _createClass(EventBinder, null, [{
-    key: 'bind',
-    value: function bind(element, attrs, target) {
-      if (attrs.length > 0) {
-        (function () {
-          var instance = Injector.instances[target.name];
-
-          attrs.forEach(function (attr) {
-            var attrName = attr.name,
-                attrValue = attr.value;
-
-            if (attrName.charAt(0) === '_') {
-              var eventName = attrName.substring(1);
-
-              element.addEventListener(eventName, function (e) {
-                var methodName = attrValue.match(/^(.*)\(/mi)[1];
-                var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-                args = args.length > 0 ? args.split(/,/) : [];
-                args = args.map(function (arg) {
-                  return setPrimitive(arg);
-                });
-
-                instance[methodName].apply(instance, args);
-              }, false);
-            }
-
-            if (attrName === 'data-model') {
-              element.addEventListener('input', function (e) {
-                instance[attrValue] = element.value;
-              }, false);
-            }
-          });
-        })();
-      }
-    }
-  }]);
-
-  return EventBinder;
-})();
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var EventBus = (function () {
-  function EventBus() {
-    _classCallCheck(this, EventBus);
-  }
-
-  _createClass(EventBus, null, [{
-    key: "subscribe",
-    value: function subscribe(topic, callback) {
-      if (!EventBus.topics.hasOwnProperty(topic)) {
-        EventBus.topics[topic] = [];
-      }
-
-      var token = (++EventBus.lastUid).toString();
-
-      EventBus.topics[topic].push({ token: token, callback: callback });
-
-      return token;
-    }
-  }, {
-    key: "unsubscribe",
-    value: function unsubscribe(token) {
-      for (var m in EventBus.topics) {
-        if (EventBus.topics.hasOwnProperty(m)) {
-          for (var i = 0, j = EventBus.topics[m].length; i < j; i++) {
-            if (EventBus.topics[m][i].token === token) {
-              EventBus.topics[m].splice(i, 1);
-              return token;
-            }
-          }
-        }
-      }
-
-      return false;
-    }
-  }, {
-    key: "publish",
-    value: function publish(topic, data) {
-      if (!EventBus.topics.hasOwnProperty(topic)) {
-        return false;
-      }
-
-      function notify() {
-        var subscribers = EventBus.topics[topic],
-            throwException = function throwException(e) {
-          return function () {
-            throw e;
-          };
-        };
-
-        for (var i = 0, j = subscribers.length; i < j; i++) {
-          try {
-            subscribers[i].callback(topic, data);
-          } catch (e) {
-            setTimeout(throwException(e), 0);
-          }
-        }
-      };
-
-      setTimeout(notify, 0);
-
-      return true;
-    }
-  }, {
-    key: "topics",
-    value: {},
-    enumerable: true
-  }, {
-    key: "lastUid",
-    value: -1,
-    enumerable: true
-  }]);
-
-  return EventBus;
-})();
-
-EventBus.CHANGE_DETECTED = "CHANGE_DETECTED";
-EventBus.MODEL_CHANGE_DETECTED = "MODEL_CHANGE_DETECTED";
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var EventNameNormalizer = (function () {
-  function EventNameNormalizer() {
-    _classCallCheck(this, EventNameNormalizer);
-  }
-
-  _createClass(EventNameNormalizer, null, [{
-    key: 'normalize',
-    value: function normalize(target, eventName) {
-      return target.name.toUpperCase() + '_' + eventName;
-    }
-  }]);
-
-  return EventNameNormalizer;
-})();
 "use strict";
 
 function Module() {}
@@ -1103,56 +1103,12 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-/*
- Object.defineProperty(Array.prototype, "push", {
- configurable: false,
- enumerable: false, // hide from for...in
- writable: false,
- value: function () {
-
- for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
- this[n] = arguments[i];
- //console.log(this, n, this[n] = arguments[i]); // assign/raise your event
- }
-
- console.log(this, n);
-
- //EventBus.publish(eventName);
-
- return n;
- }
- });
- */
-
-/*
- var observer = new MutationObserver(function(mutations) {
- mutations.forEach(function(mutation) {
- console.log(mutation);
- });
- });
-
- var config = { attributes: true, childList: true, characterData: true };
-
- // pass in the target node, as well as the observer options
- observer.observe(target, config);
- */
-
 function Bindable(target, key) {
   if (target.bindableFields) {
     target.bindableFields.push(key);
   } else {
     target.bindableFields = [key];
   }
-  /*
-  let setter = descriptor.set;
-  let eventName = EventNameNormalizer.normalize(
-    target.constructor, EventBus.CHANGE_DETECTED
-  );
-   descriptor.set = function (value) {
-    setter.call(this, value);
-    EventBus.publish(eventName);
-  };
-  */
 }
 
 var Binder = (function () {
@@ -1184,16 +1140,27 @@ var Binder = (function () {
     }
   }, {
     key: 'bindOther',
-    value: function bindOther(target, eventName) {
-      Object.defineProperty(target, {
-        get: function get() {
-          return bValue;
-        },
+    value: function bindOther(target, key, eventName) {
+      var value = target[key],
+          privateProperty = key + '_' + +new Date();
+
+      Object.defineProperty(target, privateProperty, {
+        enumerable: false,
+        configurable: false,
+        writable: true
+      });
+
+      Object.defineProperty(target, key, {
         set: function set(newValue) {
-          bValue = newValue;
+          this[privateProperty] = newValue;
           EventBus.publish(eventName);
+        },
+        get: function get() {
+          return this[privateProperty];
         }
       });
+
+      target[key] = value;
     }
   }, {
     key: 'run',
@@ -1202,20 +1169,20 @@ var Binder = (function () {
         var instance = Injector.instances[instanceName];
 
         if (!!instance.bindableFields) {
-          instance.bindableFields.forEach(function (key) {
+          (function () {
             var target = {
               name: instanceName
             };
             var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
 
-            if (instance[key] instanceof Array) {
-              Binder.bindArray(instance[key], eventName);
-            } else {
+            instance.bindableFields.forEach(function (key) {
               if (instance[key] instanceof Array) {
-                Binder.bindOther(instance[key], eventName);
+                Binder.bindArray(instance[key], eventName);
+              } else {
+                Binder.bindOther(instance, key, eventName);
               }
-            }
-          });
+            });
+          })();
         }
       };
 

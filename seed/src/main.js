@@ -18,12 +18,15 @@ import {
 class App {
 
   @Bindable
+  //get name() { return this._name; }
+  //set name(value) { this._name = value; }
   name = "My First App!!";
 
   @Bindable
   todos = [];
 
   constructor() {
+    this.name = "My First App!!";
   }
 
   add() {
@@ -40,7 +43,7 @@ class App {
 
   clean() {
     this.name = "My First App!!";
-    this.todos = [];
+    //this.todos = [];
   }
 }
 

@@ -999,14 +999,14 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["Directive"] = Directive;
     this["_classCallCheck"] = _classCallCheck;
     this["normalizeDirectiveName"] = normalizeDirectiveName;
+    this["_classCallCheck"] = _classCallCheck;
+    this["setPrimitive"] = setPrimitive;
+    this["_classCallCheck"] = _classCallCheck;
+    this["_classCallCheck"] = _classCallCheck;
     this["makeMap"] = makeMap;
     this["HTMLParser"] = HTMLParser;
     this["HTMLtoXML"] = HTMLtoXML;
     this["HTMLtoDOM"] = HTMLtoDOM;
-    this["_classCallCheck"] = _classCallCheck;
-    this["_classCallCheck"] = _classCallCheck;
-    this["setPrimitive"] = setPrimitive;
-    this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["Module"] = Module;
     this["_classCallCheck"] = _classCallCheck;
@@ -1035,6 +1035,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var DataIf = this["DataIf"];
     var DataModel = this["DataModel"];
     var Directives = this["Directives"];
+    var EventBinder = this["EventBinder"];
+    var EventBus = this["EventBus"];
+    var EventNameNormalizer = this["EventNameNormalizer"];
     var startTag = this["startTag"];
     var endTag = this["endTag"];
     var attr = this["attr"];
@@ -1045,9 +1048,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var fillAttrs = this["fillAttrs"];
     var special = this["special"];
     var DOM = this["DOM"];
-    var EventBinder = this["EventBinder"];
-    var EventBus = this["EventBus"];
-    var EventNameNormalizer = this["EventNameNormalizer"];
     var Render = this["Render"];
     var Router = this["Router"];
     var _slice = this["_slice"];
@@ -1622,6 +1622,213 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return Directives;
     })();
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    function setPrimitive(value) {
+      if (!isNaN(value)) {
+        if (/[0-9]+/.test(value)) {
+          return parseInt(value, 10);
+        }
+        if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
+          return parseFloat(value);
+        }
+      }
+      return value;
+    }
+    var EventBinder = (function() {
+      function EventBinder() {
+        _classCallCheck(this, EventBinder);
+      }
+      _createClass(EventBinder, null, [{
+        key: 'bind',
+        value: function bind(element, attrs, target) {
+          if (attrs.length > 0) {
+            (function() {
+              var instance = Injector.instances[target.name];
+              attrs.forEach(function(attr) {
+                var attrName = attr.name,
+                    attrValue = attr.value;
+                if (attrName.charAt(0) === '_') {
+                  var eventName = attrName.substring(1);
+                  element.addEventListener(eventName, function(e) {
+                    var methodName = attrValue.match(/^(.*)\(/mi)[1];
+                    var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+                    args = args.length > 0 ? args.split(/,/) : [];
+                    args = args.map(function(arg) {
+                      return setPrimitive(arg);
+                    });
+                    instance[methodName].apply(instance, args);
+                  }, false);
+                }
+                if (attrName === 'data-model') {
+                  element.addEventListener('input', function(e) {
+                    instance[attrValue] = element.value;
+                  }, false);
+                }
+              });
+            })();
+          }
+        }
+      }]);
+      return EventBinder;
+    })();
+    "use strict";
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ("value" in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+      }
+    }
+    var EventBus = (function() {
+      function EventBus() {
+        _classCallCheck(this, EventBus);
+      }
+      _createClass(EventBus, null, [{
+        key: "subscribe",
+        value: function subscribe(topic, callback) {
+          if (!EventBus.topics.hasOwnProperty(topic)) {
+            EventBus.topics[topic] = [];
+          }
+          var token = (++EventBus.lastUid).toString();
+          EventBus.topics[topic].push({
+            token: token,
+            callback: callback
+          });
+          return token;
+        }
+      }, {
+        key: "unsubscribe",
+        value: function unsubscribe(token) {
+          for (var m in EventBus.topics) {
+            if (EventBus.topics.hasOwnProperty(m)) {
+              for (var i = 0,
+                  j = EventBus.topics[m].length; i < j; i++) {
+                if (EventBus.topics[m][i].token === token) {
+                  EventBus.topics[m].splice(i, 1);
+                  return token;
+                }
+              }
+            }
+          }
+          return false;
+        }
+      }, {
+        key: "publish",
+        value: function publish(topic, data) {
+          if (!EventBus.topics.hasOwnProperty(topic)) {
+            return false;
+          }
+          function notify() {
+            var subscribers = EventBus.topics[topic],
+                throwException = function throwException(e) {
+                  return function() {
+                    throw e;
+                  };
+                };
+            for (var i = 0,
+                j = subscribers.length; i < j; i++) {
+              try {
+                subscribers[i].callback(topic, data);
+              } catch (e) {
+                setTimeout(throwException(e), 0);
+              }
+            }
+          }
+          ;
+          setTimeout(notify, 0);
+          return true;
+        }
+      }, {
+        key: "topics",
+        value: {},
+        enumerable: true
+      }, {
+        key: "lastUid",
+        value: -1,
+        enumerable: true
+      }]);
+      return EventBus;
+    })();
+    EventBus.CHANGE_DETECTED = "CHANGE_DETECTED";
+    EventBus.MODEL_CHANGE_DETECTED = "MODEL_CHANGE_DETECTED";
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var EventNameNormalizer = (function() {
+      function EventNameNormalizer() {
+        _classCallCheck(this, EventNameNormalizer);
+      }
+      _createClass(EventNameNormalizer, null, [{
+        key: 'normalize',
+        value: function normalize(target, eventName) {
+          return target.name.toUpperCase() + '_' + eventName;
+        }
+      }]);
+      return EventNameNormalizer;
+    })();
     "use strict";
     function makeMap(str) {
       var obj = {},
@@ -1867,213 +2074,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }]);
       return DOM;
-    })();
-    'use strict';
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ('value' in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
-      }
-    }
-    function setPrimitive(value) {
-      if (!isNaN(value)) {
-        if (/[0-9]+/.test(value)) {
-          return parseInt(value, 10);
-        }
-        if (/^-?(\d+\.?\d*)$|(\d*\.?\d+)$/.test(value)) {
-          return parseFloat(value);
-        }
-      }
-      return value;
-    }
-    var EventBinder = (function() {
-      function EventBinder() {
-        _classCallCheck(this, EventBinder);
-      }
-      _createClass(EventBinder, null, [{
-        key: 'bind',
-        value: function bind(element, attrs, target) {
-          if (attrs.length > 0) {
-            (function() {
-              var instance = Injector.instances[target.name];
-              attrs.forEach(function(attr) {
-                var attrName = attr.name,
-                    attrValue = attr.value;
-                if (attrName.charAt(0) === '_') {
-                  var eventName = attrName.substring(1);
-                  element.addEventListener(eventName, function(e) {
-                    var methodName = attrValue.match(/^(.*)\(/mi)[1];
-                    var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-                    args = args.length > 0 ? args.split(/,/) : [];
-                    args = args.map(function(arg) {
-                      return setPrimitive(arg);
-                    });
-                    instance[methodName].apply(instance, args);
-                  }, false);
-                }
-                if (attrName === 'data-model') {
-                  element.addEventListener('input', function(e) {
-                    instance[attrValue] = element.value;
-                  }, false);
-                }
-              });
-            })();
-          }
-        }
-      }]);
-      return EventBinder;
-    })();
-    "use strict";
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ("value" in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    var EventBus = (function() {
-      function EventBus() {
-        _classCallCheck(this, EventBus);
-      }
-      _createClass(EventBus, null, [{
-        key: "subscribe",
-        value: function subscribe(topic, callback) {
-          if (!EventBus.topics.hasOwnProperty(topic)) {
-            EventBus.topics[topic] = [];
-          }
-          var token = (++EventBus.lastUid).toString();
-          EventBus.topics[topic].push({
-            token: token,
-            callback: callback
-          });
-          return token;
-        }
-      }, {
-        key: "unsubscribe",
-        value: function unsubscribe(token) {
-          for (var m in EventBus.topics) {
-            if (EventBus.topics.hasOwnProperty(m)) {
-              for (var i = 0,
-                  j = EventBus.topics[m].length; i < j; i++) {
-                if (EventBus.topics[m][i].token === token) {
-                  EventBus.topics[m].splice(i, 1);
-                  return token;
-                }
-              }
-            }
-          }
-          return false;
-        }
-      }, {
-        key: "publish",
-        value: function publish(topic, data) {
-          if (!EventBus.topics.hasOwnProperty(topic)) {
-            return false;
-          }
-          function notify() {
-            var subscribers = EventBus.topics[topic],
-                throwException = function throwException(e) {
-                  return function() {
-                    throw e;
-                  };
-                };
-            for (var i = 0,
-                j = subscribers.length; i < j; i++) {
-              try {
-                subscribers[i].callback(topic, data);
-              } catch (e) {
-                setTimeout(throwException(e), 0);
-              }
-            }
-          }
-          ;
-          setTimeout(notify, 0);
-          return true;
-        }
-      }, {
-        key: "topics",
-        value: {},
-        enumerable: true
-      }, {
-        key: "lastUid",
-        value: -1,
-        enumerable: true
-      }]);
-      return EventBus;
-    })();
-    EventBus.CHANGE_DETECTED = "CHANGE_DETECTED";
-    EventBus.MODEL_CHANGE_DETECTED = "MODEL_CHANGE_DETECTED";
-    'use strict';
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ('value' in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
-      }
-    }
-    var EventNameNormalizer = (function() {
-      function EventNameNormalizer() {
-        _classCallCheck(this, EventNameNormalizer);
-      }
-      _createClass(EventNameNormalizer, null, [{
-        key: 'normalize',
-        value: function normalize(target, eventName) {
-          return target.name.toUpperCase() + '_' + eventName;
-        }
-      }]);
-      return EventNameNormalizer;
     })();
     "use strict";
     function Module() {}
@@ -2321,16 +2321,24 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }, {
         key: 'bindOther',
-        value: function bindOther(target, eventName) {
-          Object.defineProperty(target, {
-            get: function get() {
-              return bValue;
-            },
+        value: function bindOther(target, key, eventName) {
+          var value = target[key],
+              privateProperty = key + '_' + +new Date();
+          Object.defineProperty(target, privateProperty, {
+            enumerable: false,
+            configurable: false,
+            writable: true
+          });
+          Object.defineProperty(target, key, {
             set: function set(newValue) {
-              bValue = newValue;
+              this[privateProperty] = newValue;
               EventBus.publish(eventName);
+            },
+            get: function get() {
+              return this[privateProperty];
             }
           });
+          target[key] = value;
         }
       }, {
         key: 'run',
@@ -2338,17 +2346,17 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           var _loop = function() {
             var instance = Injector.instances[instanceName];
             if (!!instance.bindableFields) {
-              instance.bindableFields.forEach(function(key) {
+              (function() {
                 var target = {name: instanceName};
                 var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
-                if (instance[key] instanceof Array) {
-                  Binder.bindArray(instance[key], eventName);
-                } else {
+                instance.bindableFields.forEach(function(key) {
                   if (instance[key] instanceof Array) {
-                    Binder.bindOther(instance[key], eventName);
+                    Binder.bindArray(instance[key], eventName);
+                  } else {
+                    Binder.bindOther(instance, key, eventName);
                   }
-                }
-              });
+                });
+              })();
             }
           };
           for (var instanceName in Injector.instances) {
@@ -2511,6 +2519,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["DataIf"] = DataIf;
     this["DataModel"] = DataModel;
     this["Directives"] = Directives;
+    this["EventBinder"] = EventBinder;
+    this["EventBus"] = EventBus;
+    this["EventNameNormalizer"] = EventNameNormalizer;
     this["startTag"] = startTag;
     this["endTag"] = endTag;
     this["attr"] = attr;
@@ -2521,9 +2532,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["fillAttrs"] = fillAttrs;
     this["special"] = special;
     this["DOM"] = DOM;
-    this["EventBinder"] = EventBinder;
-    this["EventBus"] = EventBus;
-    this["EventNameNormalizer"] = EventNameNormalizer;
     this["Render"] = Render;
     this["Router"] = Router;
     this["_slice"] = _slice;
@@ -2554,6 +2562,9 @@ $__System.register('0', ['1'], function (_export) {
         babelHelpers.createDecoratedClass(App, [{
           key: 'name',
           decorators: [Bindable],
+
+          //get name() { return this._name; }
+          //set name(value) { this._name = value; }
           initializer: function initializer() {
             return "My First App!!";
           },
@@ -2571,6 +2582,8 @@ $__System.register('0', ['1'], function (_export) {
           babelHelpers.classCallCheck(this, _App);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
+
+          this.name = "My First App!!";
         }
 
         babelHelpers.createDecoratedClass(App, [{
@@ -2591,7 +2604,7 @@ $__System.register('0', ['1'], function (_export) {
           key: 'clean',
           value: function clean() {
             this.name = "My First App!!";
-            this.todos = [];
+            //this.todos = [];
           }
         }], null, _instanceInitializers);
         var _App = App;
