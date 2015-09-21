@@ -27,3 +27,7 @@ export function decorate(handleDescriptor, entryArgs) {
 export function first() {
   return this[0];
 }
+
+export function last() {
+  return this[this.length - 1];
+}

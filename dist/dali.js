@@ -154,52 +154,6 @@ var HTTP = (function () {
 })();
 'use strict';
 
-function ComponentHandlerDescriptor(target, value) {
-  Components.components.push({ target: target, value: value });
-}
-
-function Component(arg) {
-  return decorate(ComponentHandlerDescriptor, arg);
-}
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var Components = (function () {
-  function Components() {
-    _classCallCheck(this, Components);
-  }
-
-  _createClass(Components, null, [{
-    key: 'parse',
-    value: function parse(node, name, attrs) {
-      var component = Components.components.filter(function (component) {
-        return component.value.name === name;
-      });
-
-      //console.log(attrs);
-
-      Views.parse(node, first.call(component));
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      document.addEventListener("DOMContentLoaded", function (event) {
-        DOM.parse(event.target.body);
-      });
-    }
-  }, {
-    key: 'components',
-    value: [],
-    enumerable: true
-  }]);
-
-  return Components;
-})();
-'use strict';
-
 function InjectHandlerDescriptor(target, values) {
   target.dependencies = values;
 }
@@ -477,6 +431,52 @@ var Directives = (function () {
 })();
 
 Directives.PREFIX = "data-";
+'use strict';
+
+function ComponentHandlerDescriptor(target, value) {
+  Components.components.push({ target: target, value: value });
+}
+
+function Component(arg) {
+  return decorate(ComponentHandlerDescriptor, arg);
+}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Components = (function () {
+  function Components() {
+    _classCallCheck(this, Components);
+  }
+
+  _createClass(Components, null, [{
+    key: 'parse',
+    value: function parse(node, name, attrs) {
+      var component = Components.components.filter(function (component) {
+        return component.value.name === name;
+      });
+
+      //console.log(attrs);
+
+      Views.parse(node, first.call(component));
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      document.addEventListener("DOMContentLoaded", function (event) {
+        DOM.parse(event.target.body);
+      });
+    }
+  }, {
+    key: 'components',
+    value: [],
+    enumerable: true
+  }]);
+
+  return Components;
+})();
 /*
  * HTML Parser By John Resig (ejohn.org)
  * Original code by Erik Arvidsson, Mozilla Public License
@@ -983,6 +983,71 @@ var EventNameNormalizer = (function () {
 
   return EventNameNormalizer;
 })();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function normalizeFilterName(name) {
+  return name.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
+    return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+  }).replace(/\s+/g, '');
+}
+
+var DataFilters = (function () {
+  function DataFilters() {
+    _classCallCheck(this, DataFilters);
+  }
+
+  _createClass(DataFilters, null, [{
+    key: 'add',
+    value: function add(name, filter) {
+      DataFilters.data[normalizeFilterName(name)] = Injector.get(filter);
+    }
+  }, {
+    key: 'get',
+    value: function get(name) {
+      return DataFilters.data[name];
+    }
+  }, {
+    key: 'data',
+    value: {},
+    enumerable: true
+  }]);
+
+  return DataFilters;
+})();
+'use strict';
+
+function Filter(target) {
+  DataFilters.add(target.name, target);
+}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Filters = (function () {
+  function Filters() {
+    _classCallCheck(this, Filters);
+  }
+
+  _createClass(Filters, null, [{
+    key: 'get',
+    value: function get(name) {
+      return DataFilters.get(name);
+    }
+  }, {
+    key: 'getFilters',
+    value: function getFilters() {
+      return DataFilters.data;
+    }
+  }]);
+
+  return Filters;
+})();
 "use strict";
 
 function Module() {}
@@ -1030,7 +1095,39 @@ var Render = (function () {
       };
 
       while (match = re.exec(html)) {
-        add(html.slice(cursor, match.index))('this.' + match[1], true);
+        if (match[1].indexOf('|') > -1) {
+          var _context;
+
+          var filters = match[1].split('|').map(function (filter) {
+            return filter.trim();
+          });
+          var value = filters.shift();
+
+          filters = filters.map(function (name) {
+            if (name.indexOf(':') === -1) {
+              return {
+                filter: Filters.get(name).render,
+                value: null
+              };
+            } else {
+              var filterValue = name.substring(name.indexOf(':') + 1);
+              var _filterName = name.substring(0, name.indexOf(':'));
+              return {
+                filter: Filters.get(_filterName).render,
+                value: filterValue
+              };
+            }
+          });
+
+          var filterName = (_context = filters, first).call(_context);
+
+          options['filter'] = filterName.filter;
+          options['filterValue'] = filterName.value;
+
+          add(html.slice(cursor, match.index))('this.filter' + '(this.' + value + ', this.filterValue)', true);
+        } else {
+          add(html.slice(cursor, match.index))('this.' + match[1], true);
+        }
         cursor = match.index + match[0].length;
       }
 
@@ -1158,6 +1255,10 @@ function decorate(handleDescriptor, entryArgs) {
 
 function first() {
   return this[0];
+}
+
+function last() {
+  return this[this.length - 1];
 }
 'use strict';
 

@@ -9,6 +9,7 @@ import {
 } from 'dali/dali';
 
 import {DataShow} from 'DataShow';
+import {DateFilter} from 'DateFilter';
 
 @Component({
   name: 'app'
@@ -24,6 +25,8 @@ class App {
 
   @Bindable
   todos = [];
+
+  date = new Date();
 
   add() {
     this.todos.push(this.item);

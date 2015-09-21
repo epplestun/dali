@@ -1,5 +1,6 @@
 <h1>{{name}}</h1>
 <h2>Total: {{todos.length}}</h2>
+<h3>{{date | dateFilter:short}}</h3>
 
 <ul>
     <li *for="todo in todos track by $index">

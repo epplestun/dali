@@ -1,4 +1,6 @@
+import {first} from 'core/util/util';
 import {Directives} from 'core/directives/Directives';
+import {Filters} from 'core/filters/Filters';
 
 export class Render {
   
@@ -30,7 +32,35 @@ export class Render {
     }
 
     while (match = re.exec(html)) {
-      add(html.slice(cursor, match.index))('this.' + match[1], true);
+      if(match[1].indexOf('|') > -1) {
+        let filters = match[1].split('|').map((filter) => filter.trim());
+        let value = filters.shift();
+
+        filters = filters.map((name) => {
+          if(name.indexOf(':') === -1) {
+            return {
+              filter : Filters.get(name).render,
+              value: null
+            };
+          } else {
+            let filterValue = name.substring(name.indexOf(':') + 1);
+            let filterName = name.substring(0, name.indexOf(':'));
+            return {
+              filter: Filters.get(filterName).render,
+              value: filterValue
+            };
+          }
+        });
+
+        let filterName = filters::first();
+
+        options['filter'] = filterName.filter;
+        options['filterValue'] = filterName.value;
+        
+        add(html.slice(cursor, match.index))('this.filter' + '(this.' + value + ', this.filterValue)', true);
+      } else {
+        add(html.slice(cursor, match.index))('this.' + match[1], true);
+      }
       cursor = match.index + match[0].length;
     }
 
