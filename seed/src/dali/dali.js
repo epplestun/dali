@@ -286,7 +286,10 @@ var DataDirective = (function () {
   _createClass(DataDirective, null, [{
     key: "add",
     value: function add(name, directive, config) {
-      DataDirective.data[normalizeDirectiveName(name)] = Injector.get(directive);
+      DataDirective.data[normalizeDirectiveName(name)] = {
+        instance: Injector.get(directive),
+        config: config
+      };
     }
   }, {
     key: "get",
@@ -474,6 +477,27 @@ var Directives = (function () {
 })();
 
 Directives.PREFIX = "data-";
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Evaluator = (function () {
+  function Evaluator() {
+    _classCallCheck(this, Evaluator);
+  }
+
+  _createClass(Evaluator, [{
+    key: 'eval',
+    value: function _eval(data, code) {
+      var context = data;
+      return eval('context.' + code);
+    }
+  }]);
+
+  return Evaluator;
+})();
 /*
  * HTML Parser By John Resig (ejohn.org)
  * Original code by Erik Arvidsson, Mozilla Public License
@@ -978,6 +1002,7 @@ var Render = (function () {
     value: function normalize(html) {
       var coreDirectives = [];
       for (var directive in Directives.getDirectives()) {
+        //console.log(directive, Directives.get(directive).config);
         coreDirectives.push(directive.replace(Directives.PREFIX, ''));
       }
 
@@ -1321,7 +1346,7 @@ var Views = (function () {
             var directive = Directives.get(attr.name);
 
             if (!!directive) {
-              directive.render(data, element, attr.value, target);
+              directive.instance.render(data, element, attr.value, target);
             }
           });
         }

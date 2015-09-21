@@ -5,8 +5,10 @@ import {
   View,
   Bindable,
   BindableArray,
-  Runnable
+  Runnable,
 } from 'dali/dali';
+
+import {DataShow} from 'DataShow';
 
 @Component({
   name: 'app'

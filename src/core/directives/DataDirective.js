@@ -11,7 +11,10 @@ export class DataDirective {
   static data = {};
 
   static add(name, directive, config) {
-    DataDirective.data[normalizeDirectiveName(name)] = Injector.get(directive);
+    DataDirective.data[normalizeDirectiveName(name)] = {
+      instance: Injector.get(directive),
+      config
+    };
   }
 
   static get(name) {

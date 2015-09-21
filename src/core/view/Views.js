@@ -74,7 +74,7 @@ export class Views {
           let directive = Directives.get(attr.name);
 
           if (!!directive) {
-            directive.render(data, element, attr.value, target);
+            directive.instance.render(data, element, attr.value, target);
           }
         });
       }

@@ -1000,6 +1000,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["_classCallCheck"] = _classCallCheck;
     this["Directive"] = Directive;
     this["_classCallCheck"] = _classCallCheck;
+    this["_classCallCheck"] = _classCallCheck;
     this["makeMap"] = makeMap;
     this["HTMLParser"] = HTMLParser;
     this["HTMLtoXML"] = HTMLtoXML;
@@ -1037,6 +1038,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var DataIf = this["DataIf"];
     var DataModel = this["DataModel"];
     var Directives = this["Directives"];
+    var Evaluator = this["Evaluator"];
     var startTag = this["startTag"];
     var endTag = this["endTag"];
     var attr = this["attr"];
@@ -1390,7 +1392,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       _createClass(DataDirective, null, [{
         key: "add",
         value: function add(name, directive, config) {
-          DataDirective.data[normalizeDirectiveName(name)] = Injector.get(directive);
+          DataDirective.data[normalizeDirectiveName(name)] = {
+            instance: Injector.get(directive),
+            config: config
+          };
         }
       }, {
         key: "get",
@@ -1655,6 +1660,44 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return Directives;
     })();
     Directives.PREFIX = "data-";
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var Evaluator = (function() {
+      function Evaluator() {
+        _classCallCheck(this, Evaluator);
+      }
+      _createClass(Evaluator, [{
+        key: 'eval',
+        value: function _eval(data, code) {
+          var context = data;
+          return eval('context.' + code);
+        }
+      }]);
+      return Evaluator;
+    })();
     "use strict";
     function makeMap(str) {
       var obj = {},
@@ -2498,7 +2541,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
               attrs.forEach(function(attr) {
                 var directive = Directives.get(attr.name);
                 if (!!directive) {
-                  directive.render(data, element, attr.value, target);
+                  directive.instance.render(data, element, attr.value, target);
                 }
               });
             }
@@ -2561,6 +2604,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["DataIf"] = DataIf;
     this["DataModel"] = DataModel;
     this["Directives"] = Directives;
+    this["Evaluator"] = Evaluator;
     this["startTag"] = startTag;
     this["endTag"] = endTag;
     this["attr"] = attr;
@@ -2583,10 +2627,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
   return _retrieveGlobal();
 });
 
-$__System.register('0', ['1'], function (_export) {
+$__System.register('0', ['1', '2'], function (_export) {
   'use strict';
 
-  var bootstrap, Inject, Component, View, Bindable, BindableArray, Runnable, App;
+  var bootstrap, Inject, Component, View, Bindable, BindableArray, Runnable, DataShow, App;
   return {
     setters: [function (_) {
       bootstrap = _.bootstrap;
@@ -2596,6 +2640,8 @@ $__System.register('0', ['1'], function (_export) {
       Bindable = _.Bindable;
       BindableArray = _.BindableArray;
       Runnable = _.Runnable;
+    }, function (_2) {
+      DataShow = _2.DataShow;
     }],
     execute: function () {
       App = (function () {
@@ -2651,6 +2697,41 @@ $__System.register('0', ['1'], function (_export) {
       })();
 
       bootstrap(App);
+    }
+  };
+});
+
+$__System.register('2', ['1'], function (_export) {
+  'use strict';
+
+  var Directive, Inject, Evaluator, DataShow;
+  return {
+    setters: [function (_) {
+      Directive = _.Directive;
+      Inject = _.Inject;
+      Evaluator = _.Evaluator;
+    }],
+    execute: function () {
+      DataShow = (function () {
+        function DataShow(evaluator) {
+          babelHelpers.classCallCheck(this, _DataShow);
+
+          this.evaluator = evaluator;
+        }
+
+        babelHelpers.createClass(DataShow, [{
+          key: 'render',
+          value: function render(data, element, value, target) {
+            element.style.display = this.evaluator.eval(data, value) ? 'block' : 'none';
+          }
+        }]);
+        var _DataShow = DataShow;
+        DataShow = Inject(Evaluator)(DataShow) || DataShow;
+        DataShow = Directive({
+          name: 'data-show'
+        })(DataShow) || DataShow;
+        return DataShow;
+      })();
     }
   };
 });
