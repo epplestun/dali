@@ -4,7 +4,7 @@ export class Render {
   
   static normalize(html) {
     let coreDirectives = [];
-    for(let directive in Directives.directives) {
+    for(let directive in Directives.getDirectives()) {
       coreDirectives.push(directive.replace(Directives.PREFIX, ''));
     }
 

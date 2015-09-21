@@ -1,8 +1,8 @@
 import {decorate} from 'core/util/util';
-import {Directives} from 'core/directives/Directives';
+import {DataDirective} from 'core/directives/DataDirective';
 
-export function Directive(target) {
-
-  console.log('Directive', Directives, target.name);
-  //Directives.directives[target.name] = target;
+export function Directive(value) {
+  return function decorator(target) {
+    DataDirective.add(target.name, target, value);
+  }
 }

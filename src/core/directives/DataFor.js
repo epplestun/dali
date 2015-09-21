@@ -1,5 +1,9 @@
 import {Render} from 'util/render/Render';
+import {Directive} from 'core/directive/Directive';
 
+@Directive({
+  name : 'data-for'
+})
 export class DataFor {
   render(data, element, value, target) {
     let cloneElement = element.cloneNode(true);

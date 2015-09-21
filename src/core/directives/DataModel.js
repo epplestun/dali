@@ -2,7 +2,11 @@ import {first} from 'core/util/util';
 import {Injector} from 'core/di/Injector';
 import {EventBus, EventNameNormalizer} from 'core/event/EventBus';
 import {Views} from 'core/view/Views';
+import {Directive} from 'core/directive/Directive';
 
+@Directive({
+  name : 'data-model'
+})
 export class DataModel {
   render(data, element, value, target) {
     let instance = Injector.instances[target.name];
