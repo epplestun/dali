@@ -13,7 +13,7 @@ class DataShow {
     this.evaluator = evaluator;
   }
 
-  render(data, element, value, target) {
+  render(data, element, value) {
     element.style.display = this.evaluator.eval(data, value) ? 'block' : 'none';
   }
 }

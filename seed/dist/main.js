@@ -2721,7 +2721,7 @@ $__System.register('2', ['1'], function (_export) {
 
         babelHelpers.createClass(DataShow, [{
           key: 'render',
-          value: function render(data, element, value, target) {
+          value: function render(data, element, value) {
             element.style.display = this.evaluator.eval(data, value) ? 'block' : 'none';
           }
         }]);
