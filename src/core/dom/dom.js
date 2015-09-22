@@ -1,4 +1,3 @@
-import {HTMLParser, HTMLtoDOM} from 'core/dom/HTMLParser';
 import {Components} from 'core/component/Components';
 
 export class DOM {

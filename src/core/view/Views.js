@@ -5,6 +5,7 @@ import {EventBus, EventNameNormalizer, EventBinder} from 'core/event/EventBus';
 import {HTTP} from 'http/HTTP';
 import {Inject, Injector} from 'core/di/Injector';
 import {Directives} from 'core/directives/Directives';
+import {Components} from 'core/component/Components';
 
 function elementAttrs(element) {
   let nodeAttrs = Array.prototype.slice.call(element.attributes);
@@ -59,6 +60,9 @@ export class Views {
   }
 
   static parseAll(node, template, data, target) {
+
+    console.log(template);
+    
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
@@ -90,6 +94,10 @@ export class Views {
     childNodes.forEach((cn) => {
       let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
       EventBinder.bind(cn, attrs, target);
+
+      if(Components.exists(cn.nodeName.toLowerCase())) {
+        Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+      }
     });
   }
 

@@ -12,6 +12,18 @@ import {DataShow} from 'DataShow';
 import {DateFilter} from 'DateFilter';
 
 @Component({
+  name: 'menu'
+})
+@View({
+  template: '<div>Menu {{name}}</div>'
+})
+@Runnable
+class Menu {
+  @Bindable
+  name = "My First App XXX!!";
+}
+
+@Component({
   name: 'app'
 })
 @View({

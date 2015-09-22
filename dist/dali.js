@@ -173,13 +173,21 @@ var Components = (function () {
   }
 
   _createClass(Components, null, [{
+    key: 'exists',
+    value: function exists(name) {
+      return Components.components.filter(function (component) {
+        return component.value.name === name;
+      }).length > 0;
+    }
+  }, {
     key: 'parse',
     value: function parse(node, name, attrs) {
+
+      console.log(node, name, attrs);
+
       var component = Components.components.filter(function (component) {
         return component.value.name === name;
       });
-
-      //console.log(attrs);
 
       Views.parse(node, first.call(component));
     }
@@ -759,11 +767,11 @@ function HTMLtoDOM(html, doc) {
 
   return doc;
 }
-'use strict';
+"use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var DOM = (function () {
   function DOM() {
@@ -771,12 +779,12 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
-    key: 'getHTML',
+    key: "getHTML",
     value: function getHTML(node) {
       return node.innerHTML.toString();
     }
   }, {
-    key: 'parse',
+    key: "parse",
     value: function parse(node) {
       var items = node.getElementsByTagName("*");
 
@@ -1432,6 +1440,9 @@ var Views = (function () {
   }, {
     key: 'parseAll',
     value: function parseAll(node, template, data, target) {
+
+      console.log(template);
+
       var wrapper = document.createElement('div');
       wrapper.innerHTML = Render.normalize(template);
 
@@ -1462,6 +1473,10 @@ var Views = (function () {
       childNodes.forEach(function (cn) {
         var attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
         EventBinder.bind(cn, attrs, target);
+
+        if (Components.exists(cn.nodeName.toLowerCase())) {
+          Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+        }
       });
     }
   }, {

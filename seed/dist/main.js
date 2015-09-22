@@ -1261,8 +1261,16 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, Components);
       }
       _createClass(Components, null, [{
+        key: 'exists',
+        value: function exists(name) {
+          return Components.components.filter(function(component) {
+            return component.value.name === name;
+          }).length > 0;
+        }
+      }, {
         key: 'parse',
         value: function parse(node, name, attrs) {
+          console.log(node, name, attrs);
           var component = Components.components.filter(function(component) {
             return component.value.name === name;
           });
@@ -1865,14 +1873,14 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       });
       return doc;
     }
-    'use strict';
+    "use strict";
     var _createClass = (function() {
       function defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
           var descriptor = props[i];
           descriptor.enumerable = descriptor.enumerable || false;
           descriptor.configurable = true;
-          if ('value' in descriptor)
+          if ("value" in descriptor)
             descriptor.writable = true;
           Object.defineProperty(target, descriptor.key, descriptor);
         }
@@ -1887,7 +1895,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     })();
     function _classCallCheck(instance, Constructor) {
       if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
+        throw new TypeError("Cannot call a class as a function");
       }
     }
     var DOM = (function() {
@@ -1895,12 +1903,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, DOM);
       }
       _createClass(DOM, null, [{
-        key: 'getHTML',
+        key: "getHTML",
         value: function getHTML(node) {
           return node.innerHTML.toString();
         }
       }, {
-        key: 'parse',
+        key: "parse",
         value: function parse(node) {
           var items = node.getElementsByTagName("*");
           for (var i = 0; i < items.length; i++) {
@@ -2664,6 +2672,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }, {
         key: 'parseAll',
         value: function parseAll(node, template, data, target) {
+          console.log(template);
           var wrapper = document.createElement('div');
           wrapper.innerHTML = Render.normalize(template);
           var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter(function(element) {
@@ -2687,6 +2696,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           childNodes.forEach(function(cn) {
             var attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
             EventBinder.bind(cn, attrs, target);
+            if (Components.exists(cn.nodeName.toLowerCase())) {
+              Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+            }
           });
         }
       }, {
@@ -2766,7 +2778,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
 $__System.register('0', ['1', '2', '3'], function (_export) {
   'use strict';
 
-  var bootstrap, Inject, Component, View, Bindable, BindableArray, Runnable, DataShow, DateFilter, App;
+  var bootstrap, Inject, Component, View, Bindable, BindableArray, Runnable, DataShow, DateFilter, Menu, App;
   return {
     setters: [function (_) {
       bootstrap = _.bootstrap;
@@ -2782,13 +2794,40 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
       DateFilter = _3.DateFilter;
     }],
     execute: function () {
-      App = (function () {
+      Menu = (function () {
         var _instanceInitializers = {};
+
+        function Menu() {
+          babelHelpers.classCallCheck(this, _Menu);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(Menu, [{
+          key: 'name',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return "My First App XXX!!";
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Menu = Menu;
+        Menu = Runnable(Menu) || Menu;
+        Menu = View({
+          template: '<div>Menu {{name}}</div>'
+        })(Menu) || Menu;
+        Menu = Component({
+          name: 'menu'
+        })(Menu) || Menu;
+        return Menu;
+      })();
+
+      App = (function () {
+        var _instanceInitializers2 = {};
 
         function App() {
           babelHelpers.classCallCheck(this, _App);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers2);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers2);
           this.date = new Date();
         }
 
@@ -2823,7 +2862,7 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
             return [];
           },
           enumerable: true
-        }], null, _instanceInitializers);
+        }], null, _instanceInitializers2);
         var _App = App;
         App = Runnable(App) || App;
         App = View({
@@ -2836,6 +2875,36 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
       })();
 
       bootstrap(App);
+    }
+  };
+});
+
+$__System.register('3', ['1'], function (_export) {
+  'use strict';
+
+  var Filter, DateFilter;
+  return {
+    setters: [function (_) {
+      Filter = _.Filter;
+    }],
+    execute: function () {
+      DateFilter = (function () {
+        function DateFilter() {
+          babelHelpers.classCallCheck(this, _DateFilter);
+        }
+
+        babelHelpers.createClass(DateFilter, [{
+          key: 'render',
+          value: function render(value, extra) {
+            return value.toJSON();
+          }
+        }]);
+        var _DateFilter = DateFilter;
+        DateFilter = Filter(DateFilter) || DateFilter;
+        return DateFilter;
+      })();
+
+      _export('DateFilter', DateFilter);
     }
   };
 });
@@ -2871,37 +2940,6 @@ $__System.register('2', ['1'], function (_export) {
         })(DataShow) || DataShow;
         return DataShow;
       })();
-    }
-  };
-});
-
-$__System.register('3', ['1'], function (_export) {
-  'use strict';
-
-  var Filter, DateFilter;
-  return {
-    setters: [function (_) {
-      Filter = _.Filter;
-    }],
-    execute: function () {
-      DateFilter = (function () {
-        function DateFilter() {
-          babelHelpers.classCallCheck(this, _DateFilter);
-        }
-
-        babelHelpers.createClass(DateFilter, [{
-          key: 'render',
-          value: function render(value, extra) {
-            console.log(value, extra);
-            return value.toJSON();
-          }
-        }]);
-        var _DateFilter = DateFilter;
-        DateFilter = Filter(DateFilter) || DateFilter;
-        return DateFilter;
-      })();
-
-      _export('DateFilter', DateFilter);
     }
   };
 });
