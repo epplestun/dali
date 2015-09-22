@@ -2790,9 +2790,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
 });
 
 $__System.register('0', ['1', '2', '3'], function (_export) {
+  //import {Menu} from 'Menu';
+
   'use strict';
 
-  var bootstrap, Inject, Component, View, Bindable, BindableArray, Runnable, DataShow, DateFilter, Menu, App;
+  var bootstrap, Inject, Component, View, Bindable, Runnable, DataShow, DateFilter, Menu, App;
   return {
     setters: [function (_) {
       bootstrap = _.bootstrap;
@@ -2800,7 +2802,6 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
       Component = _.Component;
       View = _.View;
       Bindable = _.Bindable;
-      BindableArray = _.BindableArray;
       Runnable = _.Runnable;
     }, function (_2) {
       DataShow = _2.DataShow;
@@ -2808,7 +2809,6 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
       DateFilter = _3.DateFilter;
     }],
     execute: function () {
-      //@AutoInject
       //@Injectable
 
       Menu = (function () {
@@ -2818,6 +2818,10 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
           babelHelpers.classCallCheck(this, _Menu);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
         }
+
+        ///////
+        ///////
+        ///////
 
         babelHelpers.createDecoratedClass(Menu, [{
           key: 'name',

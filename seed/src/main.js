@@ -4,12 +4,14 @@ import {
   Component,
   View,
   Bindable,
-  BindableArray,
-  Runnable,
+  Runnable
 } from 'dali/dali';
 
 import {DataShow} from 'DataShow';
 import {DateFilter} from 'DateFilter';
+//import {Menu} from 'Menu';
+
+
 
 @Component({
   name: 'menu'
@@ -21,8 +23,12 @@ import {DateFilter} from 'DateFilter';
 //@Injectable
 class Menu {
   @Bindable
-  name = [1,2,3];
+    name = [1, 2, 3];
 }
+
+///////
+///////
+///////
 
 @Component({
   name: 'app'
