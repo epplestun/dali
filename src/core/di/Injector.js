@@ -1,10 +1,14 @@
 export class Injector {
   static instances = {};
 
+  static hasInstance(name) {
+    return !!Injector.instances.hasOwnProperty(name);
+  }
+
   static instantiate(target) {
     let instance;
 
-    if (!!Injector.instances.hasOwnProperty(target.name)) {
+    if (!!Injector.hasInstance(target.name)) {
       instance = Injector.instances[target.name];
     } else {
       instance = Injector.resolve(target);

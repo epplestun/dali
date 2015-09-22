@@ -31,3 +31,8 @@ export function first() {
 export function last() {
   return this[this.length - 1];
 }
+
+export function ucfirst() {
+  var f = this.charAt(0).toUpperCase();
+  return f + this.substr(1);
+}

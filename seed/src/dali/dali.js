@@ -228,11 +228,16 @@ var Injector = (function () {
   }
 
   _createClass(Injector, null, [{
+    key: "hasInstance",
+    value: function hasInstance(name) {
+      return !!Injector.instances.hasOwnProperty(name);
+    }
+  }, {
     key: "instantiate",
     value: function instantiate(target) {
       var instance = undefined;
 
-      if (!!Injector.instances.hasOwnProperty(target.name)) {
+      if (!!Injector.hasInstance(target.name)) {
         instance = Injector.instances[target.name];
       } else {
         instance = Injector.resolve(target);
@@ -804,92 +809,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var Evaluator = (function () {
-  function Evaluator() {
-    _classCallCheck(this, Evaluator);
-  }
-
-  _createClass(Evaluator, [{
-    key: 'eval',
-    value: function _eval(data, code) {
-      var context = data;
-      return eval('context.' + code);
-    }
-  }]);
-
-  return Evaluator;
-})();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function normalizeFilterName(name) {
-  return name.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
-    return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-  }).replace(/\s+/g, '');
-}
-
-var DataFilters = (function () {
-  function DataFilters() {
-    _classCallCheck(this, DataFilters);
-  }
-
-  _createClass(DataFilters, null, [{
-    key: 'add',
-    value: function add(name, filter) {
-      DataFilters.data[normalizeFilterName(name)] = Injector.get(filter);
-    }
-  }, {
-    key: 'get',
-    value: function get(name) {
-      return DataFilters.data[name];
-    }
-  }, {
-    key: 'data',
-    value: {},
-    enumerable: true
-  }]);
-
-  return DataFilters;
-})();
-'use strict';
-
-function Filter(target) {
-  DataFilters.add(target.name, target);
-}
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var Filters = (function () {
-  function Filters() {
-    _classCallCheck(this, Filters);
-  }
-
-  _createClass(Filters, null, [{
-    key: 'get',
-    value: function get(name) {
-      return DataFilters.get(name);
-    }
-  }, {
-    key: 'getFilters',
-    value: function getFilters() {
-      return DataFilters.data;
-    }
-  }]);
-
-  return Filters;
-})();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
 function setPrimitive(value) {
   if (!isNaN(value)) {
     // check integer
@@ -1052,6 +971,92 @@ var EventNameNormalizer = (function () {
   }]);
 
   return EventNameNormalizer;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Evaluator = (function () {
+  function Evaluator() {
+    _classCallCheck(this, Evaluator);
+  }
+
+  _createClass(Evaluator, [{
+    key: 'eval',
+    value: function _eval(data, code) {
+      var context = data;
+      return eval('context.' + code);
+    }
+  }]);
+
+  return Evaluator;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function normalizeFilterName(name) {
+  return name.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
+    return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+  }).replace(/\s+/g, '');
+}
+
+var DataFilters = (function () {
+  function DataFilters() {
+    _classCallCheck(this, DataFilters);
+  }
+
+  _createClass(DataFilters, null, [{
+    key: 'add',
+    value: function add(name, filter) {
+      DataFilters.data[normalizeFilterName(name)] = Injector.get(filter);
+    }
+  }, {
+    key: 'get',
+    value: function get(name) {
+      return DataFilters.data[name];
+    }
+  }, {
+    key: 'data',
+    value: {},
+    enumerable: true
+  }]);
+
+  return DataFilters;
+})();
+'use strict';
+
+function Filter(target) {
+  DataFilters.add(target.name, target);
+}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Filters = (function () {
+  function Filters() {
+    _classCallCheck(this, Filters);
+  }
+
+  _createClass(Filters, null, [{
+    key: 'get',
+    value: function get(name) {
+      return DataFilters.get(name);
+    }
+  }, {
+    key: 'getFilters',
+    value: function getFilters() {
+      return DataFilters.data;
+    }
+  }]);
+
+  return Filters;
 })();
 "use strict";
 
@@ -1228,6 +1233,50 @@ function Runnable(target) {
 }
 'use strict';
 
+var _slice = Array.prototype.slice;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+function isDescriptor(desc) {
+  if (!desc || !desc.hasOwnProperty) {
+    return false;
+  }
+
+  var keys = ['value', 'get', 'set'];
+
+  for (var i = 0, l = keys.length; i < l; i++) {
+    if (desc.hasOwnProperty(keys[i])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function decorate(handleDescriptor, entryArgs) {
+  if (isDescriptor(entryArgs[entryArgs.length - 1])) {
+    return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
+  } else {
+    return function () {
+      return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
+    };
+  }
+}
+
+function first() {
+  return this[0];
+}
+
+function last() {
+  return this[this.length - 1];
+}
+
+function ucfirst() {
+  var f = this.charAt(0).toUpperCase();
+  return f + this.substr(1);
+}
+'use strict';
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -1398,9 +1447,6 @@ var Views = (function () {
   }, {
     key: 'parseAll',
     value: function parseAll(node, template, data, target) {
-
-      console.log(template);
-
       var wrapper = document.createElement('div');
       wrapper.innerHTML = Render.normalize(template);
 
@@ -1432,8 +1478,18 @@ var Views = (function () {
         var attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
         EventBinder.bind(cn, attrs, target);
 
-        if (Components.exists(cn.nodeName.toLowerCase())) {
-          Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+        //console.log(Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst()));
+
+        if (!!Components.exists(cn.nodeName.toLowerCase())) {
+          var _context;
+
+          if (!!Injector.hasInstance((_context = cn.nodeName.toLowerCase(), ucfirst).call(_context))) {
+            Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+          } else {
+            var _context2;
+
+            throw new Error('Error, no instance for component: ' + (_context2 = cn.nodeName.toLowerCase(), ucfirst).call(_context2));
+          }
         }
       });
     }
@@ -1485,42 +1541,3 @@ var Views = (function () {
 
 Views.TEMPLATE_URL = "templateUrl";
 Views.TEMPLATE = "template";
-'use strict';
-
-var _slice = Array.prototype.slice;
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
-function isDescriptor(desc) {
-  if (!desc || !desc.hasOwnProperty) {
-    return false;
-  }
-
-  var keys = ['value', 'get', 'set'];
-
-  for (var i = 0, l = keys.length; i < l; i++) {
-    if (desc.hasOwnProperty(keys[i])) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function decorate(handleDescriptor, entryArgs) {
-  if (isDescriptor(entryArgs[entryArgs.length - 1])) {
-    return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
-  } else {
-    return function () {
-      return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
-    };
-  }
-}
-
-function first() {
-  return this[0];
-}
-
-function last() {
-  return this[this.length - 1];
-}

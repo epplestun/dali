@@ -1,4 +1,4 @@
-import {first} from 'core/util/util';
+import {first, ucfirst} from 'core/util/util';
 import {Render} from 'core/render/Render';
 import {HTMLParser} from 'core/dom/HTMLParser';
 import {EventBus, EventNameNormalizer, EventBinder} from 'core/event/EventBus';
@@ -60,9 +60,6 @@ export class Views {
   }
 
   static parseAll(node, template, data, target) {
-
-    console.log(template);
-    
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
@@ -95,9 +92,16 @@ export class Views {
       let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
       EventBinder.bind(cn, attrs, target);
 
-      if(Components.exists(cn.nodeName.toLowerCase())) {
-        Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
-      }
+      //console.log(Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst()));
+
+      
+      if(!!Components.exists(cn.nodeName.toLowerCase())) {
+        if(!!Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst())) {
+          Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+        } else {
+          throw new Error('Error, no instance for component: ' + cn.nodeName.toLowerCase()::ucfirst());
+        }
+      } 
     });
   }
 
