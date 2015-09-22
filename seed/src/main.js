@@ -20,7 +20,7 @@ import {DateFilter} from 'DateFilter';
 @Runnable
 class Menu {
   @Bindable
-  name = "My First App XXX!!";
+  name = [1,2,3];
 }
 
 @Component({
@@ -30,6 +30,7 @@ class Menu {
   templateUrl: 'main_view.html'
 })
 @Runnable
+@Inject(Menu)
 class App {
 
   @Bindable
