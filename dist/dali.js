@@ -809,6 +809,27 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+var Evaluator = (function () {
+  function Evaluator() {
+    _classCallCheck(this, Evaluator);
+  }
+
+  _createClass(Evaluator, [{
+    key: 'eval',
+    value: function _eval(data, code) {
+      var context = data;
+      return eval('context.' + code);
+    }
+  }]);
+
+  return Evaluator;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
 function setPrimitive(value) {
   if (!isNaN(value)) {
     // check integer
@@ -971,27 +992,6 @@ var EventNameNormalizer = (function () {
   }]);
 
   return EventNameNormalizer;
-})();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var Evaluator = (function () {
-  function Evaluator() {
-    _classCallCheck(this, Evaluator);
-  }
-
-  _createClass(Evaluator, [{
-    key: 'eval',
-    value: function _eval(data, code) {
-      var context = data;
-      return eval('context.' + code);
-    }
-  }]);
-
-  return Evaluator;
 })();
 'use strict';
 

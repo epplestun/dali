@@ -1006,8 +1006,8 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["HTMLtoDOM"] = HTMLtoDOM;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
-    this["setPrimitive"] = setPrimitive;
     this["_classCallCheck"] = _classCallCheck;
+    this["setPrimitive"] = setPrimitive;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
@@ -1054,10 +1054,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var fillAttrs = this["fillAttrs"];
     var special = this["special"];
     var DOM = this["DOM"];
+    var Evaluator = this["Evaluator"];
     var EventBinder = this["EventBinder"];
     var EventBus = this["EventBus"];
     var EventNameNormalizer = this["EventNameNormalizer"];
-    var Evaluator = this["Evaluator"];
     var DataFilters = this["DataFilters"];
     var Filters = this["Filters"];
     var Render = this["Render"];
@@ -1951,6 +1951,44 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         throw new TypeError('Cannot call a class as a function');
       }
     }
+    var Evaluator = (function() {
+      function Evaluator() {
+        _classCallCheck(this, Evaluator);
+      }
+      _createClass(Evaluator, [{
+        key: 'eval',
+        value: function _eval(data, code) {
+          var context = data;
+          return eval('context.' + code);
+        }
+      }]);
+      return Evaluator;
+    })();
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
     function setPrimitive(value) {
       if (!isNaN(value)) {
         if (/[0-9]+/.test(value)) {
@@ -2132,44 +2170,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }]);
       return EventNameNormalizer;
-    })();
-    'use strict';
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ('value' in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
-      }
-    }
-    var Evaluator = (function() {
-      function Evaluator() {
-        _classCallCheck(this, Evaluator);
-      }
-      _createClass(Evaluator, [{
-        key: 'eval',
-        value: function _eval(data, code) {
-          var context = data;
-          return eval('context.' + code);
-        }
-      }]);
-      return Evaluator;
     })();
     'use strict';
     var _createClass = (function() {
@@ -2774,10 +2774,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["fillAttrs"] = fillAttrs;
     this["special"] = special;
     this["DOM"] = DOM;
+    this["Evaluator"] = Evaluator;
     this["EventBinder"] = EventBinder;
     this["EventBus"] = EventBus;
     this["EventNameNormalizer"] = EventNameNormalizer;
-    this["Evaluator"] = Evaluator;
     this["DataFilters"] = DataFilters;
     this["Filters"] = Filters;
     this["Render"] = Render;
@@ -2808,6 +2808,9 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
       DateFilter = _3.DateFilter;
     }],
     execute: function () {
+      //@AutoInject
+      //@Injectable
+
       Menu = (function () {
         var _instanceInitializers = {};
 
@@ -2894,6 +2897,36 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
   };
 });
 
+$__System.register('3', ['1'], function (_export) {
+  'use strict';
+
+  var Filter, DateFilter;
+  return {
+    setters: [function (_) {
+      Filter = _.Filter;
+    }],
+    execute: function () {
+      DateFilter = (function () {
+        function DateFilter() {
+          babelHelpers.classCallCheck(this, _DateFilter);
+        }
+
+        babelHelpers.createClass(DateFilter, [{
+          key: 'render',
+          value: function render(value, extra) {
+            return value.toJSON();
+          }
+        }]);
+        var _DateFilter = DateFilter;
+        DateFilter = Filter(DateFilter) || DateFilter;
+        return DateFilter;
+      })();
+
+      _export('DateFilter', DateFilter);
+    }
+  };
+});
+
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -2925,36 +2958,6 @@ $__System.register('2', ['1'], function (_export) {
         })(DataShow) || DataShow;
         return DataShow;
       })();
-    }
-  };
-});
-
-$__System.register('3', ['1'], function (_export) {
-  'use strict';
-
-  var Filter, DateFilter;
-  return {
-    setters: [function (_) {
-      Filter = _.Filter;
-    }],
-    execute: function () {
-      DateFilter = (function () {
-        function DateFilter() {
-          babelHelpers.classCallCheck(this, _DateFilter);
-        }
-
-        babelHelpers.createClass(DateFilter, [{
-          key: 'render',
-          value: function render(value, extra) {
-            return value.toJSON();
-          }
-        }]);
-        var _DateFilter = DateFilter;
-        DateFilter = Filter(DateFilter) || DateFilter;
-        return DateFilter;
-      })();
-
-      _export('DateFilter', DateFilter);
     }
   };
 });

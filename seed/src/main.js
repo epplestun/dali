@@ -18,7 +18,6 @@ import {DateFilter} from 'DateFilter';
   template: '<div>Menu {{name}}</div>'
 })
 @Runnable
-//@AutoInject
 //@Injectable
 class Menu {
   @Bindable
