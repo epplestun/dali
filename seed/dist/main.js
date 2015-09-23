@@ -1020,6 +1020,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["pathToRegexp"] = pathToRegexp;
     this["RouterConfigHandlerDescriptor"] = RouterConfigHandlerDescriptor;
     this["RouterConfig"] = RouterConfig;
+    this["_classCallCheck"] = _classCallCheck;
     this["Runnable"] = Runnable;
     this["_toConsumableArray"] = _toConsumableArray;
     this["isDescriptor"] = isDescriptor;
@@ -1062,6 +1063,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var Filters = this["Filters"];
     var Render = this["Render"];
     var Router = this["Router"];
+    var RouterLink = this["RouterLink"];
     var _slice = this["_slice"];
     var Binder = this["Binder"];
     var Views = this["Views"];
@@ -1069,7 +1071,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     'use strict';
     function bootstrap(target) {
       Injector.get(target).run();
-      Router.run();
       Components.run();
       Binder.run();
     }
@@ -1262,6 +1263,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, Components);
       }
       _createClass(Components, null, [{
+        key: 'normalize',
+        value: function normalize(element) {
+          return element.nodeName.toLowerCase();
+        }
+      }, {
         key: 'exists',
         value: function exists(name) {
           return Components.components.filter(function(component) {
@@ -1269,12 +1275,17 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           }).length > 0;
         }
       }, {
-        key: 'parse',
-        value: function parse(node, name, attrs) {
+        key: 'get',
+        value: function get(name) {
           var component = Components.components.filter(function(component) {
             return component.value.name === name;
           });
-          Views.parse(node, first.call(component));
+          return first.call(component);
+        }
+      }, {
+        key: 'parse',
+        value: function parse(node, attrs, component) {
+          Views.parse(node, component);
         }
       }, {
         key: 'run',
@@ -1497,9 +1508,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(DataFor, [{
         key: 'render',
-        value: function render(data, element, value, target) {
-          var cloneElement = element.cloneNode(true);
+        value: function render(element, data, value, config) {
+          var originalClone = element.cloneNode(true);
           var parentNode = element.parentNode;
+          parentNode.removeChild(element);
           var _value$match = value.match(/([$a-zA-Z0-9]+)/g);
           var _value$match2 = _slicedToArray(_value$match, 6);
           var iterator = _value$match2[0];
@@ -1507,23 +1519,18 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           var track = _value$match2[3];
           var by = _value$match2[4];
           var trackBy = _value$match2[5];
-          parentNode.removeChild(element);
           data[list].forEach(function(item, index) {
             var contextData = {};
             contextData[iterator] = item;
             if (!!trackBy) {
               contextData[trackBy] = index;
             }
-            var childElement = cloneElement.cloneNode(true);
-            var args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-            args = args.length > 0 ? args.split(/,/) : [];
-            oldArgs = '(' + args.join(',') + ')';
-            newArgs = '(' + args.map(function(item) {
-              return Render.START_DELIMITER + item + Render.END_DELIMITER;
-            }).join(',') + ')';
-            childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
-            childElement.innerHTML = Render.render(childElement.innerHTML, contextData);
-            parentNode.appendChild(childElement);
+            var child = originalClone.cloneNode(true);
+            child.removeAttribute(config.name);
+            var childParsed = Directives.parseElement(child, contextData);
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
+            parentNode.appendChild(wrapper.firstChild);
           });
         }
       }]);
@@ -1637,14 +1644,14 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         DataDirective.add(target.name, target, value);
       };
     }
-    "use strict";
+    'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
           var descriptor = props[i];
           descriptor.enumerable = descriptor.enumerable || false;
           descriptor.configurable = true;
-          if ("value" in descriptor)
+          if ('value' in descriptor)
             descriptor.writable = true;
           Object.defineProperty(target, descriptor.key, descriptor);
         }
@@ -1659,7 +1666,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     })();
     function _classCallCheck(instance, Constructor) {
       if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
+        throw new TypeError('Cannot call a class as a function');
       }
     }
     var Directives = (function() {
@@ -1667,14 +1674,65 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, Directives);
       }
       _createClass(Directives, null, [{
-        key: "get",
+        key: 'has',
+        value: function has(name) {
+          return !!DataDirective.get(name);
+        }
+      }, {
+        key: 'get',
         value: function get(name) {
           return DataDirective.get(name);
         }
       }, {
-        key: "getDirectives",
+        key: 'getDirectives',
         value: function getDirectives() {
           return DataDirective.data;
+        }
+      }, {
+        key: 'parseElement',
+        value: function parseElement(element, data) {
+          if (!!element.hasAttributes()) {
+            var directives = elementAttrs(element).filter(function(attr) {
+              return Directives.has(attr.name);
+            }).map(function(attr) {
+              return {
+                directive: Directives.get(attr.name),
+                value: attr.value
+              };
+            });
+            Directives.render(element, directives, data);
+          }
+          return element;
+        }
+      }, {
+        key: 'parse',
+        value: function parse(node, data) {
+          var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
+            return element.nodeType === 1;
+          });
+          childNodes.forEach(function(element) {
+            if (!!element.hasAttributes()) {
+              var directives = elementAttrs(element).filter(function(attr) {
+                return Directives.has(attr.name);
+              }).map(function(attr) {
+                return {
+                  directive: Directives.get(attr.name),
+                  value: attr.value
+                };
+              });
+              Directives.render(element, directives, data);
+            }
+          });
+          return node;
+        }
+      }, {
+        key: 'render',
+        value: function render(element, directives, data) {
+          directives.forEach(function(input) {
+            var directive = input.directive;
+            var value = input.value;
+            directive.instance.render(element, data, value, directive.config);
+          });
         }
       }]);
       return Directives;
@@ -1878,14 +1936,14 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       });
       return doc;
     }
-    "use strict";
+    'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
           var descriptor = props[i];
           descriptor.enumerable = descriptor.enumerable || false;
           descriptor.configurable = true;
-          if ("value" in descriptor)
+          if ('value' in descriptor)
             descriptor.writable = true;
           Object.defineProperty(target, descriptor.key, descriptor);
         }
@@ -1900,7 +1958,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     })();
     function _classCallCheck(instance, Constructor) {
       if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
+        throw new TypeError('Cannot call a class as a function');
       }
     }
     var DOM = (function() {
@@ -1908,20 +1966,28 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, DOM);
       }
       _createClass(DOM, null, [{
-        key: "getHTML",
-        value: function getHTML(node) {
-          return node.innerHTML.toString();
-        }
-      }, {
-        key: "parse",
+        key: 'parse',
         value: function parse(node) {
-          var items = node.getElementsByTagName("*");
-          for (var i = 0; i < items.length; i++) {
-            var element = items[i];
-            var tag = element.tagName.toLowerCase(),
-                attrs = Array.prototype.slice.call(element.attributes);
-            Components.parse(element, tag, attrs);
+          var childNodes = Array.prototype.slice.call(node.childNodes).filter(function(element) {
+            return element.nodeType === 1;
+          });
+          while (node.firstChild) {
+            node.removeChild(node.firstChild);
           }
+          childNodes.forEach(function(element) {
+            var componentName = Components.normalize(element);
+            if (!!Components.exists(componentName)) {
+              if (!!Injector.hasInstance(ucfirst.call(componentName))) {
+                node.appendChild(element);
+                var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+                Components.parse(element, attrs, Components.get(componentName));
+              } else {
+                throw new Error('Error, no instance for component: ' + ucfirst.call(componentName));
+              }
+            } else {
+              node.appendChild(element);
+            }
+          });
         }
       }]);
       return DOM;
@@ -2363,7 +2429,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         key: 'getDOM',
         value: function getDOM(parent) {
           var nodes = parent.childNodes[0].childNodes[1].childNodes;
-          console.log(nodes);
           return nodes;
         }
       }]);
@@ -2453,6 +2518,53 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     function RouterConfig(arg) {
       return decorate(RouterConfigHandlerDescriptor, arg);
     }
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var RouterLink = (function() {
+      function RouterLink() {
+        _classCallCheck(this, _RouterLink);
+      }
+      _createClass(RouterLink, [{
+        key: 'render',
+        value: function render(element, data, value, config) {
+          var property = value.substring(2);
+          property = property.substring(0, property.length - 2);
+          if (property.indexOf('.') > -1) {
+            property = property.substring(0, property.indexOf('.'));
+          }
+          if (data.hasOwnProperty(property)) {
+            element.setAttribute('href', '#' + Render.render(value, data));
+            element.removeAttribute(config.name);
+          }
+        }
+      }]);
+      var _RouterLink = RouterLink;
+      RouterLink = Directive({name: 'router-link'})(RouterLink) || RouterLink;
+      return RouterLink;
+    })();
     "use strict";
     function Runnable(target) {
       Object.assign(target.prototype, {run: function run() {}});
@@ -2679,40 +2791,19 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           });
         }
       }, {
-        key: 'parseAll',
-        value: function parseAll(node, template, data, target) {
+        key: 'parseComponent',
+        value: function parseComponent(node, template, data, target) {
           var wrapper = document.createElement('div');
           wrapper.innerHTML = Render.normalize(template);
-          var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter(function(element) {
-            return element.nodeType === 1;
-          });
-          wrapperChildNodes.forEach(function(element) {
-            if (!!element.hasAttributes()) {
-              var attrs = elementAttrs(element);
-              attrs.forEach(function(attr) {
-                var directive = Directives.get(attr.name);
-                if (!!directive) {
-                  directive.instance.render(data, element, attr.value, target);
-                }
-              });
-            }
-          });
-          node.innerHTML = Render.render(wrapper.innerHTML, data);
+          var nodeParsed = Directives.parse(wrapper, data);
+          node.innerHTML = Render.render(nodeParsed.innerHTML, data);
+          DOM.parse(node);
           var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
             return element.nodeType === 1;
           });
-          childNodes.forEach(function(cn) {
-            var attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
-            EventBinder.bind(cn, attrs, target);
-            if (!!Components.exists(cn.nodeName.toLowerCase())) {
-              var _context;
-              if (!!Injector.hasInstance((_context = cn.nodeName.toLowerCase(), ucfirst).call(_context))) {
-                Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
-              } else {
-                var _context2;
-                throw new Error('Error, no instance for component: ' + (_context2 = cn.nodeName.toLowerCase(), ucfirst).call(_context2));
-              }
-            }
+          childNodes.forEach(function(element) {
+            var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+            EventBinder.bind(element, attrs, target);
           });
         }
       }, {
@@ -2736,9 +2827,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
                   var target = component.target,
                       eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
                       instance = Injector.instances[target.name];
-                  Views.parseAll(node, template, instance, target);
+                  Views.parseComponent(node, template, instance, target);
                   EventBus.subscribe(eventName, function() {
-                    Views.parseAll(node, template, instance, target);
+                    Views.parseComponent(node, template, instance, target);
                   });
                 });
               }
@@ -2782,6 +2873,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["Filters"] = Filters;
     this["Render"] = Render;
     this["Router"] = Router;
+    this["RouterLink"] = RouterLink;
     this["_slice"] = _slice;
     this["Binder"] = Binder;
     this["Views"] = Views;
@@ -2789,12 +2881,17 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
   return _retrieveGlobal();
 });
 
-$__System.register('0', ['1', '2', '3'], function (_export) {
-  //import {Menu} from 'Menu';
+$__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
 
+  ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////
+
+  //import {DataShow} from 'DataShow';
+  //import {DateFilter} from 'DateFilter';
   'use strict';
 
-  var bootstrap, Inject, Component, View, Bindable, Runnable, DataShow, DateFilter, Menu, App;
+  var bootstrap, Inject, Component, View, Bindable, Runnable, Menu, Module1, Module2, Module3, App;
   return {
     setters: [function (_) {
       bootstrap = _.bootstrap;
@@ -2804,88 +2901,22 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
       Bindable = _.Bindable;
       Runnable = _.Runnable;
     }, function (_2) {
-      DataShow = _2.DataShow;
+      Menu = _2.Menu;
     }, function (_3) {
-      DateFilter = _3.DateFilter;
+      Module1 = _3.Module1;
+    }, function (_4) {
+      Module2 = _4.Module2;
+    }, function (_5) {
+      Module3 = _5.Module3;
     }],
     execute: function () {
-      //@Injectable
-
-      Menu = (function () {
-        var _instanceInitializers = {};
-
-        function Menu() {
-          babelHelpers.classCallCheck(this, _Menu);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
-        }
-
-        ///////
-        ///////
-        ///////
-
-        babelHelpers.createDecoratedClass(Menu, [{
-          key: 'name',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [1, 2, 3];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _Menu = Menu;
-        Menu = Runnable(Menu) || Menu;
-        Menu = View({
-          template: '<div>Menu {{name}}</div>'
-        })(Menu) || Menu;
-        Menu = Component({
-          name: 'menu'
-        })(Menu) || Menu;
-        return Menu;
-      })();
-
       App = (function () {
-        var _instanceInitializers2 = {};
-
         function App() {
           babelHelpers.classCallCheck(this, _App);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers2);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers2);
-          this.date = new Date();
         }
 
-        babelHelpers.createDecoratedClass(App, [{
-          key: 'add',
-          value: function add() {
-            this.todos.push(this.item);
-          }
-        }, {
-          key: 'remove',
-          value: function remove(item, index) {
-            this.todos.splice(index, 1);
-          }
-        }, {
-          key: 'clean',
-          value: function clean() {
-            while (this.todos.length > 0) {
-              this.todos.splice(0, 1);
-            }
-          }
-        }, {
-          key: 'name',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return "My First App!!";
-          },
-          enumerable: true
-        }, {
-          key: 'todos',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [];
-          },
-          enumerable: true
-        }], null, _instanceInitializers2);
         var _App = App;
-        App = Inject(Menu)(App) || App;
+        App = Inject(Menu, Module1, Module2, Module3)(App) || App;
         App = Runnable(App) || App;
         App = View({
           templateUrl: 'main_view.html'
@@ -2904,29 +2935,108 @@ $__System.register('0', ['1', '2', '3'], function (_export) {
 $__System.register('3', ['1'], function (_export) {
   'use strict';
 
-  var Filter, DateFilter;
+  var RouterConfig, View, Module1;
   return {
     setters: [function (_) {
-      Filter = _.Filter;
+      RouterConfig = _.RouterConfig;
+      View = _.View;
     }],
     execute: function () {
-      DateFilter = (function () {
-        function DateFilter() {
-          babelHelpers.classCallCheck(this, _DateFilter);
+      Module1 = (function () {
+        function Module1() {
+          babelHelpers.classCallCheck(this, _Module1);
         }
 
-        babelHelpers.createClass(DateFilter, [{
-          key: 'render',
-          value: function render(value, extra) {
-            return value.toJSON();
-          }
-        }]);
-        var _DateFilter = DateFilter;
-        DateFilter = Filter(DateFilter) || DateFilter;
-        return DateFilter;
+        var _Module1 = Module1;
+        Module1 = View({
+          template: '<h1>Module1</h1>'
+        })(Module1) || Module1;
+        Module1 = RouterConfig({
+          path: '/m1'
+        })(Module1) || Module1;
+        return Module1;
       })();
 
-      _export('DateFilter', DateFilter);
+      _export('Module1', Module1);
+    }
+  };
+});
+
+/*
+@Bindable
+name = "My First App!!";
+ @Bindable
+todos = [];
+ date = new Date();
+ add() {
+  this.todos.push(this.item);
+}
+ remove(item, index) {
+  this.todos.splice(index, 1);
+}
+ clean() {
+  while(this.todos.length > 0) {
+    this.todos.splice(0, 1);
+  }
+}
+*/
+
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = View({
+          template: '<h1>Module2</h1>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = View({
+          template: '<h1>Module3</h1>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
     }
   };
 });
@@ -2934,34 +3044,59 @@ $__System.register('3', ['1'], function (_export) {
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
-  var Directive, Inject, Evaluator, DataShow;
+  var Component, View, Bindable, Runnable, Menu;
   return {
     setters: [function (_) {
-      Directive = _.Directive;
-      Inject = _.Inject;
-      Evaluator = _.Evaluator;
+      Component = _.Component;
+      View = _.View;
+      Bindable = _.Bindable;
+      Runnable = _.Runnable;
     }],
     execute: function () {
-      DataShow = (function () {
-        function DataShow(evaluator) {
-          babelHelpers.classCallCheck(this, _DataShow);
+      //@Injectable
 
-          this.evaluator = evaluator;
+      Menu = (function () {
+        var _instanceInitializers = {};
+
+        function Menu() {
+          babelHelpers.classCallCheck(this, _Menu);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'counter', _instanceInitializers);
         }
 
-        babelHelpers.createClass(DataShow, [{
-          key: 'render',
-          value: function render(data, element, value) {
-            element.style.display = this.evaluator.eval(data, value) ? 'block' : 'none';
+        babelHelpers.createDecoratedClass(Menu, [{
+          key: 'click',
+          value: function click() {
+            this.counter++;
+            console.log('click!');
           }
-        }]);
-        var _DataShow = DataShow;
-        DataShow = Inject(Evaluator)(DataShow) || DataShow;
-        DataShow = Directive({
-          name: 'data-show'
-        })(DataShow) || DataShow;
-        return DataShow;
+        }, {
+          key: 'links',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
+          },
+          enumerable: true
+        }, {
+          key: 'counter',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return 0;
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Menu = Menu;
+        Menu = Runnable(Menu) || Menu;
+        Menu = View({
+          template: '<nav>{{counter}}<button _click="click()">Click me!</button><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}} <strong>ss</strong></a>'
+        })(Menu) || Menu;
+        Menu = Component({
+          name: 'menu'
+        })(Menu) || Menu;
+        return Menu;
       })();
+
+      _export('Menu', Menu);
     }
   };
 });

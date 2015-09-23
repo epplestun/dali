@@ -7,24 +7,12 @@ import {
   Runnable
 } from 'dali/dali';
 
-import {DataShow} from 'DataShow';
-import {DateFilter} from 'DateFilter';
-//import {Menu} from 'Menu';
-
-
-
-@Component({
-  name: 'menu'
-})
-@View({
-  template: '<div>Menu {{name}}</div>'
-})
-@Runnable
-//@Injectable
-class Menu {
-  @Bindable
-    name = [1, 2, 3];
-}
+//import {DataShow} from 'DataShow';
+//import {DateFilter} from 'DateFilter';
+import {Menu} from 'Menu';
+import {Module1} from 'module1/Module1';
+import {Module2} from 'module2/Module2';
+import {Module3} from 'module3/Module3';
 
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -37,30 +25,8 @@ class Menu {
   templateUrl: 'main_view.html'
 })
 @Runnable
-@Inject(Menu)
+@Inject(Menu, Module1, Module2, Module3)
 class App {
-
-  @Bindable
-  name = "My First App!!";
-
-  @Bindable
-  todos = [];
-
-  date = new Date();
-
-  add() {
-    this.todos.push(this.item);
-  }
-
-  remove(item, index) {
-    this.todos.splice(index, 1);
-  }
-
-  clean() {
-    while(this.todos.length > 0) {
-      this.todos.splice(0, 1);
-    }
-  }
 }
 
 bootstrap(App);

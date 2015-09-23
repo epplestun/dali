@@ -72,9 +72,6 @@ export class Render {
 
   static getDOM(parent) {
     let nodes = parent.childNodes[0].childNodes[1].childNodes;
-
-    console.log(nodes);
-
     return nodes;
   }
 }

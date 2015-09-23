@@ -1,17 +1,16 @@
-import {Render} from 'util/render/Render';
-import {Directive} from 'core/directive/Directive';
+import {Render} from 'core/render/Render';
+import {Directive, Directives} from 'core/directive/Directive';
 
 @Directive({
   name : 'data-for'
 })
 export class DataFor {
-  render(data, element, value, target) {
-    let cloneElement = element.cloneNode(true);
+  render(element, data, value, config) {
+    let originalClone = element.cloneNode(true);
     let parentNode = element.parentNode;
-    let [iterator, , list, track, by, trackBy] = value.match(/([$a-zA-Z0-9]+)/g);
-
     parentNode.removeChild(element);
 
+    let [iterator, , list, track, by, trackBy] = value.match(/([$a-zA-Z0-9]+)/g);
     data[list].forEach((item, index) => {
       let contextData = {};
       contextData[iterator] = item;
@@ -20,20 +19,14 @@ export class DataFor {
         contextData[trackBy] = index;
       }
 
-      let childElement = cloneElement.cloneNode(true);
-      let args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-      args = args.length > 0 ? args.split(/,/) : [];
-      oldArgs = '(' + args.join(',') + ')';
-      newArgs = '(' + args.map((item) => Render.START_DELIMITER + item + Render.END_DELIMITER).join(',') + ')';
+      let child = originalClone.cloneNode(true);
+      child.removeAttribute(config.name);
 
-      childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
-
-      childElement.innerHTML = Render.render(
-        childElement.innerHTML,
-        contextData
-      );
-
-      parentNode.appendChild(childElement);
+      let childParsed = Directives.parseElement(child, contextData);
+      let wrapper = document.createElement('div');
+      wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
+      
+      parentNode.appendChild(wrapper.firstChild);
     });
   }
 }

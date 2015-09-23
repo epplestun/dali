@@ -3,7 +3,9 @@
 
 function bootstrap(target) {
   Injector.get(target).run();
-  Router.run();
+
+  //Router.run();
+
   Components.run();
   Binder.run();
 }
@@ -173,6 +175,11 @@ var Components = (function () {
   }
 
   _createClass(Components, null, [{
+    key: 'normalize',
+    value: function normalize(element) {
+      return element.nodeName.toLowerCase();
+    }
+  }, {
     key: 'exists',
     value: function exists(name) {
       return Components.components.filter(function (component) {
@@ -180,13 +187,18 @@ var Components = (function () {
       }).length > 0;
     }
   }, {
-    key: 'parse',
-    value: function parse(node, name, attrs) {
+    key: 'get',
+    value: function get(name) {
       var component = Components.components.filter(function (component) {
         return component.value.name === name;
       });
 
-      Views.parse(node, first.call(component));
+      return first.call(component);
+    }
+  }, {
+    key: 'parse',
+    value: function parse(node, attrs, component) {
+      Views.parse(node, component);
     }
   }, {
     key: 'run',
@@ -329,9 +341,10 @@ var DataFor = (function () {
 
   _createClass(DataFor, [{
     key: 'render',
-    value: function render(data, element, value, target) {
-      var cloneElement = element.cloneNode(true);
+    value: function render(element, data, value, config) {
+      var originalClone = element.cloneNode(true);
       var parentNode = element.parentNode;
+      parentNode.removeChild(element);
 
       var _value$match = value.match(/([$a-zA-Z0-9]+)/g);
 
@@ -343,8 +356,6 @@ var DataFor = (function () {
       var by = _value$match2[4];
       var trackBy = _value$match2[5];
 
-      parentNode.removeChild(element);
-
       data[list].forEach(function (item, index) {
         var contextData = {};
         contextData[iterator] = item;
@@ -353,19 +364,14 @@ var DataFor = (function () {
           contextData[trackBy] = index;
         }
 
-        var childElement = cloneElement.cloneNode(true);
-        var args = childElement.innerHTML.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-        args = args.length > 0 ? args.split(/,/) : [];
-        oldArgs = '(' + args.join(',') + ')';
-        newArgs = '(' + args.map(function (item) {
-          return Render.START_DELIMITER + item + Render.END_DELIMITER;
-        }).join(',') + ')';
+        var child = originalClone.cloneNode(true);
+        child.removeAttribute(config.name);
 
-        childElement.innerHTML = childElement.innerHTML.replace(oldArgs, newArgs);
+        var childParsed = Directives.parseElement(child, contextData);
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
 
-        childElement.innerHTML = Render.render(childElement.innerHTML, contextData);
-
-        parentNode.appendChild(childElement);
+        parentNode.appendChild(wrapper.firstChild);
       });
     }
   }]);
@@ -460,11 +466,11 @@ function Directive(value) {
     DataDirective.add(target.name, target, value);
   };
 }
-"use strict";
+'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var Directives = (function () {
   function Directives() {
@@ -472,14 +478,71 @@ var Directives = (function () {
   }
 
   _createClass(Directives, null, [{
-    key: "get",
+    key: 'has',
+    value: function has(name) {
+      return !!DataDirective.get(name);
+    }
+  }, {
+    key: 'get',
     value: function get(name) {
       return DataDirective.get(name);
     }
   }, {
-    key: "getDirectives",
+    key: 'getDirectives',
     value: function getDirectives() {
       return DataDirective.data;
+    }
+  }, {
+    key: 'parseElement',
+    value: function parseElement(element, data) {
+      if (!!element.hasAttributes()) {
+        var directives = elementAttrs(element).filter(function (attr) {
+          return Directives.has(attr.name);
+        }).map(function (attr) {
+          return {
+            directive: Directives.get(attr.name),
+            value: attr.value
+          };
+        });
+
+        Directives.render(element, directives, data);
+      }
+
+      return element;
+    }
+  }, {
+    key: 'parse',
+    value: function parse(node, data) {
+      var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
+        return element.nodeType === 1;
+      });
+
+      childNodes.forEach(function (element) {
+        if (!!element.hasAttributes()) {
+          var directives = elementAttrs(element).filter(function (attr) {
+            return Directives.has(attr.name);
+          }).map(function (attr) {
+            return {
+              directive: Directives.get(attr.name),
+              value: attr.value
+            };
+          });
+
+          Directives.render(element, directives, data);
+        }
+      });
+
+      return node;
+    }
+  }, {
+    key: 'render',
+    value: function render(element, directives, data) {
+      directives.forEach(function (input) {
+        var directive = input.directive;
+        var value = input.value;
+
+        directive.instance.render(element, data, value, directive.config);
+      });
     }
   }]);
 
@@ -769,11 +832,11 @@ function HTMLtoDOM(html, doc) {
 
   return doc;
 }
-"use strict";
+'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var DOM = (function () {
   function DOM() {
@@ -781,23 +844,32 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
-    key: "getHTML",
-    value: function getHTML(node) {
-      return node.innerHTML.toString();
-    }
-  }, {
-    key: "parse",
+    key: 'parse',
     value: function parse(node) {
-      var items = node.getElementsByTagName("*");
+      var childNodes = Array.prototype.slice.call(node.childNodes).filter(function (element) {
+        return element.nodeType === 1;
+      });
 
-      for (var i = 0; i < items.length; i++) {
-        var element = items[i];
-
-        var tag = element.tagName.toLowerCase(),
-            attrs = Array.prototype.slice.call(element.attributes);
-
-        Components.parse(element, tag, attrs);
+      while (node.firstChild) {
+        node.removeChild(node.firstChild);
       }
+
+      childNodes.forEach(function (element) {
+        var componentName = Components.normalize(element);
+
+        if (!!Components.exists(componentName)) {
+          if (!!Injector.hasInstance(ucfirst.call(componentName))) {
+            node.appendChild(element);
+
+            var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+            Components.parse(element, attrs, Components.get(componentName));
+          } else {
+            throw new Error('Error, no instance for component: ' + ucfirst.call(componentName));
+          }
+        } else {
+          node.appendChild(element);
+        }
+      });
     }
   }]);
 
@@ -1150,9 +1222,6 @@ var Render = (function () {
     key: 'getDOM',
     value: function getDOM(parent) {
       var nodes = parent.childNodes[0].childNodes[1].childNodes;
-
-      console.log(nodes);
-
       return nodes;
     }
   }]);
@@ -1224,6 +1293,40 @@ function RouterConfigHandlerDescriptor(target, value) {
 function RouterConfig(arg) {
   return decorate(RouterConfigHandlerDescriptor, arg);
 }
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var RouterLink = (function () {
+  function RouterLink() {
+    _classCallCheck(this, _RouterLink);
+  }
+
+  _createClass(RouterLink, [{
+    key: 'render',
+    value: function render(element, data, value, config) {
+      var property = value.substring(2);
+      property = property.substring(0, property.length - 2);
+
+      if (property.indexOf('.') > -1) {
+        property = property.substring(0, property.indexOf('.'));
+      }
+
+      if (data.hasOwnProperty(property)) {
+        element.setAttribute('href', '#' + Render.render(value, data));
+        element.removeAttribute(config.name);
+      }
+    }
+  }]);
+
+  var _RouterLink = RouterLink;
+  RouterLink = Directive({
+    name: 'router-link'
+  })(RouterLink) || RouterLink;
+  return RouterLink;
+})();
 "use strict";
 
 function Runnable(target) {
@@ -1445,53 +1548,113 @@ var Views = (function () {
       });
     }
   }, {
-    key: 'parseAll',
-    value: function parseAll(node, template, data, target) {
+    key: 'parseComponent',
+    value: function parseComponent(node, template, data, target) {
+      //console.log(node, Render.normalize(template), data);
+
       var wrapper = document.createElement('div');
       wrapper.innerHTML = Render.normalize(template);
 
-      var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter(function (element) {
-        return element.nodeType === 1;
-      });
+      var nodeParsed = Directives.parse(wrapper, data);
 
-      wrapperChildNodes.forEach(function (element) {
-        if (!!element.hasAttributes()) {
-          var attrs = elementAttrs(element);
+      //node.innerHTML = nodeParsed.innerHTML;
 
-          attrs.forEach(function (attr) {
-            var directive = Directives.get(attr.name);
+      node.innerHTML = Render.render(nodeParsed.innerHTML, data);
 
-            if (!!directive) {
-              directive.instance.render(data, element, attr.value, target);
-            }
-          });
-        }
-      });
-
-      node.innerHTML = Render.render(wrapper.innerHTML, data);
+      DOM.parse(node);
 
       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
         return element.nodeType === 1;
       });
 
-      childNodes.forEach(function (cn) {
-        var attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
-        EventBinder.bind(cn, attrs, target);
+      childNodes.forEach(function (element) {
+        var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+        EventBinder.bind(element, attrs, target);
+      });
 
-        //console.log(Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst()));
+      //console.log(node);
 
-        if (!!Components.exists(cn.nodeName.toLowerCase())) {
-          var _context;
-
-          if (!!Injector.hasInstance((_context = cn.nodeName.toLowerCase(), ucfirst).call(_context))) {
-            Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+      /*
+      let wrapper = document.createElement('div');
+      wrapper.innerHTML = Render.normalize(template);
+       var wrapperChildNodes = Array.prototype.slice.call(wrapper.childNodes).filter((element) => element.nodeType === 1);
+       wrapperChildNodes.forEach((element) => {
+        // si es componente parseamos
+        let componentName = Components.normalize(element);
+        if(!!Components.exists(componentName)) {
+          if(!!Injector.hasInstance(componentName::ucfirst())) {
+            node.appendChild(element);
+            let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+            Components.parse(element, componentName, attrs);
           } else {
-            var _context2;
-
-            throw new Error('Error, no instance for component: ' + (_context2 = cn.nodeName.toLowerCase(), ucfirst).call(_context2));
+            throw new Error('Error, no instance for component: ' + componentName::ucfirst());
           }
+        } else {
+          // si no es componente añadimos a parent
+          node.appendChild(element);
         }
       });
+      */
+
+      //node.parentNode.replaceChild(, node);
+
+      /*
+      var wrapperChildNodes = Array.prototype.slice.call(
+        wrapper.getElementsByTagName("*")
+      ).filter((element) => element.nodeType === 1);
+       wrapperChildNodes.forEach((element) => {
+        let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+        //EventBinder.bind(element, attrs, target);
+         if(!!Components.exists(element.nodeName.toLowerCase())) {
+          if(!!Injector.hasInstance(element.nodeName.toLowerCase()::ucfirst())) {
+            node.appendChild(element);
+            Components.parse(element, element.nodeName.toLowerCase(), attrs);
+          } else {
+            throw new Error('Error, no instance for component: ' + cn.nodeName.toLowerCase()::ucfirst());
+          }
+        } else {
+          console.log(node, element);
+          node.appendChild(element);
+        }
+      });
+      */
+
+      /*
+      var wrapperChildNodes = Array.prototype.slice.call(
+        wrapper.getElementsByTagName("*")
+      ).filter((element) => element.nodeType === 1);
+       console.log(wrapperChildNodes);
+       wrapperChildNodes.forEach((element) => {
+        if (!!element.hasAttributes()) {
+          let directives = elementAttrs(element).filter((attr) => Directives.has(attr.name)).map((attr) => {
+            return {
+              directive: Directives.get(attr.name),
+              value: attr.value
+            };
+          });
+           Directives.render(element, directives, {
+            data, target
+          });
+        }
+      });
+       node.innerHTML = Render.render(
+        wrapper.innerHTML,
+        data
+      );
+       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+       childNodes.forEach((cn) => {
+        let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
+        EventBinder.bind(cn, attrs, target);
+        
+        if(!!Components.exists(cn.nodeName.toLowerCase())) {
+          if(!!Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst())) {
+            Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
+          } else {
+            throw new Error('Error, no instance for component: ' + cn.nodeName.toLowerCase()::ucfirst());
+          }
+        } 
+      });
+      */
     }
   }, {
     key: 'parse',
@@ -1520,10 +1683,11 @@ var Views = (function () {
                   eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
                   instance = Injector.instances[target.name];
 
-              Views.parseAll(node, template, instance, target);
+              Views.parseComponent(node, template, instance, target);
+              //console.log('xxxxxx');
 
               EventBus.subscribe(eventName, function () {
-                Views.parseAll(node, template, instance, target);
+                Views.parseComponent(node, template, instance, target);
               });
             });
           }

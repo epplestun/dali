@@ -1,9 +1,13 @@
-import {DOM} from 'core/dom/DOM';
+import {DOM} from 'core/dom/dom';
 import {Views} from 'core/view/Views';
 import {first} from 'core/util/util';
 
 export class Components {
   static components = [];
+
+  static normalize(element) {
+    return element.nodeName.toLowerCase();
+  }
 
   static exists(name) {
     return Components.components.filter((component) => {
@@ -11,12 +15,16 @@ export class Components {
     }).length > 0;
   }
 
-  static parse(node, name, attrs) {
+  static get(name) {
     let component = Components.components.filter((component) => {
       return component.value.name === name;
     });
 
-    Views.parse(node, component::first());
+    return component::first();
+  }
+
+  static parse(node, attrs, component) {
+    Views.parse(node, component);
   }
 
   static run() {

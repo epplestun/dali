@@ -1,21 +1,28 @@
 import {Components} from 'core/component/Components';
 
 export class DOM {
-
-  static getHTML(node) {
-    return node.innerHTML.toString();
-  }
-
   static parse(node) {
-    let items = node.getElementsByTagName("*");
-
-    for (let i = 0; i < items.length; i++) {
-      let element = items[i];
-
-      let tag = element.tagName.toLowerCase(),
-        attrs = Array.prototype.slice.call(element.attributes);
-
-      Components.parse(element, tag, attrs);
+    var childNodes = Array.prototype.slice.call(node.childNodes).filter((element) => element.nodeType === 1);
+    
+    while (node.firstChild) {
+      node.removeChild(node.firstChild);
     }
+
+    childNodes.forEach((element) => {
+      let componentName = Components.normalize(element);
+
+      if(!!Components.exists(componentName)) {
+        if(!!Injector.hasInstance(componentName::ucfirst())) {
+          node.appendChild(element);
+          
+          let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+          Components.parse(element, attrs, Components.get(componentName));
+        } else {
+          throw new Error('Error, no instance for component: ' + componentName::ucfirst());
+        }
+      } else {
+        node.appendChild(element);
+      }
+    });
   }
 }

@@ -1,0 +1,23 @@
+<!--
+<h1>{{name}}</h1>
+<h2>Total: {{todos.length}}</h2>
+<h3>{{date | dateFilter:short}}</h3>
+
+<ul>
+    <li *for="todo in todos track by $index">
+        {{todo}}
+        <button _click="remove(todo,$index)">Remove</button>
+    </li>
+</ul>
+
+<hr/>
+
+<p *show="todos.length > 0">visible if todos > 0</p>
+
+<input type="text" name="item" *model="item"/>
+
+<button _click="add()">Add</button> -
+<button _click="clean()">Clean</button>
+
+<menu></menu>
+-->

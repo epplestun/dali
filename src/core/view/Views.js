@@ -1,6 +1,7 @@
 import {first, ucfirst} from 'core/util/util';
 import {Render} from 'core/render/Render';
 import {HTMLParser} from 'core/dom/HTMLParser';
+import {DOM} from 'core/dom/dom';
 import {EventBus, EventNameNormalizer, EventBinder} from 'core/event/EventBus';
 import {HTTP} from 'http/HTTP';
 import {Inject, Injector} from 'core/di/Injector';
@@ -59,24 +60,99 @@ export class Views {
     });
   }
 
-  static parseAll(node, template, data, target) {
+  static parseComponent(node, template, data, target) {
+    //console.log(node, Render.normalize(template), data);
+    
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
+    let nodeParsed = Directives.parse(wrapper, data);
+
+    //node.innerHTML = nodeParsed.innerHTML;
+
+    node.innerHTML = Render.render(
+      nodeParsed.innerHTML,
+      data
+    );
+
+    DOM.parse(node);
+
+    var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+
+    childNodes.forEach((element) => {
+      let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+      EventBinder.bind(element, attrs, target);
+    });
+
+    //console.log(node);
+
+    /*
+    let wrapper = document.createElement('div');
+    wrapper.innerHTML = Render.normalize(template);
+
+    var wrapperChildNodes = Array.prototype.slice.call(wrapper.childNodes).filter((element) => element.nodeType === 1);
+
+    wrapperChildNodes.forEach((element) => {
+      // si es componente parseamos
+      let componentName = Components.normalize(element);
+      if(!!Components.exists(componentName)) {
+        if(!!Injector.hasInstance(componentName::ucfirst())) {
+          node.appendChild(element);
+          let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+          Components.parse(element, componentName, attrs);
+        } else {
+          throw new Error('Error, no instance for component: ' + componentName::ucfirst());
+        }
+      } else {
+        // si no es componente añadimos a parent
+        node.appendChild(element);
+      }
+    });
+    */
+
+    //node.parentNode.replaceChild(, node);
+
+    /*
     var wrapperChildNodes = Array.prototype.slice.call(
       wrapper.getElementsByTagName("*")
     ).filter((element) => element.nodeType === 1);
 
     wrapperChildNodes.forEach((element) => {
+      let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+      //EventBinder.bind(element, attrs, target);
+
+      if(!!Components.exists(element.nodeName.toLowerCase())) {
+        if(!!Injector.hasInstance(element.nodeName.toLowerCase()::ucfirst())) {
+          node.appendChild(element);
+          Components.parse(element, element.nodeName.toLowerCase(), attrs);
+        } else {
+          throw new Error('Error, no instance for component: ' + cn.nodeName.toLowerCase()::ucfirst());
+        }
+      } else {
+        console.log(node, element);
+        node.appendChild(element);
+      }
+    });
+    */
+
+    /*
+    var wrapperChildNodes = Array.prototype.slice.call(
+      wrapper.getElementsByTagName("*")
+    ).filter((element) => element.nodeType === 1);
+
+    console.log(wrapperChildNodes);
+
+    wrapperChildNodes.forEach((element) => {
       if (!!element.hasAttributes()) {
-        let attrs = elementAttrs(element);
+        let directives = elementAttrs(element).filter((attr) => Directives.has(attr.name)).map((attr) => {
+          return {
+            directive: Directives.get(attr.name),
+            value: attr.value
+          };
+        });
 
-        attrs.forEach(attr => {
-          let directive = Directives.get(attr.name);
-
-          if (!!directive) {
-            directive.instance.render(data, element, attr.value, target);
-          }
+        Directives.render(element, directives, {
+          data, target
         });
       }
     });
@@ -91,9 +167,6 @@ export class Views {
     childNodes.forEach((cn) => {
       let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
       EventBinder.bind(cn, attrs, target);
-
-      //console.log(Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst()));
-
       
       if(!!Components.exists(cn.nodeName.toLowerCase())) {
         if(!!Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst())) {
@@ -103,6 +176,7 @@ export class Views {
         }
       } 
     });
+    */
   }
 
   static parse(node, component) {
@@ -129,16 +203,17 @@ export class Views {
               target, EventBus.CHANGE_DETECTED
             ),
             instance = Injector.instances[target.name];
-
-          Views.parseAll(
+          
+          Views.parseComponent(
             node,
             template,
             instance,
             target
           );
+          //console.log('xxxxxx');
 
           EventBus.subscribe(eventName, () => {
-            Views.parseAll(
+            Views.parseComponent(
               node,
               template,
               instance,
