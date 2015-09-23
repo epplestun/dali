@@ -6,9 +6,7 @@ import {Binder} from 'core/view/Bindable';
 export function bootstrap(target) {
   Injector.get(target).run();
 
-
-  //Router.run();
-
+  Router.run();
   Components.run();
   Binder.run();
 }
