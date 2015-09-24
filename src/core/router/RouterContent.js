@@ -21,6 +21,11 @@ export class RouterContent {
   }
   
   change(event, route) {
+
+    if(!!route.value.hasOwnProperty('title')) {
+      document.title = route.value.title;
+    }
+
     let element = document.getElementById('router-content'),
         view = Views.views[route.target.name],
         target = route.target,

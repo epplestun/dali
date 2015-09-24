@@ -1793,6 +1793,11 @@ var RouterContent = (function () {
   _createClass(RouterContent, [{
     key: 'change',
     value: function change(event, route) {
+
+      if (!!route.value.hasOwnProperty('title')) {
+        document.title = route.value.title;
+      }
+
       var element = document.getElementById('router-content'),
           view = Views.views[route.target.name],
           target = route.target,

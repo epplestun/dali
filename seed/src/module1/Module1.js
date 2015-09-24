@@ -7,6 +7,7 @@ import {
 import {DateFilter} from 'filters/DateFilter';
 
 @RouterConfig({
+  title: 'Module 1',
   default: true,
   path : '/m1'
 })

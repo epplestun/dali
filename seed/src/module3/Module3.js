@@ -5,6 +5,7 @@ import {
 } from 'dali/dali';
 
 @RouterConfig({
+  title: 'Module 3',
   path : '/m3'
 })
 @View({
