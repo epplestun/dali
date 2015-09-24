@@ -4,6 +4,7 @@ import {
 } from 'dali/dali';
 
 @RouterConfig({
+  default: true,
   path : '/m1'
 })
 @View({

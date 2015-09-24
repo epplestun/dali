@@ -993,6 +993,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["InjectHandlerDescriptor"] = InjectHandlerDescriptor;
     this["Inject"] = Inject;
     this["_classCallCheck"] = _classCallCheck;
+    this["makeMap"] = makeMap;
+    this["HTMLParser"] = HTMLParser;
+    this["HTMLtoXML"] = HTMLtoXML;
+    this["HTMLtoDOM"] = HTMLtoDOM;
+    this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["normalizeDirectiveName"] = normalizeDirectiveName;
     this["_classCallCheck"] = _classCallCheck;
@@ -1000,21 +1005,16 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["_classCallCheck"] = _classCallCheck;
     this["Directive"] = Directive;
     this["_classCallCheck"] = _classCallCheck;
-    this["makeMap"] = makeMap;
-    this["HTMLParser"] = HTMLParser;
-    this["HTMLtoXML"] = HTMLtoXML;
-    this["HTMLtoDOM"] = HTMLtoDOM;
-    this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["setPrimitive"] = setPrimitive;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
-    this["Module"] = Module;
     this["_classCallCheck"] = _classCallCheck;
     this["normalizeFilterName"] = normalizeFilterName;
     this["Filter"] = Filter;
     this["_classCallCheck"] = _classCallCheck;
+    this["Module"] = Module;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
     this["pathToRegexp"] = pathToRegexp;
@@ -1022,6 +1022,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["RouterConfig"] = RouterConfig;
     this["_classCallCheck"] = _classCallCheck;
     this["Runnable"] = Runnable;
+    this["_toConsumableArray"] = _toConsumableArray;
+    this["isDescriptor"] = isDescriptor;
+    this["decorate"] = decorate;
+    this["first"] = first;
+    this["last"] = last;
+    this["ucfirst"] = ucfirst;
     this["_classCallCheck"] = _classCallCheck;
     this["Bindable"] = Bindable;
     this["ViewHandlerDescriptor"] = ViewHandlerDescriptor;
@@ -1029,22 +1035,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["_classCallCheck"] = _classCallCheck;
     this["elementAttrs"] = elementAttrs;
     this["sameAttributes"] = sameAttributes;
-    this["_toConsumableArray"] = _toConsumableArray;
-    this["isDescriptor"] = isDescriptor;
-    this["decorate"] = decorate;
-    this["first"] = first;
-    this["last"] = last;
-    this["ucfirst"] = ucfirst;
     var _createClass = this["_createClass"];
     var HTTP = this["HTTP"];
     var Components = this["Components"];
     var Injector = this["Injector"];
-    var DataDirective = this["DataDirective"];
-    var _slicedToArray = this["_slicedToArray"];
-    var DataFor = this["DataFor"];
-    var DataIf = this["DataIf"];
-    var DataModel = this["DataModel"];
-    var Directives = this["Directives"];
     var startTag = this["startTag"];
     var endTag = this["endTag"];
     var attr = this["attr"];
@@ -1055,6 +1049,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var fillAttrs = this["fillAttrs"];
     var special = this["special"];
     var DOM = this["DOM"];
+    var DataDirective = this["DataDirective"];
+    var _slicedToArray = this["_slicedToArray"];
+    var DataFor = this["DataFor"];
+    var DataIf = this["DataIf"];
+    var DataModel = this["DataModel"];
+    var Directives = this["Directives"];
     var Evaluator = this["Evaluator"];
     var EventBinder = this["EventBinder"];
     var EventBus = this["EventBus"];
@@ -1064,9 +1064,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var Render = this["Render"];
     var Router = this["Router"];
     var RouterLink = this["RouterLink"];
+    var _slice = this["_slice"];
     var Binder = this["Binder"];
     var Views = this["Views"];
-    var _slice = this["_slice"];
     'use strict';
     'use strict';
     function bootstrap(target) {
@@ -1385,6 +1385,260 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         enumerable: true
       }]);
       return Injector;
+    })();
+    "use strict";
+    function makeMap(str) {
+      var obj = {},
+          items = str.split(",");
+      for (var i = 0; i < items.length; i++)
+        obj[items[i]] = true;
+      return obj;
+    }
+    var startTag = /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
+        endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/,
+        attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+    var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr");
+    var block = makeMap("address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,ins,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video");
+    var inline = makeMap("a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var");
+    var closeSelf = makeMap("colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr");
+    var fillAttrs = makeMap("checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected");
+    var special = makeMap("script,style");
+    function HTMLParser(html, handler) {
+      var index,
+          chars,
+          match,
+          stack = [],
+          last = html;
+      stack.last = function() {
+        return this[this.length - 1];
+      };
+      while (html) {
+        chars = true;
+        if (!stack.last() || !special[stack.last()]) {
+          if (html.indexOf("<!--") == 0) {
+            index = html.indexOf("-->");
+            if (index >= 0) {
+              if (handler.comment)
+                handler.comment(html.substring(4, index));
+              html = html.substring(index + 3);
+              chars = false;
+            }
+          } else if (html.indexOf("</") == 0) {
+            match = html.match(endTag);
+            if (match) {
+              html = html.substring(match[0].length);
+              match[0].replace(endTag, parseEndTag);
+              chars = false;
+            }
+          } else if (html.indexOf("<") == 0) {
+            match = html.match(startTag);
+            if (match) {
+              html = html.substring(match[0].length);
+              match[0].replace(startTag, parseStartTag);
+              chars = false;
+            }
+          }
+          if (chars) {
+            index = html.indexOf("<");
+            var text = index < 0 ? html : html.substring(0, index);
+            html = index < 0 ? "" : html.substring(index);
+            if (handler.chars)
+              handler.chars(text);
+          }
+        } else {
+          html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text) {
+            text = text.replace(/<!--(.*?)-->/g, "$1").replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
+            if (handler.chars)
+              handler.chars(text);
+            return "";
+          });
+          parseEndTag("", stack.last());
+        }
+        if (html == last)
+          throw "Parse Error: " + html;
+        last = html;
+      }
+      parseEndTag();
+      function parseStartTag(tag, tagName, rest, unary) {
+        tagName = tagName.toLowerCase();
+        if (block[tagName]) {
+          while (stack.last() && inline[stack.last()]) {
+            parseEndTag("", stack.last());
+          }
+        }
+        if (closeSelf[tagName] && stack.last() == tagName) {
+          parseEndTag("", tagName);
+        }
+        unary = empty[tagName] || !!unary;
+        if (!unary)
+          stack.push(tagName);
+        if (handler.start) {
+          var attrs = [];
+          rest.replace(attr, function(match, name) {
+            var value = arguments[2] ? arguments[2] : arguments[3] ? arguments[3] : arguments[4] ? arguments[4] : fillAttrs[name] ? name : "";
+            attrs.push({
+              name: name,
+              value: value,
+              escaped: value.replace(/(^|[^\\])"/g, '$1\\\"')
+            });
+          });
+          if (handler.start)
+            handler.start(tagName, attrs, unary);
+        }
+      }
+      function parseEndTag(tag, tagName) {
+        if (!tagName)
+          var pos = 0;
+        else
+          for (var pos = stack.length - 1; pos >= 0; pos--)
+            if (stack[pos] == tagName)
+              break;
+        if (pos >= 0) {
+          for (var i = stack.length - 1; i >= pos; i--)
+            if (handler.end)
+              handler.end(stack[i]);
+          stack.length = pos;
+        }
+      }
+    }
+    function HTMLtoXML(html) {
+      var results = "";
+      HTMLParser(html, {
+        start: function start(tag, attrs, unary) {
+          results += "<" + tag;
+          for (var i = 0; i < attrs.length; i++)
+            results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
+          results += (unary ? "/" : "") + ">";
+        },
+        end: function end(tag) {
+          results += "</" + tag + ">";
+        },
+        chars: function chars(text) {
+          results += text;
+        },
+        comment: function comment(text) {
+          results += "<!--" + text + "-->";
+        }
+      });
+      return results;
+    }
+    function HTMLtoDOM(html, doc) {
+      var one = makeMap("html,head,body,title");
+      var structure = {
+        link: "head",
+        base: "head"
+      };
+      if (!doc) {
+        if (typeof DOMDocument != "undefined")
+          doc = new DOMDocument();
+        else if (typeof document != "undefined" && document.implementation && document.implementation.createDocument)
+          doc = document.implementation.createDocument("", "", null);
+        else if (typeof ActiveX != "undefined")
+          doc = new ActiveXObject("Msxml.DOMDocument");
+      } else
+        doc = doc.ownerDocument || doc.getOwnerDocument && doc.getOwnerDocument() || doc;
+      var elems = [],
+          documentElement = doc.documentElement || doc.getDocumentElement && doc.getDocumentElement();
+      if (!documentElement && doc.createElement)
+        (function() {
+          var html = doc.createElement("html");
+          var head = doc.createElement("head");
+          head.appendChild(doc.createElement("title"));
+          html.appendChild(head);
+          html.appendChild(doc.createElement("body"));
+          doc.appendChild(html);
+        })();
+      if (doc.getElementsByTagName)
+        for (var i in one)
+          one[i] = doc.getElementsByTagName(i)[0];
+      var curParentNode = one.body;
+      HTMLParser(html, {
+        start: function start(tagName, attrs, unary) {
+          if (one[tagName]) {
+            curParentNode = one[tagName];
+            if (!unary) {
+              elems.push(curParentNode);
+            }
+            return;
+          }
+          var elem = doc.createElement(tagName);
+          for (var attr in attrs)
+            elem.setAttribute(attrs[attr].name, attrs[attr].value);
+          if (structure[tagName] && typeof one[structure[tagName]] != "boolean")
+            one[structure[tagName]].appendChild(elem);
+          else if (curParentNode && curParentNode.appendChild)
+            curParentNode.appendChild(elem);
+          if (!unary) {
+            elems.push(elem);
+            curParentNode = elem;
+          }
+        },
+        end: function end(tag) {
+          elems.length -= 1;
+          curParentNode = elems[elems.length - 1];
+        },
+        chars: function chars(text) {
+          curParentNode.appendChild(doc.createTextNode(text));
+        },
+        comment: function comment(text) {}
+      });
+      return doc;
+    }
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var DOM = (function() {
+      function DOM() {
+        _classCallCheck(this, DOM);
+      }
+      _createClass(DOM, null, [{
+        key: 'parse',
+        value: function parse(node) {
+          var childNodes = Array.prototype.slice.call(node.childNodes).filter(function(element) {
+            return element.nodeType === 1;
+          });
+          while (node.firstChild) {
+            node.removeChild(node.firstChild);
+          }
+          childNodes.forEach(function(element) {
+            var componentName = Components.normalize(element);
+            if (!!Components.exists(componentName)) {
+              if (!!Injector.hasInstance(ucfirst.call(componentName))) {
+                node.appendChild(element);
+                var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+                Components.parse(element, attrs, Components.get(componentName));
+              } else {
+                throw new Error('Error, no instance for component: ' + ucfirst.call(componentName));
+              }
+            } else {
+              node.appendChild(element);
+            }
+          });
+        }
+      }]);
+      return DOM;
     })();
     "use strict";
     var _createClass = (function() {
@@ -1739,260 +1993,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return Directives;
     })();
     Directives.PREFIX = "data-";
-    "use strict";
-    function makeMap(str) {
-      var obj = {},
-          items = str.split(",");
-      for (var i = 0; i < items.length; i++)
-        obj[items[i]] = true;
-      return obj;
-    }
-    var startTag = /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
-        endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/,
-        attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-    var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr");
-    var block = makeMap("address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,ins,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video");
-    var inline = makeMap("a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var");
-    var closeSelf = makeMap("colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr");
-    var fillAttrs = makeMap("checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected");
-    var special = makeMap("script,style");
-    function HTMLParser(html, handler) {
-      var index,
-          chars,
-          match,
-          stack = [],
-          last = html;
-      stack.last = function() {
-        return this[this.length - 1];
-      };
-      while (html) {
-        chars = true;
-        if (!stack.last() || !special[stack.last()]) {
-          if (html.indexOf("<!--") == 0) {
-            index = html.indexOf("-->");
-            if (index >= 0) {
-              if (handler.comment)
-                handler.comment(html.substring(4, index));
-              html = html.substring(index + 3);
-              chars = false;
-            }
-          } else if (html.indexOf("</") == 0) {
-            match = html.match(endTag);
-            if (match) {
-              html = html.substring(match[0].length);
-              match[0].replace(endTag, parseEndTag);
-              chars = false;
-            }
-          } else if (html.indexOf("<") == 0) {
-            match = html.match(startTag);
-            if (match) {
-              html = html.substring(match[0].length);
-              match[0].replace(startTag, parseStartTag);
-              chars = false;
-            }
-          }
-          if (chars) {
-            index = html.indexOf("<");
-            var text = index < 0 ? html : html.substring(0, index);
-            html = index < 0 ? "" : html.substring(index);
-            if (handler.chars)
-              handler.chars(text);
-          }
-        } else {
-          html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text) {
-            text = text.replace(/<!--(.*?)-->/g, "$1").replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
-            if (handler.chars)
-              handler.chars(text);
-            return "";
-          });
-          parseEndTag("", stack.last());
-        }
-        if (html == last)
-          throw "Parse Error: " + html;
-        last = html;
-      }
-      parseEndTag();
-      function parseStartTag(tag, tagName, rest, unary) {
-        tagName = tagName.toLowerCase();
-        if (block[tagName]) {
-          while (stack.last() && inline[stack.last()]) {
-            parseEndTag("", stack.last());
-          }
-        }
-        if (closeSelf[tagName] && stack.last() == tagName) {
-          parseEndTag("", tagName);
-        }
-        unary = empty[tagName] || !!unary;
-        if (!unary)
-          stack.push(tagName);
-        if (handler.start) {
-          var attrs = [];
-          rest.replace(attr, function(match, name) {
-            var value = arguments[2] ? arguments[2] : arguments[3] ? arguments[3] : arguments[4] ? arguments[4] : fillAttrs[name] ? name : "";
-            attrs.push({
-              name: name,
-              value: value,
-              escaped: value.replace(/(^|[^\\])"/g, '$1\\\"')
-            });
-          });
-          if (handler.start)
-            handler.start(tagName, attrs, unary);
-        }
-      }
-      function parseEndTag(tag, tagName) {
-        if (!tagName)
-          var pos = 0;
-        else
-          for (var pos = stack.length - 1; pos >= 0; pos--)
-            if (stack[pos] == tagName)
-              break;
-        if (pos >= 0) {
-          for (var i = stack.length - 1; i >= pos; i--)
-            if (handler.end)
-              handler.end(stack[i]);
-          stack.length = pos;
-        }
-      }
-    }
-    function HTMLtoXML(html) {
-      var results = "";
-      HTMLParser(html, {
-        start: function start(tag, attrs, unary) {
-          results += "<" + tag;
-          for (var i = 0; i < attrs.length; i++)
-            results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
-          results += (unary ? "/" : "") + ">";
-        },
-        end: function end(tag) {
-          results += "</" + tag + ">";
-        },
-        chars: function chars(text) {
-          results += text;
-        },
-        comment: function comment(text) {
-          results += "<!--" + text + "-->";
-        }
-      });
-      return results;
-    }
-    function HTMLtoDOM(html, doc) {
-      var one = makeMap("html,head,body,title");
-      var structure = {
-        link: "head",
-        base: "head"
-      };
-      if (!doc) {
-        if (typeof DOMDocument != "undefined")
-          doc = new DOMDocument();
-        else if (typeof document != "undefined" && document.implementation && document.implementation.createDocument)
-          doc = document.implementation.createDocument("", "", null);
-        else if (typeof ActiveX != "undefined")
-          doc = new ActiveXObject("Msxml.DOMDocument");
-      } else
-        doc = doc.ownerDocument || doc.getOwnerDocument && doc.getOwnerDocument() || doc;
-      var elems = [],
-          documentElement = doc.documentElement || doc.getDocumentElement && doc.getDocumentElement();
-      if (!documentElement && doc.createElement)
-        (function() {
-          var html = doc.createElement("html");
-          var head = doc.createElement("head");
-          head.appendChild(doc.createElement("title"));
-          html.appendChild(head);
-          html.appendChild(doc.createElement("body"));
-          doc.appendChild(html);
-        })();
-      if (doc.getElementsByTagName)
-        for (var i in one)
-          one[i] = doc.getElementsByTagName(i)[0];
-      var curParentNode = one.body;
-      HTMLParser(html, {
-        start: function start(tagName, attrs, unary) {
-          if (one[tagName]) {
-            curParentNode = one[tagName];
-            if (!unary) {
-              elems.push(curParentNode);
-            }
-            return;
-          }
-          var elem = doc.createElement(tagName);
-          for (var attr in attrs)
-            elem.setAttribute(attrs[attr].name, attrs[attr].value);
-          if (structure[tagName] && typeof one[structure[tagName]] != "boolean")
-            one[structure[tagName]].appendChild(elem);
-          else if (curParentNode && curParentNode.appendChild)
-            curParentNode.appendChild(elem);
-          if (!unary) {
-            elems.push(elem);
-            curParentNode = elem;
-          }
-        },
-        end: function end(tag) {
-          elems.length -= 1;
-          curParentNode = elems[elems.length - 1];
-        },
-        chars: function chars(text) {
-          curParentNode.appendChild(doc.createTextNode(text));
-        },
-        comment: function comment(text) {}
-      });
-      return doc;
-    }
-    'use strict';
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ('value' in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
-      }
-    }
-    var DOM = (function() {
-      function DOM() {
-        _classCallCheck(this, DOM);
-      }
-      _createClass(DOM, null, [{
-        key: 'parse',
-        value: function parse(node) {
-          var childNodes = Array.prototype.slice.call(node.childNodes).filter(function(element) {
-            return element.nodeType === 1;
-          });
-          while (node.firstChild) {
-            node.removeChild(node.firstChild);
-          }
-          childNodes.forEach(function(element) {
-            var componentName = Components.normalize(element);
-            if (!!Components.exists(componentName)) {
-              if (!!Injector.hasInstance(ucfirst.call(componentName))) {
-                node.appendChild(element);
-                var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-                Components.parse(element, attrs, Components.get(componentName));
-              } else {
-                throw new Error('Error, no instance for component: ' + ucfirst.call(componentName));
-              }
-            } else {
-              node.appendChild(element);
-            }
-          });
-        }
-      }]);
-      return DOM;
-    })();
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -2238,8 +2238,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return EventNameNormalizer;
     })();
-    "use strict";
-    function Module() {}
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -2337,6 +2335,8 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return Filters;
     })();
+    "use strict";
+    function Module() {}
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -2467,9 +2467,25 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, Router);
       }
       _createClass(Router, null, [{
+        key: 'change',
+        value: function change(event, route) {
+          console.log('Cargar componente asociado a ruta', Router.getHash(), route);
+        }
+      }, {
         key: 'getHash',
         value: function getHash() {
           return window.location.hash.substring(1);
+        }
+      }, {
+        key: 'exists',
+        value: function exists() {
+          var routes = Router.routes.filter(function(route) {
+            var path = route.value.path;
+            if (!!path.test(Router.getHash())) {
+              return route;
+            }
+          });
+          return routes.length === 1 ? true : false;
         }
       }, {
         key: 'route',
@@ -2477,13 +2493,32 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           Router.routes.forEach(function(route) {
             var path = route.value.path;
             if (!!path.test(Router.getHash())) {
-              Injector.get(route.target).run();
+              EventBus.publish(Router.ROUTE_CHANGED, route);
+            }
+          });
+        }
+      }, {
+        key: 'routeToDefault',
+        value: function routeToDefault() {
+          Router.routes.forEach(function(route) {
+            if (!!route.value.hasOwnProperty('default')) {
+              window.location.hash = route.value.url;
             }
           });
         }
       }, {
         key: 'run',
         value: function run() {
+          EventBus.subscribe(Router.ROUTE_CHANGED, Router.change);
+          if (window.location.hash.length === 0) {
+            Router.routeToDefault();
+          } else {
+            if (Router.exists()) {
+              Router.route();
+            } else {
+              throw new Error('404');
+            }
+          }
           window.addEventListener('hashchange', Router.route, false);
         }
       }, {
@@ -2493,6 +2528,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }]);
       return Router;
     })();
+    Router.ROUTE_CHANGED = "ROUTE_CHANGED";
     'use strict';
     function pathToRegexp(path, keys, sensitive, strict) {
       if (path instanceof RegExp)
@@ -2510,6 +2546,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return new RegExp('^' + path + '$', sensitive ? '' : 'i');
     }
     function RouterConfigHandlerDescriptor(target, value) {
+      value.url = value.path;
       value.path = pathToRegexp(value.path, [], false, false);
       Router.routes.push({
         target: target,
@@ -2569,6 +2606,50 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     "use strict";
     function Runnable(target) {
       Object.assign(target.prototype, {run: function run() {}});
+    }
+    'use strict';
+    var _slice = Array.prototype.slice;
+    function _toConsumableArray(arr) {
+      if (Array.isArray(arr)) {
+        for (var i = 0,
+            arr2 = Array(arr.length); i < arr.length; i++)
+          arr2[i] = arr[i];
+        return arr2;
+      } else {
+        return Array.from(arr);
+      }
+    }
+    function isDescriptor(desc) {
+      if (!desc || !desc.hasOwnProperty) {
+        return false;
+      }
+      var keys = ['value', 'get', 'set'];
+      for (var i = 0,
+          l = keys.length; i < l; i++) {
+        if (desc.hasOwnProperty(keys[i])) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function decorate(handleDescriptor, entryArgs) {
+      if (isDescriptor(entryArgs[entryArgs.length - 1])) {
+        return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
+      } else {
+        return function() {
+          return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
+        };
+      }
+    }
+    function first() {
+      return this[0];
+    }
+    function last() {
+      return this[this.length - 1];
+    }
+    function ucfirst() {
+      var f = this.charAt(0).toUpperCase();
+      return f + this.substr(1);
     }
     'use strict';
     var _createClass = (function() {
@@ -2802,60 +2883,10 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     })();
     Views.TEMPLATE_URL = "templateUrl";
     Views.TEMPLATE = "template";
-    'use strict';
-    var _slice = Array.prototype.slice;
-    function _toConsumableArray(arr) {
-      if (Array.isArray(arr)) {
-        for (var i = 0,
-            arr2 = Array(arr.length); i < arr.length; i++)
-          arr2[i] = arr[i];
-        return arr2;
-      } else {
-        return Array.from(arr);
-      }
-    }
-    function isDescriptor(desc) {
-      if (!desc || !desc.hasOwnProperty) {
-        return false;
-      }
-      var keys = ['value', 'get', 'set'];
-      for (var i = 0,
-          l = keys.length; i < l; i++) {
-        if (desc.hasOwnProperty(keys[i])) {
-          return true;
-        }
-      }
-      return false;
-    }
-    function decorate(handleDescriptor, entryArgs) {
-      if (isDescriptor(entryArgs[entryArgs.length - 1])) {
-        return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
-      } else {
-        return function() {
-          return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
-        };
-      }
-    }
-    function first() {
-      return this[0];
-    }
-    function last() {
-      return this[this.length - 1];
-    }
-    function ucfirst() {
-      var f = this.charAt(0).toUpperCase();
-      return f + this.substr(1);
-    }
     this["_createClass"] = _createClass;
     this["HTTP"] = HTTP;
     this["Components"] = Components;
     this["Injector"] = Injector;
-    this["DataDirective"] = DataDirective;
-    this["_slicedToArray"] = _slicedToArray;
-    this["DataFor"] = DataFor;
-    this["DataIf"] = DataIf;
-    this["DataModel"] = DataModel;
-    this["Directives"] = Directives;
     this["startTag"] = startTag;
     this["endTag"] = endTag;
     this["attr"] = attr;
@@ -2866,6 +2897,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["fillAttrs"] = fillAttrs;
     this["special"] = special;
     this["DOM"] = DOM;
+    this["DataDirective"] = DataDirective;
+    this["_slicedToArray"] = _slicedToArray;
+    this["DataFor"] = DataFor;
+    this["DataIf"] = DataIf;
+    this["DataModel"] = DataModel;
+    this["Directives"] = Directives;
     this["Evaluator"] = Evaluator;
     this["EventBinder"] = EventBinder;
     this["EventBus"] = EventBus;
@@ -2875,9 +2912,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["Render"] = Render;
     this["Router"] = Router;
     this["RouterLink"] = RouterLink;
+    this["_slice"] = _slice;
     this["Binder"] = Binder;
     this["Views"] = Views;
-    this["_slice"] = _slice;
   })();
   return _retrieveGlobal();
 });
@@ -2937,6 +2974,36 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = View({
+          template: '<h1>Module2</h1>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -2983,85 +3050,6 @@ $__System.register('2', ['1'], function (_export) {
   };
 });
 
-$__System.register('3', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Module1;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-    }],
-    execute: function () {
-      Module1 = (function () {
-        function Module1() {
-          babelHelpers.classCallCheck(this, _Module1);
-        }
-
-        var _Module1 = Module1;
-        Module1 = View({
-          template: '<h1>Module1</h1>'
-        })(Module1) || Module1;
-        Module1 = RouterConfig({
-          path: '/m1'
-        })(Module1) || Module1;
-        return Module1;
-      })();
-
-      _export('Module1', Module1);
-    }
-  };
-});
-
-/*
-@Bindable
-name = "My First App!!";
- @Bindable
-todos = [];
- date = new Date();
- add() {
-  this.todos.push(this.item);
-}
- remove(item, index) {
-  this.todos.splice(index, 1);
-}
- clean() {
-  while(this.todos.length > 0) {
-    this.todos.splice(0, 1);
-  }
-}
-*/
-
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = View({
-          template: '<h1>Module2</h1>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
-    }
-  };
-});
-
 $__System.register('5', ['1'], function (_export) {
   'use strict';
 
@@ -3091,6 +3079,56 @@ $__System.register('5', ['1'], function (_export) {
     }
   };
 });
+
+$__System.register('3', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Module1;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+    }],
+    execute: function () {
+      Module1 = (function () {
+        function Module1() {
+          babelHelpers.classCallCheck(this, _Module1);
+        }
+
+        var _Module1 = Module1;
+        Module1 = View({
+          template: '<h1>Module1</h1>'
+        })(Module1) || Module1;
+        Module1 = RouterConfig({
+          'default': true,
+          path: '/m1'
+        })(Module1) || Module1;
+        return Module1;
+      })();
+
+      _export('Module1', Module1);
+    }
+  };
+});
+
+/*
+@Bindable
+name = "My First App!!";
+ @Bindable
+todos = [];
+ date = new Date();
+ add() {
+  this.todos.push(this.item);
+}
+ remove(item, index) {
+  this.todos.splice(index, 1);
+}
+ clean() {
+  while(this.todos.length > 0) {
+    this.todos.splice(0, 1);
+  }
+}
+*/
 
 })
 (function(factory) {

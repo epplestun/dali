@@ -21,6 +21,7 @@ function pathToRegexp(path, keys, sensitive, strict) {
 }
 
 function RouterConfigHandlerDescriptor(target, value) {
+  value.url = value.path;
   value.path = pathToRegexp(value.path, [], false, false);
   Router.routes.push({target, value});
 }
