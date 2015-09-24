@@ -986,7 +986,11 @@ var DOM = (function () {
 
         if (!!Components.exists(componentName)) {
           if (!!Injector.hasInstance(componentName)) {
-            node.appendChild(element);
+            if (element.parentNode) {
+              element.parentNode.appendChild(element);
+            } else {
+              node.appendChild(element);
+            }
 
             var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
             Components.parse(element, attrs, Components.get(componentName));
@@ -994,7 +998,11 @@ var DOM = (function () {
             throw new Error('Error, no instance for component: ' + componentName);
           }
         } else {
-          node.appendChild(element);
+          if (element.parentNode) {
+            element.parentNode.appendChild(element);
+          } else {
+            node.appendChild(element);
+          }
         }
       });
     }
