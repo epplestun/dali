@@ -4,6 +4,7 @@ import {Router} from 'core/router/Router';
 import {Component} from 'core/component/Component';
 import {View} from 'core/view/View';
 import {Runnable} from 'core/runnable/Runnable';
+import {Injector} from 'core/di/Injector';
 
 log('RouterContent.js');
 
@@ -19,6 +20,6 @@ export class RouterContent {
   }
   
   change(event, route) {
-    console.log('RouterContent.change', route);
+    Injector.resolve(route.target).run();
   }
 }

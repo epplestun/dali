@@ -1,6 +1,7 @@
 import {
   RouterConfig,
-  View
+  View,
+  Runnable
 } from 'dali/dali';
 
 @RouterConfig({
@@ -10,7 +11,12 @@ import {
 @View({
   template: '<h1>Module1</h1>'
 })
+@Runnable
 export class Module1 {
+  constructor() {
+    console.log('Module1');
+  }
+
   /*
   @Bindable
   name = "My First App!!";

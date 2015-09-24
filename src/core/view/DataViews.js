@@ -10,8 +10,6 @@ export class DataViews {
   }
 
   static add(name, view, config) {
-    console.log(name, DataViews.normalize(name));
-
     DataViews.data[DataViews.normalize(name)] = {
       target: view,
       config

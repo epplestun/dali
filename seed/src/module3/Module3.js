@@ -1,6 +1,7 @@
 import {
   RouterConfig,
-  View
+  View,
+  Runnable
 } from 'dali/dali';
 
 @RouterConfig({
@@ -9,6 +10,9 @@ import {
 @View({
   template: '<h1>Module3</h1>'
 })
+@Runnable
 export class Module3 {
-  
+  constructor() {
+    console.log('Module3');
+  }
 }

@@ -1486,8 +1486,6 @@ var DataViews = (function () {
   }, {
     key: 'add',
     value: function add(name, view, config) {
-      console.log(name, DataViews.normalize(name));
-
       DataViews.data[DataViews.normalize(name)] = {
         target: view,
         config: config
@@ -1758,14 +1756,15 @@ var RouterContent = (function () {
   function RouterContent() {
     _classCallCheck(this, _RouterContent);
 
-    console.log('RouterContent.constructor');
     EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
   }
 
   _createClass(RouterContent, [{
     key: 'change',
     value: function change(event, route) {
-      console.log('RouterContent.change', route);
+      //console.log('RouterContent.change', route);
+
+      Injector.resolve(route.target).run();
     }
   }]);
 

@@ -2740,7 +2740,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }, {
         key: 'add',
         value: function add(name, view, config) {
-          console.log(name, DataViews.normalize(name));
           DataViews.data[DataViews.normalize(name)] = {
             target: view,
             config: config
@@ -3034,13 +3033,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var RouterContent = (function() {
       function RouterContent() {
         _classCallCheck(this, _RouterContent);
-        console.log('RouterContent.constructor');
         EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
       }
       _createClass(RouterContent, [{
         key: 'change',
         value: function change(event, route) {
-          console.log('RouterContent.change', route);
+          Injector.resolve(route.target).run();
         }
       }]);
       var _RouterContent = RouterContent;
@@ -3199,6 +3197,40 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+
+          console.log('Module2');
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h1>Module2</h1>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -3248,19 +3280,23 @@ $__System.register('2', ['1'], function (_export) {
 $__System.register('5', ['1'], function (_export) {
   'use strict';
 
-  var RouterConfig, View, Module3;
+  var RouterConfig, View, Runnable, Module3;
   return {
     setters: [function (_) {
       RouterConfig = _.RouterConfig;
       View = _.View;
+      Runnable = _.Runnable;
     }],
     execute: function () {
       Module3 = (function () {
         function Module3() {
           babelHelpers.classCallCheck(this, _Module3);
+
+          console.log('Module3');
         }
 
         var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
         Module3 = View({
           template: '<h1>Module3</h1>'
         })(Module3) || Module3;
@@ -3278,19 +3314,41 @@ $__System.register('5', ['1'], function (_export) {
 $__System.register('3', ['1'], function (_export) {
   'use strict';
 
-  var RouterConfig, View, Module1;
+  var RouterConfig, View, Runnable, Module1;
   return {
     setters: [function (_) {
       RouterConfig = _.RouterConfig;
       View = _.View;
+      Runnable = _.Runnable;
     }],
     execute: function () {
       Module1 = (function () {
         function Module1() {
           babelHelpers.classCallCheck(this, _Module1);
+
+          console.log('Module1');
         }
 
+        /*
+        @Bindable
+        name = "My First App!!";
+         @Bindable
+        todos = [];
+         date = new Date();
+         add() {
+          this.todos.push(this.item);
+        }
+         remove(item, index) {
+          this.todos.splice(index, 1);
+        }
+         clean() {
+          while(this.todos.length > 0) {
+            this.todos.splice(0, 1);
+          }
+        }
+        */
         var _Module1 = Module1;
+        Module1 = Runnable(Module1) || Module1;
         Module1 = View({
           template: '<h1>Module1</h1>'
         })(Module1) || Module1;
@@ -3302,55 +3360,6 @@ $__System.register('3', ['1'], function (_export) {
       })();
 
       _export('Module1', Module1);
-    }
-  };
-});
-
-/*
-@Bindable
-name = "My First App!!";
- @Bindable
-todos = [];
- date = new Date();
- add() {
-  this.todos.push(this.item);
-}
- remove(item, index) {
-  this.todos.splice(index, 1);
-}
- clean() {
-  while(this.todos.length > 0) {
-    this.todos.splice(0, 1);
-  }
-}
-*/
-
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = View({
-          template: '<h1>Module2</h1>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
     }
   };
 });
