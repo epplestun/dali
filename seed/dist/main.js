@@ -3223,70 +3223,6 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = Runnable(Module2) || Module2;
-        Module2 = View({
-          template: '<h2>Module2</h2>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = Runnable(Module3) || Module3;
-        Module3 = View({
-          template: '<h2>Module3</h2>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
-    }
-  };
-});
-
 $__System.register('3', ['1', '6'], function (_export) {
   'use strict';
 
@@ -3402,6 +3338,70 @@ $__System.register('2', ['1'], function (_export) {
       })();
 
       _export('MenuBar', MenuBar);
+    }
+  };
+});
+
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
+        Module3 = View({
+          template: '<h2>Module3</h2>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
+
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h2>Module2</h2>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
     }
   };
 });
