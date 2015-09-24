@@ -2,7 +2,7 @@ import {Components} from 'core/component/Components';
 
 export class DOM {
   static parse(node) {
-    var childNodes = Array.prototype.slice.call(node.childNodes).filter((element) => element.nodeType === 1);
+    var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
     
     while (node.firstChild) {
       node.removeChild(node.firstChild);
@@ -12,13 +12,13 @@ export class DOM {
       let componentName = Components.normalize(element);
 
       if(!!Components.exists(componentName)) {
-        if(!!Injector.hasInstance(componentName::ucfirst())) {
+        if(!!Injector.hasInstance(componentName)) {
           node.appendChild(element);
           
           let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
           Components.parse(element, attrs, Components.get(componentName));
         } else {
-          throw new Error('Error, no instance for component: ' + componentName::ucfirst());
+          throw new Error('Error, no instance for component: ' + componentName);
         }
       } else {
         node.appendChild(element);

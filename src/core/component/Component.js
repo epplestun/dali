@@ -1,10 +1,7 @@
-import {decorate} from 'core/util/util';
-import {Components} from 'core/component/Components';
+import {DataComponents} from 'core/component/DataComponents';
 
-function ComponentHandlerDescriptor(target, value) {
-  Components.components.push({target, value});
-}
-
-export function Component(arg) {
-  return decorate(ComponentHandlerDescriptor, arg);
+export function Component(value) {
+  return function decorator(target) {
+    DataComponents.add(target.name, target, value);
+  }
 }

@@ -1,4 +1,3 @@
-import {Injector} from 'core/di/Injector';
 import {DataFilters} from 'core/filters/DataFilters';
 
 export function Filter(target) {

@@ -1,17 +1,17 @@
-import {DataDirective} from 'core/directives/DataDirective';
+import {DataDirectives} from 'core/directives/DataDirectives';
 import {Components} from 'core/component/Components';
 
 export class Directives {
   static has(name) {
-    return !!DataDirective.get(name);
+    return !!DataDirectives.get(name);
   }
 
   static get(name) {
-    return DataDirective.get(name);
+    return DataDirectives.get(name);
   }
 
   static getDirectives() {
-    return DataDirective.data;
+    return DataDirectives.data;
   }
 
   static parseElement(element, data) {

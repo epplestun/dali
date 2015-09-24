@@ -6,14 +6,14 @@ import {
 } from 'dali/dali';
 
 @Component({
-  name: 'menu'
+  name: 'menu-bar'
 })
 @View({
   template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
 })
 @Runnable
 //@Injectable
-export class Menu {
+export class MenuBar {
   @Bindable
   links = [
     { path: '/m1', name: 'Module 1'},

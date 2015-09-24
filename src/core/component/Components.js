@@ -1,26 +1,21 @@
 import {DOM} from 'core/dom/dom';
 import {Views} from 'core/view/Views';
 import {first} from 'core/util/util';
+import {DataComponents} from 'core/component/DataComponents';
 
 export class Components {
   static components = [];
 
   static normalize(element) {
-    return element.nodeName.toLowerCase();
+    return DataComponents.normalize(element.nodeName);
   }
 
   static exists(name) {
-    return Components.components.filter((component) => {
-      return component.value.name === name;
-    }).length > 0;
+    return !!DataComponents.get(name);
   }
 
   static get(name) {
-    let component = Components.components.filter((component) => {
-      return component.value.name === name;
-    });
-
-    return component::first();
+    return DataComponents.get(name);
   }
 
   static parse(node, attrs, component) {
