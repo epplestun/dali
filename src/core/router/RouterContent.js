@@ -23,26 +23,9 @@ export class RouterContent {
     let element = document.getElementById('router-content'),
         template = Views.views[route.target.name].template,
         target = route.target,
-        eventName = EventNameNormalizer.normalize(
-          target, EventBus.CHANGE_DETECTED
-        ),
         instance = Injector.instantiate(route.target);
 
-    Views.parseComponent(
-      element,
-      template,
-      instance,
-      route.target
-    );
-
-    EventBus.subscribe(eventName, () => {
-      Views.parseComponent(
-        element,
-        template,
-        instance,
-        route.target
-      );
-    });
+    Views.parseView(element, template, instance, route.target);
 
     Binder.run(instance, target.name);
   }

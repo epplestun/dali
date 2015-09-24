@@ -1614,6 +1614,17 @@ var Views = (function () {
       });
     }
   }, {
+    key: 'parseView',
+    value: function parseView(node, template, instance, target) {
+      var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+
+      Views.parseComponent(node, template, instance, target);
+
+      EventBus.subscribe(eventName, function () {
+        Views.parseComponent(node, template, instance, target);
+      });
+    }
+  }, {
     key: 'parse',
     value: function parse(node, component) {
       if (!!component) {
@@ -1637,14 +1648,9 @@ var Views = (function () {
               view.nodeCached = node;
 
               var target = component.target,
-                  eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
                   instance = Injector.instances[target.name];
 
-              Views.parseComponent(node, template, instance, target);
-
-              EventBus.subscribe(eventName, function () {
-                Views.parseComponent(node, template, instance, target);
-              });
+              Views.parseView(node, template, instance, target);
             });
           }
         })();
@@ -1781,14 +1787,9 @@ var RouterContent = (function () {
       var element = document.getElementById('router-content'),
           template = Views.views[route.target.name].template,
           target = route.target,
-          eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
           instance = Injector.instantiate(route.target);
 
-      Views.parseComponent(element, template, instance, route.target);
-
-      EventBus.subscribe(eventName, function () {
-        Views.parseComponent(element, template, instance, route.target);
-      });
+      Views.parseView(element, template, instance, route.target);
 
       Binder.run(instance, target.name);
     }

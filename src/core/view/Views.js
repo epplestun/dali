@@ -80,6 +80,28 @@ export class Views {
     });    
   }
 
+  static parseView(node, template, instance, target) {
+    let eventName = EventNameNormalizer.normalize(
+      target, EventBus.CHANGE_DETECTED
+    );
+
+    Views.parseComponent(
+      node,
+      template,
+      instance,
+      target
+    );
+
+    EventBus.subscribe(eventName, () => {
+      Views.parseComponent(
+        node,
+        template,
+        instance,
+        target
+      );
+    });
+  }
+
   static parse(node, component) {
     if (!!component) {
       let view = Views.views[component.target.name];
@@ -100,26 +122,9 @@ export class Views {
           view.nodeCached = node;
 
           let target = component.target,
-            eventName = EventNameNormalizer.normalize(
-              target, EventBus.CHANGE_DETECTED
-            ),
             instance = Injector.instances[target.name];
           
-          Views.parseComponent(
-            node,
-            template,
-            instance,
-            target
-          );
-
-          EventBus.subscribe(eventName, () => {
-            Views.parseComponent(
-              node,
-              template,
-              instance,
-              target
-            );
-          });
+          Views.parseView(node, template, instance, target);
         });
       }
     }

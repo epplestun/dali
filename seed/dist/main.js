@@ -2868,6 +2868,15 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           });
         }
       }, {
+        key: 'parseView',
+        value: function parseView(node, template, instance, target) {
+          var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+          Views.parseComponent(node, template, instance, target);
+          EventBus.subscribe(eventName, function() {
+            Views.parseComponent(node, template, instance, target);
+          });
+        }
+      }, {
         key: 'parse',
         value: function parse(node, component) {
           if (!!component) {
@@ -2886,12 +2895,8 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
                   view.templateCached = template;
                   view.nodeCached = node;
                   var target = component.target,
-                      eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
                       instance = Injector.instances[target.name];
-                  Views.parseComponent(node, template, instance, target);
-                  EventBus.subscribe(eventName, function() {
-                    Views.parseComponent(node, template, instance, target);
-                  });
+                  Views.parseView(node, template, instance, target);
                 });
               }
             })();
@@ -3057,12 +3062,8 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           var element = document.getElementById('router-content'),
               template = Views.views[route.target.name].template,
               target = route.target,
-              eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
               instance = Injector.instantiate(route.target);
-          Views.parseComponent(element, template, instance, route.target);
-          EventBus.subscribe(eventName, function() {
-            Views.parseComponent(element, template, instance, route.target);
-          });
+          Views.parseView(element, template, instance, route.target);
           Binder.run(instance, target.name);
         }
       }]);
@@ -3268,6 +3269,38 @@ $__System.register('2', ['1'], function (_export) {
   };
 });
 
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
+        Module3 = View({
+          template: '<h2>Module3</h2>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
+
 $__System.register('3', ['1', '6'], function (_export) {
   'use strict';
 
@@ -3369,38 +3402,6 @@ $__System.register('4', ['1'], function (_export) {
       })();
 
       _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = Runnable(Module3) || Module3;
-        Module3 = View({
-          template: '<h2>Module3</h2>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
     }
   };
 });
