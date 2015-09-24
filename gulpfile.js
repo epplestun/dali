@@ -2,33 +2,12 @@ var gulp = require('gulp');
 var del = require('del');
 var concat = require('gulp-concat');
 var babel = require('gulp-babel');
-var order = require("gulp-order");
 
 gulp.task('clean', function(cb) {
   return del(['dist'], cb);
 });
  
 gulp.task('default', ['clean'], function () {
-  //return gulp.src('src/**/*.js')
-      /*
-      .pipe(order([
-        "src/core/bootstrap.js",
-        "src/HTTP/*.js",
-        "src/core/util/*.js",
-        "src/core/component/*.js",
-        "src/core/di/*.js",
-        "src/core/directives/*.js",
-        "src/core/dom/*.js",
-        "src/core/evaluator/*.js",
-        "src/core/event/*.js",
-        "src/core/filters/*.js",
-        "src/core/module/*.js",
-        "src/core/render/*.js",
-        "src/core/runnable/*.js",        
-        "src/core/view/*.js",
-        "src/core/router/*.js"
-      ]))
-      */
     return gulp.src([
         "src/http/*.js",
         "src/core/util/*.js",
