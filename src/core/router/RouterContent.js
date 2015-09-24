@@ -5,6 +5,7 @@ import {Component} from 'core/component/Component';
 import {View} from 'core/view/View';
 import {Views} from 'core/view/Views';
 import {Injector} from 'core/di/Injector';
+import {Binder} from 'core/view/Bindable';
 
 log('RouterContent.js');
 
