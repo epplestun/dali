@@ -8,11 +8,12 @@ import {Directive} from 'core/directive/Directive';
   name : 'data-model'
 })
 export class DataModel {
-  render(data, element, value, target) {
-    let instance = Injector.instances[target.name];
+  render(element, data, value, config, target) { 
     let eventName = EventNameNormalizer.normalize(
       target, EventBus.MODEL_CHANGE_DETECTED
     );
+
+    let instance = Injector.instances[target.name];
 
     Object.defineProperty(instance, value, {
       get: function () {
@@ -33,11 +34,10 @@ export class DataModel {
     instance[value] = element.value;
 
     EventBus.subscribe(eventName, (e, data) => {
-      let key = Object.keys(data)
-      ::
-      first();
+      let key = Object.keys(data)::first();
 
-      Views.parseModel(key, data, target);
+      console.log(key, data, target);
+      //Views.parseModel(key, data, target);
     });
   }
 }

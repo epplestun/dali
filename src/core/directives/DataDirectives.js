@@ -12,6 +12,7 @@ export class DataDirectives {
 
   static add(name, directive, config) {
     DataDirectives.data[DataDirectives.normalize(name)] = {
+      target: directive,
       instance: Injector.get(directive),
       config
     };

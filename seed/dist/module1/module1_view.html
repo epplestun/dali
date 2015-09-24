@@ -2,7 +2,12 @@
 
 <div>
   <ul>
-    <li *for="todo in todos">{{todo | dateFilter}}</li>
+    <li *for="todo in todos">{{todo}}</li>
   </ul>
+
+  {{item}}
+
+  <input type="text" *model="item" />
+  
   <button _click="add()">Add</button><button _click="clean()">Clear</button>
 </div>

@@ -28,8 +28,11 @@ export class Views {
 
   static parseModel(key, data, target) {
     let view = Views.views[target.name]
-    node = view.nodeCached,
-      template = view.templateCached;
+        node = view.nodeCached,
+        template = view.templateCached;
+
+
+    console.log(node, template);
 
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
@@ -59,11 +62,11 @@ export class Views {
     });
   }
 
-  static parseComponent(node, template, data, target) {    
+  static parseComponent(node, template, data, target) {
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
-    let nodeParsed = Directives.parse(wrapper, data);
+    let nodeParsed = Directives.parse(wrapper, data, target);
 
     node.innerHTML = Render.render(
       nodeParsed.innerHTML,

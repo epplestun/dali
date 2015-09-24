@@ -25,8 +25,8 @@ export class Module1 {
   date = new Date();
 
   add() {
-    //this.todos.push(this.item);
-    this.todos.push(new Date());
+    this.todos.push(this.item);
+    //this.todos.push(new Date());
   }
 
   remove(item, index) {

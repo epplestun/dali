@@ -31,7 +31,7 @@ export class Directives {
     return element;
   }
 
-  static parse(node, data) {
+  static parse(node, data, target) {
     var childNodes = Array.prototype.slice.call(
       node.getElementsByTagName("*")
     ).filter((element) => element.nodeType === 1);
@@ -43,7 +43,8 @@ export class Directives {
           .map((attr) => {
             return {
               directive: Directives.get(attr.name),
-              value: attr.value
+              value: attr.value,
+              target
             };
           });
 
@@ -56,8 +57,15 @@ export class Directives {
 
   static render(element, directives, data) {
     directives.forEach((input) => {
-      let {directive, value} = input;
-      directive.instance.render(element, data, value, directive.config);
+      let {directive, value, target} = input;
+
+      directive.instance.render(
+        element, 
+        data, 
+        value, 
+        directive.config, 
+        target
+      );
     });
   }
 }
