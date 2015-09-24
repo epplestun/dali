@@ -3193,52 +3193,6 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
-$__System.register('2', ['1'], function (_export) {
-  'use strict';
-
-  var Component, View, Bindable, Runnable, MenuBar;
-  return {
-    setters: [function (_) {
-      Component = _.Component;
-      View = _.View;
-      Bindable = _.Bindable;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      //@Injectable
-
-      MenuBar = (function () {
-        var _instanceInitializers = {};
-
-        function MenuBar() {
-          babelHelpers.classCallCheck(this, _MenuBar);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
-        }
-
-        babelHelpers.createDecoratedClass(MenuBar, [{
-          key: 'links',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _MenuBar = MenuBar;
-        MenuBar = Runnable(MenuBar) || MenuBar;
-        MenuBar = View({
-          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
-        })(MenuBar) || MenuBar;
-        MenuBar = Component({
-          name: 'menu-bar'
-        })(MenuBar) || MenuBar;
-        return MenuBar;
-      })();
-
-      _export('MenuBar', MenuBar);
-    }
-  };
-});
-
 $__System.register('4', ['1'], function (_export) {
   'use strict';
 
@@ -3265,36 +3219,6 @@ $__System.register('4', ['1'], function (_export) {
       })();
 
       _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = View({
-          template: '<h1>Module3</h1>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
     }
   };
 });
@@ -3348,6 +3272,82 @@ todos = [];
   }
 }
 */
+
+$__System.register('2', ['1'], function (_export) {
+  'use strict';
+
+  var Component, View, Bindable, Runnable, MenuBar;
+  return {
+    setters: [function (_) {
+      Component = _.Component;
+      View = _.View;
+      Bindable = _.Bindable;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      //@Injectable
+
+      MenuBar = (function () {
+        var _instanceInitializers = {};
+
+        function MenuBar() {
+          babelHelpers.classCallCheck(this, _MenuBar);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(MenuBar, [{
+          key: 'links',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _MenuBar = MenuBar;
+        MenuBar = Runnable(MenuBar) || MenuBar;
+        MenuBar = View({
+          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
+        })(MenuBar) || MenuBar;
+        MenuBar = Component({
+          name: 'menu-bar'
+        })(MenuBar) || MenuBar;
+        return MenuBar;
+      })();
+
+      _export('MenuBar', MenuBar);
+    }
+  };
+});
+
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = View({
+          template: '<h1>Module3</h1>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
 
 })
 (function(factory) {
