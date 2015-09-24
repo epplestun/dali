@@ -1,0 +1,8 @@
+<h2>Module1 {{name}}</h2>
+
+<div>
+  <ul>
+    <li *for="todo in todos">{{todo | dateFilter}}</li>
+  </ul>
+  <button _click="add()">Add</button><button _click="clean()">Clear</button>
+</div>

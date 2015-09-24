@@ -11,7 +11,7 @@ import {DateFilter} from 'filters/DateFilter';
   path : '/m1'
 })
 @View({
-  template: '<h2>Module1 {{name}}</h2><div><ul><li *for="todo in todos">{{todo | dateFilter}}</li></ul><button _click="add()">Add</button><button _click="clean()">Clear</button></div>'
+  templateUrl: 'module1/module1_view.html'
 })
 @Runnable
 export class Module1 {  

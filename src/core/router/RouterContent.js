@@ -22,11 +22,11 @@ export class RouterContent {
   
   change(event, route) {
     let element = document.getElementById('router-content'),
-        template = Views.views[route.target.name].template,
+        view = Views.views[route.target.name],
         target = route.target,
         instance = Injector.instantiate(route.target);
 
-    Views.parseView(element, template, instance, route.target);
+    Views.resolve(view, element, target, instance);
 
     Binder.run(instance, target.name);
   }

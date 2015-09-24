@@ -1633,35 +1633,36 @@ var Views = (function () {
       });
     }
   }, {
+    key: 'resolve',
+    value: function resolve(view, node, target, instance) {
+      if (!!view) {
+        var promise;
+
+        if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
+          promise = HTTP.get(view[Views.TEMPLATE_URL]);
+        } else if (!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
+          promise = Promise.resolve(view[Views.TEMPLATE]);
+        } else {
+          throw new Exception("View need templateUrl or template attributes");
+        }
+
+        promise.then(function (template) {
+          view.templateCached = template;
+          view.nodeCached = node;
+
+          Views.parseView(node, template, instance, target);
+        });
+      }
+    }
+  }, {
     key: 'parse',
     value: function parse(node, component) {
       if (!!component) {
-        var promise;
+        var view = Views.views[component.target.name],
+            target = component.target,
+            instance = Injector.instances[target.name];;
 
-        (function () {
-          var view = Views.views[component.target.name];
-
-          if (!!view) {
-
-            if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
-              promise = HTTP.get(view[Views.TEMPLATE_URL]);
-            } else if (!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
-              promise = Promise.resolve(view[Views.TEMPLATE]);
-            } else {
-              throw new Exception("View need templateUrl or template attributes");
-            }
-
-            promise.then(function (template) {
-              view.templateCached = template;
-              view.nodeCached = node;
-
-              var target = component.target,
-                  instance = Injector.instances[target.name];
-
-              Views.parseView(node, template, instance, target);
-            });
-          }
-        })();
+        Views.resolve(view, node, target, instance);
       }
     }
   }, {
@@ -1793,11 +1794,11 @@ var RouterContent = (function () {
     key: 'change',
     value: function change(event, route) {
       var element = document.getElementById('router-content'),
-          template = Views.views[route.target.name].template,
+          view = Views.views[route.target.name],
           target = route.target,
           instance = Injector.instantiate(route.target);
 
-      Views.parseView(element, template, instance, route.target);
+      Views.resolve(view, element, target, instance);
 
       Binder.run(instance, target.name);
     }

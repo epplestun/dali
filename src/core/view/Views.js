@@ -102,31 +102,34 @@ export class Views {
     });
   }
 
+  static resolve(view, node, target, instance) {
+    if (!!view) {
+      var promise;
+
+      if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
+        promise = HTTP.get(view[Views.TEMPLATE_URL]);
+      } else if (!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
+        promise = Promise.resolve(view[Views.TEMPLATE]);
+      } else {
+        throw new Exception("View need templateUrl or template attributes");
+      }
+
+      promise.then(function (template) {
+        view.templateCached = template;
+        view.nodeCached = node;
+        
+        Views.parseView(node, template, instance, target);
+      });
+    }
+  }
+
   static parse(node, component) {
     if (!!component) {
-      let view = Views.views[component.target.name];
+      let view = Views.views[component.target.name],
+          target = component.target,
+          instance = Injector.instances[target.name];;
 
-      if (!!view) {
-        var promise;
-
-        if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
-          promise = HTTP.get(view[Views.TEMPLATE_URL]);
-        } else if (!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
-          promise = Promise.resolve(view[Views.TEMPLATE]);
-        } else {
-          throw new Exception("View need templateUrl or template attributes");
-        }
-
-        promise.then(function (template) {
-          view.templateCached = template;
-          view.nodeCached = node;
-
-          let target = component.target,
-            instance = Injector.instances[target.name];
-          
-          Views.parseView(node, template, instance, target);
-        });
-      }
+      Views.resolve(view, node, target, instance);
     }
   }
 }
