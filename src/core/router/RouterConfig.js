@@ -1,5 +1,8 @@
+import {log} from 'core/util/util';
 import {decorate} from 'core/util/util';
 import {Router} from 'core/router/Router';
+
+log('RouterConfig.js');
 
 function pathToRegexp(path, keys, sensitive, strict) {
   if (path instanceof RegExp) return path;
