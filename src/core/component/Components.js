@@ -4,7 +4,9 @@ import {first} from 'core/util/util';
 import {DataComponents} from 'core/component/DataComponents';
 
 export class Components {
-  static components = [];
+  static components() {
+    return DataComponents.data;
+  }
 
   static normalize(element) {
     return DataComponents.normalize(element.nodeName);
@@ -22,9 +24,13 @@ export class Components {
     Views.parse(node, component);
   }
 
-  static run() {
-    document.addEventListener("DOMContentLoaded", (event) => {
-      DOM.parse(event.target.body);
-    });
+  static run(element) {
+    if(!!element) {
+      DOM.parse(element);
+    } else {
+      document.addEventListener("DOMContentLoaded", (event) => {
+        DOM.parse(event.target.body);
+      });
+    }
   }
 }

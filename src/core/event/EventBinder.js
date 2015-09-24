@@ -17,10 +17,8 @@ function setPrimitive(value) {
 }
 
 export class EventBinder {
-  static bind(element, attrs, target) {
+  static bindInstance(element, attrs, instance) {
     if (attrs.length > 0) {
-      let instance = Injector.instances[target.name];
-
       attrs.forEach((attr) => {
         let attrName = attr.name,
           attrValue = attr.value;
@@ -44,6 +42,13 @@ export class EventBinder {
           }, false);
         }
       });
+    }
+  }
+
+  static bind(element, attrs, target) {
+    if (attrs.length > 0) {
+      let instance = Injector.instances[target.name];
+      EventBinder.bindInstance(element, attrs, instance);
     }
   }
 }

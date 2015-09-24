@@ -1267,9 +1267,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       var f = this.charAt(0).toUpperCase();
       return f + this.substr(1);
     }
-    function log() {
-      console.log(arguments);
-    }
+    function log() {}
     log('util.js');
     'use strict';
     var _createClass = (function() {
@@ -1366,6 +1364,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, Components);
       }
       _createClass(Components, null, [{
+        key: 'components',
+        value: function components() {
+          return DataComponents.data;
+        }
+      }, {
         key: 'normalize',
         value: function normalize(element) {
           return DataComponents.normalize(element.nodeName);
@@ -1387,15 +1390,15 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }, {
         key: 'run',
-        value: function run() {
-          document.addEventListener("DOMContentLoaded", function(event) {
-            DOM.parse(event.target.body);
-          });
+        value: function run(element) {
+          if (!!element) {
+            DOM.parse(element);
+          } else {
+            document.addEventListener("DOMContentLoaded", function(event) {
+              DOM.parse(event.target.body);
+            });
+          }
         }
-      }, {
-        key: 'components',
-        value: [],
-        enumerable: true
       }]);
       return Components;
     })();
@@ -2230,33 +2233,38 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, EventBinder);
       }
       _createClass(EventBinder, null, [{
+        key: 'bindInstance',
+        value: function bindInstance(element, attrs, instance) {
+          if (attrs.length > 0) {
+            attrs.forEach(function(attr) {
+              var attrName = attr.name,
+                  attrValue = attr.value;
+              if (attrName.charAt(0) === '_') {
+                var eventName = attrName.substring(1);
+                element.addEventListener(eventName, function(e) {
+                  var methodName = attrValue.match(/^(.*)\(/mi)[1];
+                  var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+                  args = args.length > 0 ? args.split(/,/) : [];
+                  args = args.map(function(arg) {
+                    return setPrimitive(arg);
+                  });
+                  instance[methodName].apply(instance, args);
+                }, false);
+              }
+              if (attrName === 'data-model') {
+                element.addEventListener('input', function(e) {
+                  instance[attrValue] = element.value;
+                }, false);
+              }
+            });
+          }
+        }
+      }, {
         key: 'bind',
         value: function bind(element, attrs, target) {
           if (attrs.length > 0) {
-            (function() {
-              var instance = Injector.instances[target.name];
-              attrs.forEach(function(attr) {
-                var attrName = attr.name,
-                    attrValue = attr.value;
-                if (attrName.charAt(0) === '_') {
-                  var eventName = attrName.substring(1);
-                  element.addEventListener(eventName, function(e) {
-                    var methodName = attrValue.match(/^(.*)\(/mi)[1];
-                    var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-                    args = args.length > 0 ? args.split(/,/) : [];
-                    args = args.map(function(arg) {
-                      return setPrimitive(arg);
-                    });
-                    instance[methodName].apply(instance, args);
-                  }, false);
-                }
-                if (attrName === 'data-model') {
-                  element.addEventListener('input', function(e) {
-                    instance[attrValue] = element.value;
-                  }, false);
-                }
-              });
-            })();
+            var instance = Injector.instances[target.name];
+            EventBinder.bindInstance(element, attrs, instance);
           }
         }
       }]);
@@ -2643,16 +2651,18 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         value: function bindArray(target, key, eventName) {
           var methods = ['push', 'pop', 'reverse', 'shift', 'unshift', 'splice'];
           methods.forEach(function(name) {
-            Object.defineProperty(target[key], name, {
-              configurable: false,
-              enumerable: false,
-              writable: false,
-              value: function value() {
-                Array.prototype[name].apply(this, arguments);
-                EventBus.publish(eventName);
-                return this.length;
-              }
-            });
+            try {
+              Object.defineProperty(target[key], name, {
+                configurable: false,
+                enumerable: false,
+                writable: false,
+                value: function value() {
+                  Array.prototype[name].apply(this, arguments);
+                  EventBus.publish(eventName);
+                  return this.length;
+                }
+              });
+            } catch (e) {}
           });
         }
       }, {
@@ -2677,26 +2687,32 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           target[key] = value;
         }
       }, {
+        key: 'bindInstance',
+        value: function bindInstance(instance, instanceName) {
+          if (!!instance.bindableFields) {
+            (function() {
+              var target = {name: instanceName};
+              var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+              instance.bindableFields.forEach(function(key) {
+                if (instance[key] instanceof Array) {
+                  Binder.bindArray(instance, key, eventName);
+                } else {
+                  Binder.bindOther(instance, key, eventName);
+                }
+              });
+            })();
+          }
+        }
+      }, {
         key: 'run',
-        value: function run() {
-          var _loop = function() {
-            var instance = Injector.instances[instanceName];
-            if (!!instance.bindableFields) {
-              (function() {
-                var target = {name: instanceName};
-                var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
-                instance.bindableFields.forEach(function(key) {
-                  if (instance[key] instanceof Array) {
-                    Binder.bindArray(instance, key, eventName);
-                  } else {
-                    Binder.bindOther(instance, key, eventName);
-                  }
-                });
-              })();
+        value: function run(instance, instanceName) {
+          if (!!instance) {
+            Binder.bindInstance(instance, instanceName);
+          } else {
+            for (var instanceName in Injector.instances) {
+              var _instance = Injector.instances[instanceName];
+              Binder.bindInstance(_instance, instanceName);
             }
-          };
-          for (var instanceName in Injector.instances) {
-            _loop();
           }
         }
       }]);
@@ -3038,11 +3054,20 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       _createClass(RouterContent, [{
         key: 'change',
         value: function change(event, route) {
-          Injector.resolve(route.target).run();
+          var element = document.getElementById('router-content'),
+              template = Views.views[route.target.name].template,
+              target = route.target,
+              eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
+              instance = Injector.instantiate(route.target);
+          Views.parseComponent(element, template, instance, route.target);
+          EventBus.subscribe(eventName, function() {
+            Views.parseComponent(element, template, instance, route.target);
+          });
+          Binder.run(instance, target.name);
         }
       }]);
       var _RouterContent = RouterContent;
-      RouterContent = View({template: '<div>Router content</div>'})(RouterContent) || RouterContent;
+      RouterContent = View({template: '<div id="router-content">Router content</div>'})(RouterContent) || RouterContent;
       RouterContent = Component({name: 'router-content'})(RouterContent) || RouterContent;
       return RouterContent;
     })();
@@ -3197,40 +3222,6 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-
-          console.log('Module2');
-        }
-
-        var _Module2 = Module2;
-        Module2 = Runnable(Module2) || Module2;
-        Module2 = View({
-          template: '<h1>Module2</h1>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
-    }
-  };
-});
-
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -3277,6 +3268,111 @@ $__System.register('2', ['1'], function (_export) {
   };
 });
 
+$__System.register('3', ['1', '6'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, DateFilter, Module1;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }, function (_2) {
+      DateFilter = _2.DateFilter;
+    }],
+    execute: function () {
+      Module1 = (function () {
+        var _instanceInitializers = {};
+
+        function Module1() {
+          babelHelpers.classCallCheck(this, _Module1);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
+          this.date = new Date();
+        }
+
+        babelHelpers.createDecoratedClass(Module1, [{
+          key: 'add',
+          value: function add() {
+            //this.todos.push(this.item);
+            this.todos.push(new Date());
+          }
+        }, {
+          key: 'remove',
+          value: function remove(item, index) {
+            this.todos.splice(index, 1);
+          }
+        }, {
+          key: 'clean',
+          value: function clean() {
+            while (this.todos.length > 0) {
+              this.todos.splice(0, 1);
+            }
+          }
+        }, {
+          key: 'name',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return "My First App!!";
+          },
+          enumerable: true
+        }, {
+          key: 'todos',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Module1 = Module1;
+        Module1 = Runnable(Module1) || Module1;
+        Module1 = View({
+          template: '<h2>Module1 {{name}}</h2><div><ul><li *for="todo in todos">{{todo | dateFilter}}</li></ul><button _click="add()">Add</button><button _click="clean()">Clear</button></div>'
+        })(Module1) || Module1;
+        Module1 = RouterConfig({
+          'default': true,
+          path: '/m1'
+        })(Module1) || Module1;
+        return Module1;
+      })();
+
+      _export('Module1', Module1);
+    }
+  };
+});
+
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h2>Module2</h2>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
 $__System.register('5', ['1'], function (_export) {
   'use strict';
 
@@ -3291,14 +3387,12 @@ $__System.register('5', ['1'], function (_export) {
       Module3 = (function () {
         function Module3() {
           babelHelpers.classCallCheck(this, _Module3);
-
-          console.log('Module3');
         }
 
         var _Module3 = Module3;
         Module3 = Runnable(Module3) || Module3;
         Module3 = View({
-          template: '<h1>Module3</h1>'
+          template: '<h2>Module3</h2>'
         })(Module3) || Module3;
         Module3 = RouterConfig({
           path: '/m3'
@@ -3311,55 +3405,32 @@ $__System.register('5', ['1'], function (_export) {
   };
 });
 
-$__System.register('3', ['1'], function (_export) {
+$__System.register('6', ['1'], function (_export) {
   'use strict';
 
-  var RouterConfig, View, Runnable, Module1;
+  var Filter, DateFilter;
   return {
     setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
+      Filter = _.Filter;
     }],
     execute: function () {
-      Module1 = (function () {
-        function Module1() {
-          babelHelpers.classCallCheck(this, _Module1);
-
-          console.log('Module1');
+      DateFilter = (function () {
+        function DateFilter() {
+          babelHelpers.classCallCheck(this, _DateFilter);
         }
 
-        /*
-        @Bindable
-        name = "My First App!!";
-         @Bindable
-        todos = [];
-         date = new Date();
-         add() {
-          this.todos.push(this.item);
-        }
-         remove(item, index) {
-          this.todos.splice(index, 1);
-        }
-         clean() {
-          while(this.todos.length > 0) {
-            this.todos.splice(0, 1);
+        babelHelpers.createClass(DateFilter, [{
+          key: 'render',
+          value: function render(value, extra) {
+            return value.toJSON();
           }
-        }
-        */
-        var _Module1 = Module1;
-        Module1 = Runnable(Module1) || Module1;
-        Module1 = View({
-          template: '<h1>Module1</h1>'
-        })(Module1) || Module1;
-        Module1 = RouterConfig({
-          'default': true,
-          path: '/m1'
-        })(Module1) || Module1;
-        return Module1;
+        }]);
+        var _DateFilter = DateFilter;
+        DateFilter = Filter(DateFilter) || DateFilter;
+        return DateFilter;
       })();
 
-      _export('Module1', Module1);
+      _export('DateFilter', DateFilter);
     }
   };
 });

@@ -189,7 +189,7 @@ function ucfirst() {
 }
 
 function log() {
-  console.log(arguments);
+  //console.log(arguments);
 }
 
 log('util.js');
@@ -257,6 +257,11 @@ var Components = (function () {
   }
 
   _createClass(Components, null, [{
+    key: 'components',
+    value: function components() {
+      return DataComponents.data;
+    }
+  }, {
     key: 'normalize',
     value: function normalize(element) {
       return DataComponents.normalize(element.nodeName);
@@ -278,15 +283,15 @@ var Components = (function () {
     }
   }, {
     key: 'run',
-    value: function run() {
-      document.addEventListener("DOMContentLoaded", function (event) {
-        DOM.parse(event.target.body);
-      });
+    value: function run(element) {
+      if (!!element) {
+        DOM.parse(element);
+      } else {
+        document.addEventListener("DOMContentLoaded", function (event) {
+          DOM.parse(event.target.body);
+        });
+      }
     }
-  }, {
-    key: 'components',
-    value: [],
-    enumerable: true
   }]);
 
   return Components;
@@ -1046,38 +1051,42 @@ var EventBinder = (function () {
   }
 
   _createClass(EventBinder, null, [{
+    key: 'bindInstance',
+    value: function bindInstance(element, attrs, instance) {
+      if (attrs.length > 0) {
+        attrs.forEach(function (attr) {
+          var attrName = attr.name,
+              attrValue = attr.value;
+
+          if (attrName.charAt(0) === '_') {
+            var eventName = attrName.substring(1);
+
+            element.addEventListener(eventName, function (e) {
+              var methodName = attrValue.match(/^(.*)\(/mi)[1];
+              var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
+              args = args.length > 0 ? args.split(/,/) : [];
+              args = args.map(function (arg) {
+                return setPrimitive(arg);
+              });
+
+              instance[methodName].apply(instance, args);
+            }, false);
+          }
+
+          if (attrName === 'data-model') {
+            element.addEventListener('input', function (e) {
+              instance[attrValue] = element.value;
+            }, false);
+          }
+        });
+      }
+    }
+  }, {
     key: 'bind',
     value: function bind(element, attrs, target) {
       if (attrs.length > 0) {
-        (function () {
-          var instance = Injector.instances[target.name];
-
-          attrs.forEach(function (attr) {
-            var attrName = attr.name,
-                attrValue = attr.value;
-
-            if (attrName.charAt(0) === '_') {
-              var eventName = attrName.substring(1);
-
-              element.addEventListener(eventName, function (e) {
-                var methodName = attrValue.match(/^(.*)\(/mi)[1];
-                var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
-                args = args.length > 0 ? args.split(/,/) : [];
-                args = args.map(function (arg) {
-                  return setPrimitive(arg);
-                });
-
-                instance[methodName].apply(instance, args);
-              }, false);
-            }
-
-            if (attrName === 'data-model') {
-              element.addEventListener('input', function (e) {
-                instance[attrValue] = element.value;
-              }, false);
-            }
-          });
-        })();
+        var instance = Injector.instances[target.name];
+        EventBinder.bindInstance(element, attrs, instance);
       }
     }
   }]);
@@ -1395,16 +1404,18 @@ var Binder = (function () {
 
       var methods = ['push', 'pop', 'reverse', 'shift', 'unshift', 'splice'];
       methods.forEach(function (name) {
-        Object.defineProperty(target[key], name, {
-          configurable: false,
-          enumerable: false,
-          writable: false,
-          value: function value() {
-            Array.prototype[name].apply(this, arguments);
-            EventBus.publish(eventName);
-            return this.length;
-          }
-        });
+        try {
+          Object.defineProperty(target[key], name, {
+            configurable: false,
+            enumerable: false,
+            writable: false,
+            value: function value() {
+              Array.prototype[name].apply(this, arguments);
+              EventBus.publish(eventName);
+              return this.length;
+            }
+          });
+        } catch (e) {}
       });
 
       //Binder.bindOther(target, key, eventName);
@@ -1434,31 +1445,36 @@ var Binder = (function () {
       target[key] = value;
     }
   }, {
+    key: 'bindInstance',
+    value: function bindInstance(instance, instanceName) {
+      if (!!instance.bindableFields) {
+        (function () {
+          var target = {
+            name: instanceName
+          };
+          var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+
+          instance.bindableFields.forEach(function (key) {
+            if (instance[key] instanceof Array) {
+              Binder.bindArray(instance, key, eventName);
+            } else {
+              Binder.bindOther(instance, key, eventName);
+            }
+          });
+        })();
+      }
+    }
+  }, {
     key: 'run',
-    value: function run() {
-      var _loop = function () {
-        var instance = Injector.instances[instanceName];
+    value: function run(instance, instanceName) {
+      if (!!instance) {
+        Binder.bindInstance(instance, instanceName);
+      } else {
+        for (var instanceName in Injector.instances) {
+          var _instance = Injector.instances[instanceName];
 
-        if (!!instance.bindableFields) {
-          (function () {
-            var target = {
-              name: instanceName
-            };
-            var eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
-
-            instance.bindableFields.forEach(function (key) {
-              if (instance[key] instanceof Array) {
-                Binder.bindArray(instance, key, eventName);
-              } else {
-                Binder.bindOther(instance, key, eventName);
-              }
-            });
-          })();
+          Binder.bindInstance(_instance, instanceName);
         }
-      };
-
-      for (var instanceName in Injector.instances) {
-        _loop();
       }
     }
   }]);
@@ -1762,15 +1778,25 @@ var RouterContent = (function () {
   _createClass(RouterContent, [{
     key: 'change',
     value: function change(event, route) {
-      //console.log('RouterContent.change', route);
+      var element = document.getElementById('router-content'),
+          template = Views.views[route.target.name].template,
+          target = route.target,
+          eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED),
+          instance = Injector.instantiate(route.target);
 
-      Injector.resolve(route.target).run();
+      Views.parseComponent(element, template, instance, route.target);
+
+      EventBus.subscribe(eventName, function () {
+        Views.parseComponent(element, template, instance, route.target);
+      });
+
+      Binder.run(instance, target.name);
     }
   }]);
 
   var _RouterContent = RouterContent;
   RouterContent = View({
-    template: '<div>Router content</div>'
+    template: '<div id="router-content">Router content</div>'
   })(RouterContent) || RouterContent;
   RouterContent = Component({
     name: 'router-content'
@@ -1817,7 +1843,6 @@ log('bootstrap.js');
 
 function bootstrap(target) {
   Injector.get(target).run();
-
   Router.run();
   Components.run();
   Binder.run();

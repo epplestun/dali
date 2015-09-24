@@ -4,20 +4,17 @@ import {
   Runnable
 } from 'dali/dali';
 
+import {DateFilter} from 'filters/DateFilter';
+
 @RouterConfig({
   default: true,
   path : '/m1'
 })
 @View({
-  template: '<h1>Module1</h1>'
+  template: '<h2>Module1 {{name}}</h2><div><ul><li *for="todo in todos">{{todo | dateFilter}}</li></ul><button _click="add()">Add</button><button _click="clean()">Clear</button></div>'
 })
 @Runnable
-export class Module1 {
-  constructor() {
-    console.log('Module1');
-  }
-
-  /*
+export class Module1 {  
   @Bindable
   name = "My First App!!";
 
@@ -27,7 +24,8 @@ export class Module1 {
   date = new Date();
 
   add() {
-    this.todos.push(this.item);
+    //this.todos.push(this.item);
+    this.todos.push(new Date());
   }
 
   remove(item, index) {
@@ -39,5 +37,4 @@ export class Module1 {
       this.todos.splice(0, 1);
     }
   }
-  */
 }

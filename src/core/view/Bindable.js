@@ -19,16 +19,20 @@ export class Binder {
 
     let methods = ['push', 'pop', 'reverse', 'shift', 'unshift', 'splice'];
     methods.forEach((name) => {
-      Object.defineProperty(target[key], name, {
-        configurable: false,
-        enumerable: false,
-        writable: false,
-        value: function () {
-          Array.prototype[name].apply(this, arguments);
-          EventBus.publish(eventName);
-          return this.length;
-        }
-      });
+      try {
+        Object.defineProperty(target[key], name, {
+          configurable: false,
+          enumerable: false,
+          writable: false,
+          value: function () {
+            Array.prototype[name].apply(this, arguments);
+            EventBus.publish(eventName);
+            return this.length;
+          }
+        });
+      } catch(e) {
+        
+      }
     });
 
     //Binder.bindOther(target, key, eventName);
@@ -57,23 +61,31 @@ export class Binder {
     target[key] = value;
   }
 
-  static run() {
-    for(var instanceName in Injector.instances) {
-      let instance = Injector.instances[instanceName];
+  static bindInstance(instance, instanceName) {
+    if(!!instance.bindableFields) {
+      let target = {
+        name : instanceName
+      };
+      let eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
 
-      if(!!instance.bindableFields) {
-        let target = {
-          name : instanceName
-        };
-        let eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
+      instance.bindableFields.forEach((key) => {
+        if(instance[key] instanceof Array) {
+          Binder.bindArray(instance, key, eventName);
+        } else {
+          Binder.bindOther(instance, key, eventName);  
+        }
+      });
+    }
+  }
 
-        instance.bindableFields.forEach((key) => {
-          if(instance[key] instanceof Array) {
-            Binder.bindArray(instance, key, eventName);
-          } else {
-            Binder.bindOther(instance, key, eventName);  
-          }
-        });
+  static run(instance, instanceName) {
+    if(!!instance) {
+      Binder.bindInstance(instance, instanceName);
+    } else {
+      for(var instanceName in Injector.instances) {
+        let instance = Injector.instances[instanceName];
+
+        Binder.bindInstance(instance, instanceName);
       }
     }
   }

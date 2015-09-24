@@ -8,7 +8,6 @@ log('bootstrap.js');
 
 export function bootstrap(target) {
   Injector.get(target).run();
-
   Router.run();
   Components.run();
   Binder.run();

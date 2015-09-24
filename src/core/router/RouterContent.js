@@ -3,7 +3,7 @@ import {EventBus} from 'core/event/EventBus';
 import {Router} from 'core/router/Router';
 import {Component} from 'core/component/Component';
 import {View} from 'core/view/View';
-import {Runnable} from 'core/runnable/Runnable';
+import {Views} from 'core/view/Views';
 import {Injector} from 'core/di/Injector';
 
 log('RouterContent.js');
@@ -12,7 +12,7 @@ log('RouterContent.js');
   name: 'router-content'
 })
 @View({
-  template: '<div>Router content</div>'
+  template: '<div id="router-content">Router content</div>'
 })
 export class RouterContent {
   constructor() {
@@ -20,6 +20,30 @@ export class RouterContent {
   }
   
   change(event, route) {
-    Injector.resolve(route.target).run();
+    let element = document.getElementById('router-content'),
+        template = Views.views[route.target.name].template,
+        target = route.target,
+        eventName = EventNameNormalizer.normalize(
+          target, EventBus.CHANGE_DETECTED
+        ),
+        instance = Injector.instantiate(route.target);
+
+    Views.parseComponent(
+      element,
+      template,
+      instance,
+      route.target
+    );
+
+    EventBus.subscribe(eventName, () => {
+      Views.parseComponent(
+        element,
+        template,
+        instance,
+        route.target
+      );
+    });
+
+    Binder.run(instance, target.name);
   }
 }
