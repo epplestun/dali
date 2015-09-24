@@ -1230,7 +1230,6 @@ var Render = (function () {
 
 Render.START_DELIMITER = "{{";
 Render.END_DELIMITER = "}}";
-//import {Injector} from 'core/di/Injector';
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1243,11 +1242,6 @@ var Router = (function () {
   }
 
   _createClass(Router, null, [{
-    key: 'change',
-    value: function change(event, route) {
-      console.log('Cargar componente asociado a ruta', Router.getHash(), route);
-    }
-  }, {
     key: 'getHash',
     value: function getHash() {
       return window.location.hash.substring(1);
@@ -1288,18 +1282,15 @@ var Router = (function () {
   }, {
     key: 'run',
     value: function run() {
-      EventBus.subscribe(Router.ROUTE_CHANGED, Router.change);
-
       if (window.location.hash.length === 0) {
         Router.routeToDefault();
-        //console.log('Router.routeToDefault');
       } else {
-          if (Router.exists()) {
-            Router.route();
-          } else {
-            throw new Error('404');
-          }
+        if (Router.exists()) {
+          Router.route();
+        } else {
+          throw new Error('404');
         }
+      }
 
       window.addEventListener('hashchange', Router.route, false);
     }
@@ -1336,6 +1327,28 @@ function RouterConfigHandlerDescriptor(target, value) {
 function RouterConfig(arg) {
   return decorate(RouterConfigHandlerDescriptor, arg);
 }
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var RouterContent = (function () {
+  function RouterContent() {
+    _classCallCheck(this, RouterContent);
+
+    EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
+  }
+
+  _createClass(RouterContent, [{
+    key: 'change',
+    value: function change(event, route) {
+      console.log('RouterContent.change', route);
+    }
+  }]);
+
+  return RouterContent;
+})();
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1593,14 +1606,10 @@ var Views = (function () {
   }, {
     key: 'parseComponent',
     value: function parseComponent(node, template, data, target) {
-      //console.log(node, Render.normalize(template), data);
-
       var wrapper = document.createElement('div');
       wrapper.innerHTML = Render.normalize(template);
 
       var nodeParsed = Directives.parse(wrapper, data);
-
-      //node.innerHTML = nodeParsed.innerHTML;
 
       node.innerHTML = Render.render(nodeParsed.innerHTML, data);
 
@@ -1614,90 +1623,6 @@ var Views = (function () {
         var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
         EventBinder.bind(element, attrs, target);
       });
-
-      //console.log(node);
-
-      /*
-      let wrapper = document.createElement('div');
-      wrapper.innerHTML = Render.normalize(template);
-       var wrapperChildNodes = Array.prototype.slice.call(wrapper.childNodes).filter((element) => element.nodeType === 1);
-       wrapperChildNodes.forEach((element) => {
-        // si es componente parseamos
-        let componentName = Components.normalize(element);
-        if(!!Components.exists(componentName)) {
-          if(!!Injector.hasInstance(componentName::ucfirst())) {
-            node.appendChild(element);
-            let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-            Components.parse(element, componentName, attrs);
-          } else {
-            throw new Error('Error, no instance for component: ' + componentName::ucfirst());
-          }
-        } else {
-          // si no es componente añadimos a parent
-          node.appendChild(element);
-        }
-      });
-      */
-
-      //node.parentNode.replaceChild(, node);
-
-      /*
-      var wrapperChildNodes = Array.prototype.slice.call(
-        wrapper.getElementsByTagName("*")
-      ).filter((element) => element.nodeType === 1);
-       wrapperChildNodes.forEach((element) => {
-        let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-        //EventBinder.bind(element, attrs, target);
-         if(!!Components.exists(element.nodeName.toLowerCase())) {
-          if(!!Injector.hasInstance(element.nodeName.toLowerCase()::ucfirst())) {
-            node.appendChild(element);
-            Components.parse(element, element.nodeName.toLowerCase(), attrs);
-          } else {
-            throw new Error('Error, no instance for component: ' + cn.nodeName.toLowerCase()::ucfirst());
-          }
-        } else {
-          console.log(node, element);
-          node.appendChild(element);
-        }
-      });
-      */
-
-      /*
-      var wrapperChildNodes = Array.prototype.slice.call(
-        wrapper.getElementsByTagName("*")
-      ).filter((element) => element.nodeType === 1);
-       console.log(wrapperChildNodes);
-       wrapperChildNodes.forEach((element) => {
-        if (!!element.hasAttributes()) {
-          let directives = elementAttrs(element).filter((attr) => Directives.has(attr.name)).map((attr) => {
-            return {
-              directive: Directives.get(attr.name),
-              value: attr.value
-            };
-          });
-           Directives.render(element, directives, {
-            data, target
-          });
-        }
-      });
-       node.innerHTML = Render.render(
-        wrapper.innerHTML,
-        data
-      );
-       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-       childNodes.forEach((cn) => {
-        let attrs = !!cn.hasAttributes() ? elementAttrs(cn) : [];
-        EventBinder.bind(cn, attrs, target);
-        
-        if(!!Components.exists(cn.nodeName.toLowerCase())) {
-          if(!!Injector.hasInstance(cn.nodeName.toLowerCase()::ucfirst())) {
-            Components.parse(cn, cn.nodeName.toLowerCase(), attrs);
-          } else {
-            throw new Error('Error, no instance for component: ' + cn.nodeName.toLowerCase()::ucfirst());
-          }
-        } 
-      });
-      */
     }
   }, {
     key: 'parse',
@@ -1727,7 +1652,6 @@ var Views = (function () {
                   instance = Injector.instances[target.name];
 
               Views.parseComponent(node, template, instance, target);
-              //console.log('xxxxxx');
 
               EventBus.subscribe(eventName, function () {
                 Views.parseComponent(node, template, instance, target);

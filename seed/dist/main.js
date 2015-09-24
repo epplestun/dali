@@ -1021,6 +1021,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["RouterConfigHandlerDescriptor"] = RouterConfigHandlerDescriptor;
     this["RouterConfig"] = RouterConfig;
     this["_classCallCheck"] = _classCallCheck;
+    this["_classCallCheck"] = _classCallCheck;
     this["Runnable"] = Runnable;
     this["_toConsumableArray"] = _toConsumableArray;
     this["isDescriptor"] = isDescriptor;
@@ -1063,6 +1064,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var Filters = this["Filters"];
     var Render = this["Render"];
     var Router = this["Router"];
+    var RouterContent = this["RouterContent"];
     var RouterLink = this["RouterLink"];
     var _slice = this["_slice"];
     var Binder = this["Binder"];
@@ -2467,11 +2469,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, Router);
       }
       _createClass(Router, null, [{
-        key: 'change',
-        value: function change(event, route) {
-          console.log('Cargar componente asociado a ruta', Router.getHash(), route);
-        }
-      }, {
         key: 'getHash',
         value: function getHash() {
           return window.location.hash.substring(1);
@@ -2509,7 +2506,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }, {
         key: 'run',
         value: function run() {
-          EventBus.subscribe(Router.ROUTE_CHANGED, Router.change);
           if (window.location.hash.length === 0) {
             Router.routeToDefault();
           } else {
@@ -2556,6 +2552,44 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     function RouterConfig(arg) {
       return decorate(RouterConfigHandlerDescriptor, arg);
     }
+    'use strict';
+    var _createClass = (function() {
+      function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+          var descriptor = props[i];
+          descriptor.enumerable = descriptor.enumerable || false;
+          descriptor.configurable = true;
+          if ('value' in descriptor)
+            descriptor.writable = true;
+          Object.defineProperty(target, descriptor.key, descriptor);
+        }
+      }
+      return function(Constructor, protoProps, staticProps) {
+        if (protoProps)
+          defineProperties(Constructor.prototype, protoProps);
+        if (staticProps)
+          defineProperties(Constructor, staticProps);
+        return Constructor;
+      };
+    })();
+    function _classCallCheck(instance, Constructor) {
+      if (!(instance instanceof Constructor)) {
+        throw new TypeError('Cannot call a class as a function');
+      }
+    }
+    var RouterContent = (function() {
+      function RouterContent() {
+        _classCallCheck(this, RouterContent);
+        EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
+      }
+      _createClass(RouterContent, [{
+        key: 'change',
+        value: function change(event, route) {
+          console.log('RouterContent.change', route);
+        }
+      }]);
+      return RouterContent;
+    })();
     'use strict';
     var _createClass = (function() {
       function defineProperties(target, props) {
@@ -2911,6 +2945,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["Filters"] = Filters;
     this["Render"] = Render;
     this["Router"] = Router;
+    this["RouterContent"] = RouterContent;
     this["RouterLink"] = RouterLink;
     this["_slice"] = _slice;
     this["Binder"] = Binder;
@@ -2922,7 +2957,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
 $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   'use strict';
 
-  var bootstrap, Inject, Component, View, Bindable, Runnable, Menu, Module1, Module2, Module3, App;
+  var bootstrap, Inject, Component, View, Bindable, Runnable, RouterContent, Menu, Module1, Module2, Module3, App;
   return {
     setters: [function (_) {
       bootstrap = _.bootstrap;
@@ -2931,6 +2966,7 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
       View = _.View;
       Bindable = _.Bindable;
       Runnable = _.Runnable;
+      RouterContent = _.RouterContent;
     }, function (_2) {
       Menu = _2.Menu;
     }, function (_3) {
@@ -2958,7 +2994,7 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
           enumerable: true
         }], null, _instanceInitializers);
         var _App = App;
-        App = Inject(Menu)(App) || App;
+        App = Inject(Menu, RouterContent)(App) || App;
         App = Runnable(App) || App;
         App = View({
           templateUrl: 'main_view.html'
@@ -3000,82 +3036,6 @@ $__System.register('4', ['1'], function (_export) {
       })();
 
       _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('2', ['1'], function (_export) {
-  'use strict';
-
-  var Component, View, Bindable, Runnable, Menu;
-  return {
-    setters: [function (_) {
-      Component = _.Component;
-      View = _.View;
-      Bindable = _.Bindable;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      //@Injectable
-
-      Menu = (function () {
-        var _instanceInitializers = {};
-
-        function Menu() {
-          babelHelpers.classCallCheck(this, _Menu);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
-        }
-
-        babelHelpers.createDecoratedClass(Menu, [{
-          key: 'links',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _Menu = Menu;
-        Menu = Runnable(Menu) || Menu;
-        Menu = View({
-          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
-        })(Menu) || Menu;
-        Menu = Component({
-          name: 'menu'
-        })(Menu) || Menu;
-        return Menu;
-      })();
-
-      _export('Menu', Menu);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = View({
-          template: '<h1>Module3</h1>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
     }
   };
 });
@@ -3129,6 +3089,82 @@ todos = [];
   }
 }
 */
+
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = View({
+          template: '<h1>Module3</h1>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
+
+$__System.register('2', ['1'], function (_export) {
+  'use strict';
+
+  var Component, View, Bindable, Runnable, Menu;
+  return {
+    setters: [function (_) {
+      Component = _.Component;
+      View = _.View;
+      Bindable = _.Bindable;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      //@Injectable
+
+      Menu = (function () {
+        var _instanceInitializers = {};
+
+        function Menu() {
+          babelHelpers.classCallCheck(this, _Menu);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(Menu, [{
+          key: 'links',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Menu = Menu;
+        Menu = Runnable(Menu) || Menu;
+        Menu = View({
+          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
+        })(Menu) || Menu;
+        Menu = Component({
+          name: 'menu'
+        })(Menu) || Menu;
+        return Menu;
+      })();
+
+      _export('Menu', Menu);
+    }
+  };
+});
 
 })
 (function(factory) {

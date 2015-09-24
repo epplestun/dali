@@ -1,16 +1,7 @@
-//import {Injector} from 'core/di/Injector';
 import {EventBus} from 'core/event/EventBus';
 
 export class Router {
   static routes = [];
-
-  static change(event, route) {
-    console.log(
-      'Cargar componente asociado a ruta', 
-      Router.getHash(), 
-      route
-    );
-  }
 
   static getHash() {
     return window.location.hash.substring(1);
@@ -47,11 +38,8 @@ export class Router {
   }
 
   static run() {
-    EventBus.subscribe(Router.ROUTE_CHANGED, Router.change);
-
     if(window.location.hash.length === 0) {
       Router.routeToDefault();
-      //console.log('Router.routeToDefault');
     } else {
       if(Router.exists()) {
         Router.route();

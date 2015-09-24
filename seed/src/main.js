@@ -4,7 +4,8 @@ import {
   Component,
   View,
   Bindable,
-  Runnable
+  Runnable,
+  RouterContent
 } from 'dali/dali';
 
 import {Menu} from 'menu/Menu';
@@ -19,7 +20,7 @@ import {Module3} from 'module3/Module3';
   templateUrl: 'main_view.html'
 })
 @Runnable
-@Inject(Menu)
+@Inject(Menu, RouterContent)
 class App {
   @Bindable
   appName = "My Fist DALI App!!";
