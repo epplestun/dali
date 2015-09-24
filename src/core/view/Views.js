@@ -1,10 +1,10 @@
-import {first, ucfirst} from 'core/util/util';
 import {Render} from 'core/render/Render';
-import {HTMLParser} from 'core/dom/HTMLParser';
 import {DOM} from 'core/dom/dom';
-import {EventBus, EventNameNormalizer, EventBinder} from 'core/event/EventBus';
+import {EventBus} from 'core/event/EventBus';
+import {EventNameNormalizer} from 'core/event/EventNameNormalizer';
+import {EventBinder} from 'core/event/EventBinder';
 import {HTTP} from 'http/HTTP';
-import {Inject, Injector} from 'core/di/Injector';
+import {Injector} from 'core/di/Injector';
 import {Directives} from 'core/directives/Directives';
 
 function elementAttrs(element) {

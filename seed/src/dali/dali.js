@@ -1,13 +1,3 @@
-'use strict';
-'use strict';
-
-function bootstrap(target) {
-  Injector.get(target).run();
-
-  Router.run();
-  Components.run();
-  Binder.run();
-}
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -153,6 +143,56 @@ var HTTP = (function () {
 
   return HTTP;
 })();
+'use strict';
+
+var _slice = Array.prototype.slice;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+function isDescriptor(desc) {
+  if (!desc || !desc.hasOwnProperty) {
+    return false;
+  }
+
+  var keys = ['value', 'get', 'set'];
+
+  for (var i = 0, l = keys.length; i < l; i++) {
+    if (desc.hasOwnProperty(keys[i])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function decorate(handleDescriptor, entryArgs) {
+  if (isDescriptor(entryArgs[entryArgs.length - 1])) {
+    return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
+  } else {
+    return function () {
+      return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
+    };
+  }
+}
+
+function first() {
+  return this[0];
+}
+
+function last() {
+  return this[this.length - 1];
+}
+
+function ucfirst() {
+  var f = this.charAt(0).toUpperCase();
+  return f + this.substr(1);
+}
+
+function log() {
+  console.log(arguments);
+}
+
+log('util.js');
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1319,225 +1359,12 @@ Render.START_DELIMITER = "{{";
 Render.END_DELIMITER = "}}";
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var Router = (function () {
-  function Router() {
-    _classCallCheck(this, Router);
-  }
-
-  _createClass(Router, null, [{
-    key: 'getHash',
-    value: function getHash() {
-      return window.location.hash.substring(1);
-    }
-  }, {
-    key: 'exists',
-    value: function exists() {
-      var routes = Router.routes.filter(function (route) {
-        var path = route.value.path;
-
-        if (!!path.test(Router.getHash())) {
-          return route;
-        }
-      });
-
-      return routes.length === 1 ? true : false;
-    }
-  }, {
-    key: 'route',
-    value: function route() {
-      Router.routes.forEach(function (route) {
-        var path = route.value.path;
-
-        if (!!path.test(Router.getHash())) {
-          EventBus.publish(Router.ROUTE_CHANGED, route);
-        }
-      });
-    }
-  }, {
-    key: 'routeToDefault',
-    value: function routeToDefault() {
-      Router.routes.forEach(function (route) {
-        if (!!route.value.hasOwnProperty('default')) {
-          window.location.hash = route.value.url;
-        }
-      });
-    }
-  }, {
-    key: 'run',
-    value: function run() {
-      if (window.location.hash.length === 0) {
-        Router.routeToDefault();
-      } else {
-        if (Router.exists()) {
-          Router.route();
-        } else {
-          throw new Error('404');
-        }
-      }
-
-      window.addEventListener('hashchange', Router.route, false);
-    }
-  }, {
-    key: 'routes',
-    value: [],
-    enumerable: true
-  }]);
-
-  return Router;
-})();
-
-Router.ROUTE_CHANGED = "ROUTE_CHANGED";
-'use strict';
-
-log('RouterConfig.js');
-
-function pathToRegexp(path, keys, sensitive, strict) {
-  if (path instanceof RegExp) return path;
-  if (path instanceof Array) path = '(' + path.join('|') + ')';
-  path = path.concat(strict ? '' : '/?').replace(/\/\(/g, '(?:/').replace(/\+/g, '__plus__').replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function (_, slash, format, key, capture, optional) {
-    keys.push({ name: key, optional: !!optional });
-    slash = slash || '';
-    return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
-  }).replace(/([\/.])/g, '\\$1').replace(/__plus__/g, '(.+)').replace(/\*/g, '(.*)');
-
-  return new RegExp('^' + path + '$', sensitive ? '' : 'i');
-}
-
-function RouterConfigHandlerDescriptor(target, value) {
-  value.url = value.path;
-  value.path = pathToRegexp(value.path, [], false, false);
-  Router.routes.push({ target: target, value: value });
-}
-
-function RouterConfig(arg) {
-  return decorate(RouterConfigHandlerDescriptor, arg);
-}
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-/*
-@Component({
-  name: 'router-content'
-})
-@View({
-  template: '<div>Router content</div>'
-})
-@Runnable
-*/
-
-var RouterContent = (function () {
-  function RouterContent() {
-    _classCallCheck(this, RouterContent);
-
-    EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
-  }
-
-  _createClass(RouterContent, [{
-    key: 'change',
-    value: function change(event, route) {
-      console.log('RouterContent.change', route);
-    }
-  }]);
-
-  return RouterContent;
-})();
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var RouterLink = (function () {
-  function RouterLink() {
-    _classCallCheck(this, _RouterLink);
-  }
-
-  _createClass(RouterLink, [{
-    key: 'render',
-    value: function render(element, data, value, config) {
-      var property = value.substring(2);
-      property = property.substring(0, property.length - 2);
-
-      if (property.indexOf('.') > -1) {
-        property = property.substring(0, property.indexOf('.'));
-      }
-
-      if (data.hasOwnProperty(property)) {
-        element.setAttribute('href', '#' + Render.render(value, data));
-        element.removeAttribute(config.name);
-      }
-    }
-  }]);
-
-  var _RouterLink = RouterLink;
-  RouterLink = Directive({
-    name: 'router-link'
-  })(RouterLink) || RouterLink;
-  return RouterLink;
-})();
-'use strict';
-
 log('Runnable.js');
 
 function Runnable(target) {
   Object.assign(target.prototype, {
     run: function run() {}
   });
-}
-'use strict';
-
-var _slice = Array.prototype.slice;
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
-function isDescriptor(desc) {
-  if (!desc || !desc.hasOwnProperty) {
-    return false;
-  }
-
-  var keys = ['value', 'get', 'set'];
-
-  for (var i = 0, l = keys.length; i < l; i++) {
-    if (desc.hasOwnProperty(keys[i])) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function decorate(handleDescriptor, entryArgs) {
-  if (isDescriptor(entryArgs[entryArgs.length - 1])) {
-    return handleDescriptor.apply(undefined, _toConsumableArray(entryArgs).concat([[]]));
-  } else {
-    return function () {
-      return handleDescriptor.apply(undefined, _slice.call(arguments).concat([entryArgs]));
-    };
-  }
-}
-
-function first() {
-  return this[0];
-}
-
-function last() {
-  return this[this.length - 1];
-}
-
-function ucfirst() {
-  var f = this.charAt(0).toUpperCase();
-  return f + this.substr(1);
-}
-
-function log() {
-  console.log(arguments);
 }
 'use strict';
 
@@ -1820,3 +1647,179 @@ var Views = (function () {
 
 Views.TEMPLATE_URL = "templateUrl";
 Views.TEMPLATE = "template";
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Router = (function () {
+  function Router() {
+    _classCallCheck(this, Router);
+  }
+
+  _createClass(Router, null, [{
+    key: 'getHash',
+    value: function getHash() {
+      return window.location.hash.substring(1);
+    }
+  }, {
+    key: 'exists',
+    value: function exists() {
+      var routes = Router.routes.filter(function (route) {
+        var path = route.value.path;
+
+        if (!!path.test(Router.getHash())) {
+          return route;
+        }
+      });
+
+      return routes.length === 1 ? true : false;
+    }
+  }, {
+    key: 'route',
+    value: function route() {
+      Router.routes.forEach(function (route) {
+        var path = route.value.path;
+
+        if (!!path.test(Router.getHash())) {
+          EventBus.publish(Router.ROUTE_CHANGED, route);
+        }
+      });
+    }
+  }, {
+    key: 'routeToDefault',
+    value: function routeToDefault() {
+      Router.routes.forEach(function (route) {
+        if (!!route.value.hasOwnProperty('default')) {
+          window.location.hash = route.value.url;
+        }
+      });
+    }
+  }, {
+    key: 'run',
+    value: function run() {
+      if (window.location.hash.length === 0) {
+        Router.routeToDefault();
+      } else {
+        if (Router.exists()) {
+          Router.route();
+        } else {
+          throw new Error('404');
+        }
+      }
+
+      window.addEventListener('hashchange', Router.route, false);
+    }
+  }, {
+    key: 'routes',
+    value: [],
+    enumerable: true
+  }]);
+
+  return Router;
+})();
+
+Router.ROUTE_CHANGED = "ROUTE_CHANGED";
+'use strict';
+
+log('RouterConfig.js');
+
+function pathToRegexp(path, keys, sensitive, strict) {
+  if (path instanceof RegExp) return path;
+  if (path instanceof Array) path = '(' + path.join('|') + ')';
+  path = path.concat(strict ? '' : '/?').replace(/\/\(/g, '(?:/').replace(/\+/g, '__plus__').replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function (_, slash, format, key, capture, optional) {
+    keys.push({ name: key, optional: !!optional });
+    slash = slash || '';
+    return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
+  }).replace(/([\/.])/g, '\\$1').replace(/__plus__/g, '(.+)').replace(/\*/g, '(.*)');
+
+  return new RegExp('^' + path + '$', sensitive ? '' : 'i');
+}
+
+function RouterConfigHandlerDescriptor(target, value) {
+  value.url = value.path;
+  value.path = pathToRegexp(value.path, [], false, false);
+  Router.routes.push({ target: target, value: value });
+}
+
+function RouterConfig(arg) {
+  return decorate(RouterConfigHandlerDescriptor, arg);
+}
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+log('RouterContent.js');
+
+var RouterContent = (function () {
+  function RouterContent() {
+    _classCallCheck(this, _RouterContent);
+
+    console.log('RouterContent.constructor');
+    EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
+  }
+
+  _createClass(RouterContent, [{
+    key: 'change',
+    value: function change(event, route) {
+      console.log('RouterContent.change', route);
+    }
+  }]);
+
+  var _RouterContent = RouterContent;
+  RouterContent = View({
+    template: '<div>Router content</div>'
+  })(RouterContent) || RouterContent;
+  RouterContent = Component({
+    name: 'router-content'
+  })(RouterContent) || RouterContent;
+  return RouterContent;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var RouterLink = (function () {
+  function RouterLink() {
+    _classCallCheck(this, _RouterLink);
+  }
+
+  _createClass(RouterLink, [{
+    key: 'render',
+    value: function render(element, data, value, config) {
+      var property = value.substring(2);
+      property = property.substring(0, property.length - 2);
+
+      if (property.indexOf('.') > -1) {
+        property = property.substring(0, property.indexOf('.'));
+      }
+
+      if (data.hasOwnProperty(property)) {
+        element.setAttribute('href', '#' + Render.render(value, data));
+        element.removeAttribute(config.name);
+      }
+    }
+  }]);
+
+  var _RouterLink = RouterLink;
+  RouterLink = Directive({
+    name: 'router-link'
+  })(RouterLink) || RouterLink;
+  return RouterLink;
+})();
+'use strict';
+
+log('bootstrap.js');
+
+function bootstrap(target) {
+  Injector.get(target).run();
+
+  Router.run();
+  Components.run();
+  Binder.run();
+}

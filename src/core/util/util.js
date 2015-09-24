@@ -40,3 +40,5 @@ export function ucfirst() {
 export function log() {
   console.log(arguments);
 }
+
+log('util.js');
