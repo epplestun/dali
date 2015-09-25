@@ -33,14 +33,20 @@ export class Views {
         instance = Injector.instances[target.name],
         value = instance[key];
 
-    let wrapper = document.createElement('div');
-    wrapper.innerHTML = template.replace(/\n/gm, '');
-
     DOM.walk(node, () => {
       DOM.cache.forEach((cacheNode) => {
         let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
-        if(!!regexp.test(cacheNode.data)) {
-          cacheNode.node.nodeValue = instance[key];
+
+        if(cacheNode.data instanceof Array) {
+          cacheNode.data.forEach(attr => {
+            if(!!regexp.test(attr.value)) {
+              cacheNode.node.setAttribute(attr.name, instance[key]);
+            }
+          });
+        } else {
+          if(!!regexp.test(cacheNode.data)) {
+            cacheNode.node.nodeValue = instance[key];
+          }  
         }
       });
     });
@@ -56,7 +62,12 @@ export class Views {
       node.innerHTML = nodeParsed.innerHTML;
 
       DOM.walk(node, (n) => {
-        if(n.data) {
+        if(n.nodeType === 1 && n.hasAttributes()) {
+          DOM.cache.push({
+            node: n,
+            data: elementAttrs(n).slice()
+          }); 
+        } else if(n.data) {
           DOM.cache.push({
             node: n,
             data: n.data.slice()

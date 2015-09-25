@@ -2871,13 +2871,19 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         value: function parseModel(key, target) {
           var view = Views.views[target.name];
           node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
-          var wrapper = document.createElement('div');
-          wrapper.innerHTML = template.replace(/\n/gm, '');
           DOM.walk(node, function() {
             DOM.cache.forEach(function(cacheNode) {
               var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
-              if (!!regexp.test(cacheNode.data)) {
-                cacheNode.node.nodeValue = instance[key];
+              if (cacheNode.data instanceof Array) {
+                cacheNode.data.forEach(function(attr) {
+                  if (!!regexp.test(attr.value)) {
+                    cacheNode.node.setAttribute(attr.name, instance[key]);
+                  }
+                });
+              } else {
+                if (!!regexp.test(cacheNode.data)) {
+                  cacheNode.node.nodeValue = instance[key];
+                }
               }
             });
           });
@@ -2891,7 +2897,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           if (!!node) {
             node.innerHTML = nodeParsed.innerHTML;
             DOM.walk(node, function(n) {
-              if (n.data) {
+              if (n.nodeType === 1 && n.hasAttributes()) {
+                DOM.cache.push({
+                  node: n,
+                  data: elementAttrs(n).slice()
+                });
+              } else if (n.data) {
                 DOM.cache.push({
                   node: n,
                   data: n.data.slice()
@@ -3270,6 +3281,39 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h2>Module2</h2>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          title: 'Module 2',
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
 $__System.register('3', ['1', '6'], function (_export) {
   'use strict';
 
@@ -3344,72 +3388,6 @@ $__System.register('3', ['1', '6'], function (_export) {
   };
 });
 
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = Runnable(Module2) || Module2;
-        Module2 = View({
-          template: '<h2>Module2</h2>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          title: 'Module 2',
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = Runnable(Module3) || Module3;
-        Module3 = View({
-          template: '<h2>Module3</h2>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          title: 'Module 3',
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
-    }
-  };
-});
-
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -3452,6 +3430,39 @@ $__System.register('2', ['1'], function (_export) {
       })();
 
       _export('MenuBar', MenuBar);
+    }
+  };
+});
+
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
+        Module3 = View({
+          template: '<h2>Module3</h2>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          title: 'Module 3',
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
     }
   };
 });

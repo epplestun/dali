@@ -1622,14 +1622,20 @@ var Views = (function () {
       var view = Views.views[target.name];
       node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
 
-      var wrapper = document.createElement('div');
-      wrapper.innerHTML = template.replace(/\n/gm, '');
-
       DOM.walk(node, function () {
         DOM.cache.forEach(function (cacheNode) {
           var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
-          if (!!regexp.test(cacheNode.data)) {
-            cacheNode.node.nodeValue = instance[key];
+
+          if (cacheNode.data instanceof Array) {
+            cacheNode.data.forEach(function (attr) {
+              if (!!regexp.test(attr.value)) {
+                cacheNode.node.setAttribute(attr.name, instance[key]);
+              }
+            });
+          } else {
+            if (!!regexp.test(cacheNode.data)) {
+              cacheNode.node.nodeValue = instance[key];
+            }
           }
         });
       });
@@ -1646,7 +1652,12 @@ var Views = (function () {
         node.innerHTML = nodeParsed.innerHTML;
 
         DOM.walk(node, function (n) {
-          if (n.data) {
+          if (n.nodeType === 1 && n.hasAttributes()) {
+            DOM.cache.push({
+              node: n,
+              data: elementAttrs(n).slice()
+            });
+          } else if (n.data) {
             DOM.cache.push({
               node: n,
               data: n.data.slice()
@@ -1663,21 +1674,6 @@ var Views = (function () {
           }
         });
       }
-
-      /*
-      if(!!node) {
-        node.innerHTML = Render.render(
-          nodeParsed.innerHTML,
-          data
-        );
-         DOM.parse(node).walk(node, (element) => {
-          if(element.nodeType === 1) {
-            let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-            EventBinder.bind(element, attrs, target);
-          }
-        });
-      }
-      */
     }
   }, {
     key: 'parseView',
