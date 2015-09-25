@@ -1792,7 +1792,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           EventBus.subscribe(eventName, function(e, data) {
             var _context;
             var key = (_context = Object.keys(data), first).call(_context);
-            Views.parseModel(key, data, target);
+            Views.parseModel(key, target);
           });
         }
       }]);
@@ -2131,14 +2131,24 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, DOM);
       }
       _createClass(DOM, null, [{
-        key: 'walk',
-        value: function walk(n, c) {
+        key: 'walk2',
+        value: function walk2(node1, node2, callback) {
           do {
-            c(n);
-            if (!!n && n.hasChildNodes()) {
-              DOM.walk(n.firstChild, c);
+            callback(node1, node2);
+            if (!!node1 && node1.hasChildNodes() && !!node2 && node2.hasChildNodes()) {
+              DOM.walk2(node1.firstChild, node2.firstChild, callback);
             }
-          } while (n = n.nextSibling);
+          } while ((node1 = node1.nextSibling ? node1.nextSibling : node1, node2 = node2.nextSibling ? node2.nextSibling : node2));
+        }
+      }, {
+        key: 'walk',
+        value: function walk(node, callback) {
+          do {
+            callback(node);
+            if (!!node && node.hasChildNodes()) {
+              DOM.walk(node.firstChild, callback);
+            }
+          } while (node = node.nextSibling);
         }
       }, {
         key: 'clean',
@@ -2154,11 +2164,19 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           }
         }
       }, {
+        key: 'childs',
+        value: function childs(node) {
+          var childNodes = [];
+          DOM.walk(node, function(n) {
+            childNodes.push(n);
+          });
+          childNodes.shift();
+          return childNodes;
+        }
+      }, {
         key: 'parse',
         value: function parse(node) {
-          var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
-            return element.nodeType === 1;
-          });
+          var childNodes = DOM.childs(node);
           while (node.firstChild) {
             node.removeChild(node.firstChild);
           }
@@ -2859,15 +2877,14 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(Views, null, [{
         key: 'parseModel',
-        value: function parseModel(key, data, target) {
+        value: function parseModel(key, target) {
           var view = Views.views[target.name];
-          node = view.nodeCached, template = view.templateCached;
+          node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
           var wrapper = document.createElement('div');
-          wrapper.innerHTML = Render.normalize(template);
-          DOM.clean(node);
-          DOM.walk(node, function(n) {
-            console.log(n);
-          });
+          wrapper.innerHTML = template.replace(/\n/gm, '');
+          console.log(node.innerHTML);
+          console.log(wrapper.innerHTML);
+          console.log(key, value);
         }
       }, {
         key: 'parseComponent',
@@ -2875,15 +2892,17 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           var wrapper = document.createElement('div');
           wrapper.innerHTML = Render.normalize(template);
           var nodeParsed = Directives.parse(wrapper, data, target);
-          node.innerHTML = Render.render(nodeParsed.innerHTML, data);
-          DOM.parse(node);
-          var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
-            return element.nodeType === 1;
-          });
-          childNodes.forEach(function(element) {
-            var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-            EventBinder.bind(element, attrs, target);
-          });
+          if (!!node) {
+            node.innerHTML = Render.render(nodeParsed.innerHTML, data);
+            DOM.parse(node);
+            var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
+              return element.nodeType === 1;
+            });
+            childNodes.forEach(function(element) {
+              var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+              EventBinder.bind(element, attrs, target);
+            });
+          }
         }
       }, {
         key: 'parseView',
@@ -2919,9 +2938,9 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           if (!!component) {
             var view = Views.views[component.target.name],
                 target = component.target,
-                instance = Injector.instances[target.name];
+                _instance = Injector.instances[target.name];
             ;
-            Views.resolve(view, node, target, instance);
+            Views.resolve(view, node, target, _instance);
           }
         }
       }, {
@@ -3248,80 +3267,6 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
-$__System.register('3', ['1', '6'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, DateFilter, Module1;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }, function (_2) {
-      DateFilter = _2.DateFilter;
-    }],
-    execute: function () {
-      Module1 = (function () {
-        var _instanceInitializers = {};
-
-        function Module1() {
-          babelHelpers.classCallCheck(this, _Module1);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
-          this.date = new Date();
-        }
-
-        babelHelpers.createDecoratedClass(Module1, [{
-          key: 'add',
-          value: function add() {
-            this.todos.push(this.item);
-            //this.todos.push(new Date());
-          }
-        }, {
-          key: 'remove',
-          value: function remove(item, index) {
-            this.todos.splice(index, 1);
-          }
-        }, {
-          key: 'clean',
-          value: function clean() {
-            while (this.todos.length > 0) {
-              this.todos.splice(0, 1);
-            }
-          }
-        }, {
-          key: 'name',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return "My First App!!";
-          },
-          enumerable: true
-        }, {
-          key: 'todos',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _Module1 = Module1;
-        Module1 = Runnable(Module1) || Module1;
-        Module1 = View({
-          templateUrl: 'module1/module1_view.html'
-        })(Module1) || Module1;
-        Module1 = RouterConfig({
-          title: 'Module 1',
-          'default': true,
-          path: '/m1'
-        })(Module1) || Module1;
-        return Module1;
-      })();
-
-      _export('Module1', Module1);
-    }
-  };
-});
-
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -3397,6 +3342,80 @@ $__System.register('4', ['1'], function (_export) {
       })();
 
       _export('Module2', Module2);
+    }
+  };
+});
+
+$__System.register('3', ['1', '6'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, DateFilter, Module1;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }, function (_2) {
+      DateFilter = _2.DateFilter;
+    }],
+    execute: function () {
+      Module1 = (function () {
+        var _instanceInitializers = {};
+
+        function Module1() {
+          babelHelpers.classCallCheck(this, _Module1);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
+          this.date = new Date();
+        }
+
+        babelHelpers.createDecoratedClass(Module1, [{
+          key: 'add',
+          value: function add() {
+            this.todos.push(this.item);
+            //this.todos.push(new Date());
+          }
+        }, {
+          key: 'remove',
+          value: function remove(item, index) {
+            this.todos.splice(index, 1);
+          }
+        }, {
+          key: 'clean',
+          value: function clean() {
+            while (this.todos.length > 0) {
+              this.todos.splice(0, 1);
+            }
+          }
+        }, {
+          key: 'name',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return "My First App!!";
+          },
+          enumerable: true
+        }, {
+          key: 'todos',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Module1 = Module1;
+        Module1 = Runnable(Module1) || Module1;
+        Module1 = View({
+          templateUrl: 'module1/module1_view.html'
+        })(Module1) || Module1;
+        Module1 = RouterConfig({
+          title: 'Module 1',
+          'default': true,
+          path: '/m1'
+        })(Module1) || Module1;
+        return Module1;
+      })();
+
+      _export('Module1', Module1);
     }
   };
 });

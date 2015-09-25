@@ -26,56 +26,41 @@ function sameAttributes(elementAttrs, attrs) {
 export class Views {
   static views = {};
 
-  static parseModel(key, data, target) {
-
-    //console.log(key, data, target.name);
-    
+  static parseModel(key, target) {    
     let view = Views.views[target.name]
         node = view.nodeCached,
-        template = view.templateCached;
-    
-    let wrapper = document.createElement('div');
-    wrapper.innerHTML = Render.normalize(template);
+        template = view.templateCached,
+        instance = Injector.instances[target.name],
+        value = instance[key];
+        //nodeParsed = Views.views[target.name].nodeParsedCached;
 
-    DOM.clean(node);
-    DOM.walk(node, function(n) {
-      console.log(n);
-    });
+    let wrapper = document.createElement('div');
+    wrapper.innerHTML = template.replace(/\n/gm, '');
+
+    console.log(node.innerHTML);
+    console.log(wrapper.innerHTML);
+    console.log(key, value);
+
+    /*DOM.walk2(node, wrapper, function(n1, n2) {
+      console.log(n1, n2);
+    });*/
 
     /*
-    var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*"));
-    wrapperChildNodes = wrapperChildNodes.filter((element) => {
-      let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER);
-      return regexp.test(element.innerText);
-    });
-
-    console.log(wrapperChildNodes);
-
-    wrapperChildNodes.forEach((wrapperChildNode) => {
-      let attrs = elementAttrs(wrapperChildNode);
-
-      var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-      let childNode = childNodes.filter((element) => {
-        let nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-        return element.nodeName.toLowerCase() === wrapperChildNode.nodeName.toLowerCase() && sameAttributes(nodeAttrs, attrs);
-      });
-
-      childNode.forEach((cn) => {
-        cn.innerHTML = Render.render(
-          wrapperChildNode.innerHTML,
-          data
-        );
-      });
-    });
-    */
-  }
-
-  static parseComponent(node, template, data, target) {
     let wrapper = document.createElement('div');
-    wrapper.innerHTML = Render.normalize(template);
+    wrapper.innerHTML = template;
 
-    let nodeParsed = Directives.parse(wrapper, data, target);
+    DOM.clean(wrapper);
+    DOM.walk(wrapper, function(n) {
+      var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
+      if(n.data && !!regexp.test(n.data)) {
+        n.nodeValue = data[key];
+      }        
+    });*/
 
+    
+
+    //console.log(instance, nodeParsed.innerHTML);
+    /*
     node.innerHTML = Render.render(
       nodeParsed.innerHTML,
       data
@@ -88,7 +73,33 @@ export class Views {
     childNodes.forEach((element) => {
       let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
       EventBinder.bind(element, attrs, target);
-    });    
+    });
+    */
+  }
+
+  static parseComponent(node, template, data, target) {
+    let wrapper = document.createElement('div');
+    wrapper.innerHTML = Render.normalize(template);
+
+    let nodeParsed = Directives.parse(wrapper, data, target);
+
+    if(!!node) {
+      //Views.views[target.name].nodeParsedCached = nodeParsed;
+
+      node.innerHTML = Render.render(
+        nodeParsed.innerHTML,
+        data
+      );
+
+      DOM.parse(node);
+
+      var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+
+      childNodes.forEach((element) => {
+        let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+        EventBinder.bind(element, attrs, target);
+      });    
+    }
   }
 
   static parseView(node, template, instance, target) {

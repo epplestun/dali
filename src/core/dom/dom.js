@@ -1,14 +1,27 @@
 import {Components} from 'core/component/Components';
 
 export class DOM {
-  static walk(n, c) {
+  static walk2(node1, node2, callback) {
     do {
-      c(n);
+      callback(node1, node2);
 
-      if (!!n && n.hasChildNodes()) {
-        DOM.walk(n.firstChild, c);
+      if (!!node1 && node1.hasChildNodes() && !!node2 && node2.hasChildNodes()) {
+        DOM.walk2(node1.firstChild, node2.firstChild, callback);
       }
-    } while (n = n.nextSibling);
+    } while (
+      node1 = node1.nextSibling ? node1.nextSibling : node1, 
+      node2 = node2.nextSibling ? node2.nextSibling : node2
+    );
+  }
+
+  static walk(node, callback) {
+    do {
+      callback(node);
+
+      if (!!node && node.hasChildNodes()) {
+        DOM.walk(node.firstChild, callback);
+      }
+    } while (node = node.nextSibling);
   }
 
   static clean(node) {
@@ -23,9 +36,19 @@ export class DOM {
     }
   }
 
-  static parse(node) {
-    var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-    
+  static childs(node) {
+    let childNodes = [];
+    DOM.walk(node, function(n) {
+      childNodes.push(n);
+    });
+    childNodes.shift();
+
+    return childNodes;
+  }
+
+  static parse(node) {    
+    let childNodes = DOM.childs(node);
+
     while (node.firstChild) {
       node.removeChild(node.firstChild);
     }

@@ -5,9 +5,11 @@
     <li *for="todo in todos">{{todo}}</li>
   </ul>
 
+  <hr/>
   {{item}}
+  <hr/>
 
-  <input type="text" *model="item" />
+  <input type="text" value="Test" *model="item" />
   
   <button _click="add()" title="Add">Add</button><button _click="clean()" title="{{item}}">Clear</button>
 </div>

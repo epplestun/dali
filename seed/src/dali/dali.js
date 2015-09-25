@@ -574,7 +574,7 @@ var DataModel = (function () {
         var _context;
 
         var key = (_context = Object.keys(data), first).call(_context);
-        Views.parseModel(key, data, target);
+        Views.parseModel(key, target);
       });
     }
   }]);
@@ -974,15 +974,26 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
-    key: 'walk',
-    value: function walk(n, c) {
+    key: 'walk2',
+    value: function walk2(node1, node2, callback) {
       do {
-        c(n);
+        callback(node1, node2);
 
-        if (!!n && n.hasChildNodes()) {
-          DOM.walk(n.firstChild, c);
+        if (!!node1 && node1.hasChildNodes() && !!node2 && node2.hasChildNodes()) {
+          DOM.walk2(node1.firstChild, node2.firstChild, callback);
         }
-      } while (n = n.nextSibling);
+      } while ((node1 = node1.nextSibling ? node1.nextSibling : node1, node2 = node2.nextSibling ? node2.nextSibling : node2));
+    }
+  }, {
+    key: 'walk',
+    value: function walk(node, callback) {
+      do {
+        callback(node);
+
+        if (!!node && node.hasChildNodes()) {
+          DOM.walk(node.firstChild, callback);
+        }
+      } while (node = node.nextSibling);
     }
   }, {
     key: 'clean',
@@ -998,11 +1009,20 @@ var DOM = (function () {
       }
     }
   }, {
+    key: 'childs',
+    value: function childs(node) {
+      var childNodes = [];
+      DOM.walk(node, function (n) {
+        childNodes.push(n);
+      });
+      childNodes.shift();
+
+      return childNodes;
+    }
+  }, {
     key: 'parse',
     value: function parse(node) {
-      var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
-        return element.nodeType === 1;
-      });
+      var childNodes = DOM.childs(node);
 
       while (node.firstChild) {
         node.removeChild(node.firstChild);
@@ -1595,41 +1615,44 @@ var Views = (function () {
 
   _createClass(Views, null, [{
     key: 'parseModel',
-    value: function parseModel(key, data, target) {
-
-      //console.log(key, data, target.name);
-
+    value: function parseModel(key, target) {
       var view = Views.views[target.name];
-      node = view.nodeCached, template = view.templateCached;
+      node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
+      //nodeParsed = Views.views[target.name].nodeParsedCached;
 
       var wrapper = document.createElement('div');
-      wrapper.innerHTML = Render.normalize(template);
+      wrapper.innerHTML = template.replace(/\n/gm, '');
 
-      DOM.clean(node);
-      DOM.walk(node, function (n) {
-        console.log(n);
-      });
+      console.log(node.innerHTML);
+      console.log(wrapper.innerHTML);
+      console.log(key, value);
+
+      /*DOM.walk2(node, wrapper, function(n1, n2) {
+        console.log(n1, n2);
+      });*/
 
       /*
-      var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*"));
-      wrapperChildNodes = wrapperChildNodes.filter((element) => {
-        let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER);
-        return regexp.test(element.innerText);
-      });
-       console.log(wrapperChildNodes);
-       wrapperChildNodes.forEach((wrapperChildNode) => {
-        let attrs = elementAttrs(wrapperChildNode);
-         var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-        let childNode = childNodes.filter((element) => {
-          let nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-          return element.nodeName.toLowerCase() === wrapperChildNode.nodeName.toLowerCase() && sameAttributes(nodeAttrs, attrs);
-        });
-         childNode.forEach((cn) => {
-          cn.innerHTML = Render.render(
-            wrapperChildNode.innerHTML,
-            data
-          );
-        });
+      let wrapper = document.createElement('div');
+      wrapper.innerHTML = template;
+       DOM.clean(wrapper);
+      DOM.walk(wrapper, function(n) {
+        var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
+        if(n.data && !!regexp.test(n.data)) {
+          n.nodeValue = data[key];
+        }        
+      });*/
+
+      //console.log(instance, nodeParsed.innerHTML);
+      /*
+      node.innerHTML = Render.render(
+        nodeParsed.innerHTML,
+        data
+      );
+       DOM.parse(node);
+       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+       childNodes.forEach((element) => {
+        let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+        EventBinder.bind(element, attrs, target);
       });
       */
     }
@@ -1641,18 +1664,22 @@ var Views = (function () {
 
       var nodeParsed = Directives.parse(wrapper, data, target);
 
-      node.innerHTML = Render.render(nodeParsed.innerHTML, data);
+      if (!!node) {
+        //Views.views[target.name].nodeParsedCached = nodeParsed;
 
-      DOM.parse(node);
+        node.innerHTML = Render.render(nodeParsed.innerHTML, data);
 
-      var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
-        return element.nodeType === 1;
-      });
+        DOM.parse(node);
 
-      childNodes.forEach(function (element) {
-        var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-        EventBinder.bind(element, attrs, target);
-      });
+        var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
+          return element.nodeType === 1;
+        });
+
+        childNodes.forEach(function (element) {
+          var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+          EventBinder.bind(element, attrs, target);
+        });
+      }
     }
   }, {
     key: 'parseView',
@@ -1693,9 +1720,9 @@ var Views = (function () {
       if (!!component) {
         var view = Views.views[component.target.name],
             target = component.target,
-            instance = Injector.instances[target.name];;
+            _instance = Injector.instances[target.name];;
 
-        Views.resolve(view, node, target, instance);
+        Views.resolve(view, node, target, _instance);
       }
     }
   }, {
