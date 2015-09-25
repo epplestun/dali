@@ -1792,7 +1792,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           EventBus.subscribe(eventName, function(e, data) {
             var _context;
             var key = (_context = Object.keys(data), first).call(_context);
-            console.log(key, data, target);
+            Views.parseModel(key, data, target);
           });
         }
       }]);
@@ -2131,6 +2131,29 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, DOM);
       }
       _createClass(DOM, null, [{
+        key: 'walk',
+        value: function walk(n, c) {
+          do {
+            c(n);
+            if (!!n && n.hasChildNodes()) {
+              DOM.walk(n.firstChild, c);
+            }
+          } while (n = n.nextSibling);
+        }
+      }, {
+        key: 'clean',
+        value: function clean(node) {
+          for (var n = 0; n < node.childNodes.length; n++) {
+            var child = node.childNodes[n];
+            if (child.nodeType === 8 || child.nodeType === 3 && !/\S/.test(child.nodeValue)) {
+              node.removeChild(child);
+              n--;
+            } else if (child.nodeType === 1) {
+              DOM.clean(child);
+            }
+          }
+        }
+      }, {
         key: 'parse',
         value: function parse(node) {
           var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
@@ -2839,28 +2862,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         value: function parseModel(key, data, target) {
           var view = Views.views[target.name];
           node = view.nodeCached, template = view.templateCached;
-          console.log(node, template);
           var wrapper = document.createElement('div');
           wrapper.innerHTML = Render.normalize(template);
-          var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter(function(element) {
-            return element.nodeType === 1;
-          });
-          wrapperChildNodes = wrapperChildNodes.filter(function(element) {
-            var regexp = new RegExp('{{' + key + '}}');
-            return regexp.test(element.innerText);
-          });
-          wrapperChildNodes.forEach(function(wrapperChildNode) {
-            var attrs = elementAttrs(wrapperChildNode);
-            var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
-              return element.nodeType === 1;
-            });
-            var childNode = childNodes.filter(function(element) {
-              var nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-              return element.nodeName.toLowerCase() === wrapperChildNode.nodeName.toLowerCase() && sameAttributes(nodeAttrs, attrs);
-            });
-            childNode.forEach(function(cn) {
-              cn.innerHTML = Render.render(wrapperChildNode.innerHTML, data);
-            });
+          DOM.clean(node);
+          DOM.walk(node, function(n) {
+            console.log(n);
           });
         }
       }, {
@@ -3242,6 +3248,80 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
+$__System.register('3', ['1', '6'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, DateFilter, Module1;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }, function (_2) {
+      DateFilter = _2.DateFilter;
+    }],
+    execute: function () {
+      Module1 = (function () {
+        var _instanceInitializers = {};
+
+        function Module1() {
+          babelHelpers.classCallCheck(this, _Module1);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
+          this.date = new Date();
+        }
+
+        babelHelpers.createDecoratedClass(Module1, [{
+          key: 'add',
+          value: function add() {
+            this.todos.push(this.item);
+            //this.todos.push(new Date());
+          }
+        }, {
+          key: 'remove',
+          value: function remove(item, index) {
+            this.todos.splice(index, 1);
+          }
+        }, {
+          key: 'clean',
+          value: function clean() {
+            while (this.todos.length > 0) {
+              this.todos.splice(0, 1);
+            }
+          }
+        }, {
+          key: 'name',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return "My First App!!";
+          },
+          enumerable: true
+        }, {
+          key: 'todos',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Module1 = Module1;
+        Module1 = Runnable(Module1) || Module1;
+        Module1 = View({
+          templateUrl: 'module1/module1_view.html'
+        })(Module1) || Module1;
+        Module1 = RouterConfig({
+          title: 'Module 1',
+          'default': true,
+          path: '/m1'
+        })(Module1) || Module1;
+        return Module1;
+      })();
+
+      _export('Module1', Module1);
+    }
+  };
+});
+
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -3317,80 +3397,6 @@ $__System.register('4', ['1'], function (_export) {
       })();
 
       _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('3', ['1', '6'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, DateFilter, Module1;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }, function (_2) {
-      DateFilter = _2.DateFilter;
-    }],
-    execute: function () {
-      Module1 = (function () {
-        var _instanceInitializers = {};
-
-        function Module1() {
-          babelHelpers.classCallCheck(this, _Module1);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
-          this.date = new Date();
-        }
-
-        babelHelpers.createDecoratedClass(Module1, [{
-          key: 'add',
-          value: function add() {
-            this.todos.push(this.item);
-            //this.todos.push(new Date());
-          }
-        }, {
-          key: 'remove',
-          value: function remove(item, index) {
-            this.todos.splice(index, 1);
-          }
-        }, {
-          key: 'clean',
-          value: function clean() {
-            while (this.todos.length > 0) {
-              this.todos.splice(0, 1);
-            }
-          }
-        }, {
-          key: 'name',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return "My First App!!";
-          },
-          enumerable: true
-        }, {
-          key: 'todos',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _Module1 = Module1;
-        Module1 = Runnable(Module1) || Module1;
-        Module1 = View({
-          templateUrl: 'module1/module1_view.html'
-        })(Module1) || Module1;
-        Module1 = RouterConfig({
-          title: 'Module 1',
-          'default': true,
-          path: '/m1'
-        })(Module1) || Module1;
-        return Module1;
-      })();
-
-      _export('Module1', Module1);
     }
   };
 });

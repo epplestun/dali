@@ -27,22 +27,29 @@ export class Views {
   static views = {};
 
   static parseModel(key, data, target) {
+
+    //console.log(key, data, target.name);
+    
     let view = Views.views[target.name]
         node = view.nodeCached,
         template = view.templateCached;
-
-
-    console.log(node, template);
-
+    
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
-    var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+    DOM.clean(node);
+    DOM.walk(node, function(n) {
+      console.log(n);
+    });
 
+    /*
+    var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*"));
     wrapperChildNodes = wrapperChildNodes.filter((element) => {
-      let regexp = new RegExp('{{' + key + '}}');
+      let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER);
       return regexp.test(element.innerText);
     });
+
+    console.log(wrapperChildNodes);
 
     wrapperChildNodes.forEach((wrapperChildNode) => {
       let attrs = elementAttrs(wrapperChildNode);
@@ -60,6 +67,7 @@ export class Views {
         );
       });
     });
+    */
   }
 
   static parseComponent(node, template, data, target) {

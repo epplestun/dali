@@ -574,9 +574,7 @@ var DataModel = (function () {
         var _context;
 
         var key = (_context = Object.keys(data), first).call(_context);
-
-        console.log(key, data, target);
-        //Views.parseModel(key, data, target);
+        Views.parseModel(key, data, target);
       });
     }
   }]);
@@ -976,6 +974,30 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
+    key: 'walk',
+    value: function walk(n, c) {
+      do {
+        c(n);
+
+        if (!!n && n.hasChildNodes()) {
+          DOM.walk(n.firstChild, c);
+        }
+      } while (n = n.nextSibling);
+    }
+  }, {
+    key: 'clean',
+    value: function clean(node) {
+      for (var n = 0; n < node.childNodes.length; n++) {
+        var child = node.childNodes[n];
+        if (child.nodeType === 8 || child.nodeType === 3 && !/\S/.test(child.nodeValue)) {
+          node.removeChild(child);
+          n--;
+        } else if (child.nodeType === 1) {
+          DOM.clean(child);
+        }
+      }
+    }
+  }, {
     key: 'parse',
     value: function parse(node) {
       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
@@ -1574,38 +1596,42 @@ var Views = (function () {
   _createClass(Views, null, [{
     key: 'parseModel',
     value: function parseModel(key, data, target) {
+
+      //console.log(key, data, target.name);
+
       var view = Views.views[target.name];
       node = view.nodeCached, template = view.templateCached;
-
-      console.log(node, template);
 
       var wrapper = document.createElement('div');
       wrapper.innerHTML = Render.normalize(template);
 
-      var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*")).filter(function (element) {
-        return element.nodeType === 1;
+      DOM.clean(node);
+      DOM.walk(node, function (n) {
+        console.log(n);
       });
 
-      wrapperChildNodes = wrapperChildNodes.filter(function (element) {
-        var regexp = new RegExp('{{' + key + '}}');
+      /*
+      var wrapperChildNodes = Array.prototype.slice.call(wrapper.getElementsByTagName("*"));
+      wrapperChildNodes = wrapperChildNodes.filter((element) => {
+        let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER);
         return regexp.test(element.innerText);
       });
-
-      wrapperChildNodes.forEach(function (wrapperChildNode) {
-        var attrs = elementAttrs(wrapperChildNode);
-
-        var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
-          return element.nodeType === 1;
-        });
-        var childNode = childNodes.filter(function (element) {
-          var nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+       console.log(wrapperChildNodes);
+       wrapperChildNodes.forEach((wrapperChildNode) => {
+        let attrs = elementAttrs(wrapperChildNode);
+         var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
+        let childNode = childNodes.filter((element) => {
+          let nodeAttrs = !!element.hasAttributes() ? elementAttrs(element) : [];
           return element.nodeName.toLowerCase() === wrapperChildNode.nodeName.toLowerCase() && sameAttributes(nodeAttrs, attrs);
         });
-
-        childNode.forEach(function (cn) {
-          cn.innerHTML = Render.render(wrapperChildNode.innerHTML, data);
+         childNode.forEach((cn) => {
+          cn.innerHTML = Render.render(
+            wrapperChildNode.innerHTML,
+            data
+          );
         });
       });
+      */
     }
   }, {
     key: 'parseComponent',

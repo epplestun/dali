@@ -35,9 +35,7 @@ export class DataModel {
 
     EventBus.subscribe(eventName, (e, data) => {
       let key = Object.keys(data)::first();
-
-      console.log(key, data, target);
-      //Views.parseModel(key, data, target);
+      Views.parseModel(key, data, target);
     });
   }
 }
