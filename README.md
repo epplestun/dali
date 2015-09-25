@@ -1,7 +1,12 @@
 # dali
 ES6 framework for creating web applications.
 
+##Introduction
+*dali* use [babel](https://babeljs.io) to compile ES6 code into ES5
+
 ##How to start
+
+npm install dali
 
 ##Decorators
 Decorators make it possible to annotate and modify classes and properties at design time.
