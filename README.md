@@ -1,20 +1,21 @@
 # dali
--------------------------------
 ES6 framework for creating web applications.
 
 ##How to start
 
-##Annotations
-@Component
+##Decorators
+Decorators make it possible to annotate and modify classes and properties at design time.
 
-@Inject
+###@Component
 
-@Directive
+###@Inject
 
-@Filter
+###@Directive
 
-@RouterConfig
+###@Filter
 
-@Runnable
+###@RouterConfig
 
-@View
+###@Runnable
+
+###@View
