@@ -7,6 +7,9 @@ ES6 framework for creating web applications.
 Decorators make it possible to annotate and modify classes and properties at design time.
 
 ###@Component
+
+* Name
+
 ```javascript
 import {Component} from 'dali/dali';
 
@@ -34,6 +37,9 @@ class MyComponent {
 ```
 
 ###@Directive
+
+* Name
+
 ```javascript
 import {Directive} from 'dali/dali';
 
@@ -60,11 +66,52 @@ export class JsonFilter {
 
 ###@RouterConfig
 
+* Title
+* Default
+* Path
+
+```javascript
+import {RouterConfig} from 'dali/dali';
+
+@RouterConfig({
+  title: 'Module 1',
+  default: true,
+  path : '/path'
+})
+```
+
 ###@Runnable
+
+```javascript
+import {Runnable} from 'dali/dali';
+
+@Runnable
+class Test {}
+```
 
 ###@View
 
-###@Bindable
+* Template
+* TemplateURL
 
+```javascript
+import {View} from 'dali/dali';
+
+@View({
+  templateUrl: 'module1/module1_view.html'
+})
+class Test {
+}
+```
+
+###@Bindable
+```javascript
+import {Bindable} from 'dali/dali';
+
+class Test {
+    @Bindable
+    name;
+}
+```
 
 More info and complete example in [Seed](https://github.com/epplestun/dali/tree/master/seed) project.
