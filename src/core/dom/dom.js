@@ -1,18 +1,8 @@
 import {Components} from 'core/component/Components';
 
 export class DOM {
-  static walk2(node1, node2, callback) {
-    do {
-      callback(node1, node2);
 
-      if (!!node1 && node1.hasChildNodes() && !!node2 && node2.hasChildNodes()) {
-        DOM.walk2(node1.firstChild, node2.firstChild, callback);
-      }
-    } while (
-      node1 = node1.nextSibling ? node1.nextSibling : node1, 
-      node2 = node2.nextSibling ? node2.nextSibling : node2
-    );
-  }
+  static cache = [];
 
   static walk(node, callback) {
     do {
@@ -22,6 +12,8 @@ export class DOM {
         DOM.walk(node.firstChild, callback);
       }
     } while (node = node.nextSibling);
+
+    return DOM;
   }
 
   static clean(node) {
@@ -34,6 +26,8 @@ export class DOM {
         DOM.clean(child);
       }
     }
+
+    return DOM;
   }
 
   static childs(node) {
@@ -54,6 +48,7 @@ export class DOM {
     }
 
     childNodes.forEach((element) => {
+      //element._daliData = JSON.stringify(element.cloneNode(true));
       let componentName = Components.normalize(element);
 
       if(!!Components.exists(componentName)) {
@@ -77,5 +72,7 @@ export class DOM {
         }
       }
     });
+
+    return DOM;
   }
 }

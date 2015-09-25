@@ -2131,16 +2131,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         _classCallCheck(this, DOM);
       }
       _createClass(DOM, null, [{
-        key: 'walk2',
-        value: function walk2(node1, node2, callback) {
-          do {
-            callback(node1, node2);
-            if (!!node1 && node1.hasChildNodes() && !!node2 && node2.hasChildNodes()) {
-              DOM.walk2(node1.firstChild, node2.firstChild, callback);
-            }
-          } while ((node1 = node1.nextSibling ? node1.nextSibling : node1, node2 = node2.nextSibling ? node2.nextSibling : node2));
-        }
-      }, {
         key: 'walk',
         value: function walk(node, callback) {
           do {
@@ -2149,6 +2139,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
               DOM.walk(node.firstChild, callback);
             }
           } while (node = node.nextSibling);
+          return DOM;
         }
       }, {
         key: 'clean',
@@ -2162,6 +2153,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
               DOM.clean(child);
             }
           }
+          return DOM;
         }
       }, {
         key: 'childs',
@@ -2202,7 +2194,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
               }
             }
           });
+          return DOM;
         }
+      }, {
+        key: 'cache',
+        value: [],
+        enumerable: true
       }]);
       return DOM;
     })();
@@ -2646,12 +2643,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           code += 'return r.join("");';
           return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
         }
-      }, {
-        key: 'getDOM',
-        value: function getDOM(parent) {
-          var nodes = parent.childNodes[0].childNodes[1].childNodes;
-          return nodes;
-        }
       }]);
       return Render;
     })();
@@ -2882,9 +2873,14 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
           var wrapper = document.createElement('div');
           wrapper.innerHTML = template.replace(/\n/gm, '');
-          console.log(node.innerHTML);
-          console.log(wrapper.innerHTML);
-          console.log(key, value);
+          DOM.walk(node, function() {
+            DOM.cache.forEach(function(cacheNode) {
+              var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
+              if (!!regexp.test(cacheNode.data)) {
+                cacheNode.node.nodeValue = instance[key];
+              }
+            });
+          });
         }
       }, {
         key: 'parseComponent',
@@ -2893,14 +2889,21 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           wrapper.innerHTML = Render.normalize(template);
           var nodeParsed = Directives.parse(wrapper, data, target);
           if (!!node) {
-            node.innerHTML = Render.render(nodeParsed.innerHTML, data);
-            DOM.parse(node);
-            var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function(element) {
-              return element.nodeType === 1;
+            node.innerHTML = nodeParsed.innerHTML;
+            DOM.walk(node, function(n) {
+              if (n.data) {
+                DOM.cache.push({
+                  node: n,
+                  data: n.data.slice()
+                });
+                n.data = Render.render(n.data, data);
+              }
             });
-            childNodes.forEach(function(element) {
-              var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-              EventBinder.bind(element, attrs, target);
+            DOM.parse(node).walk(node, function(element) {
+              if (element.nodeType === 1) {
+                var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+                EventBinder.bind(element, attrs, target);
+              }
             });
           }
         }
@@ -3267,85 +3270,6 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
-$__System.register('2', ['1'], function (_export) {
-  'use strict';
-
-  var Component, View, Bindable, Runnable, MenuBar;
-  return {
-    setters: [function (_) {
-      Component = _.Component;
-      View = _.View;
-      Bindable = _.Bindable;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      //@Injectable
-
-      MenuBar = (function () {
-        var _instanceInitializers = {};
-
-        function MenuBar() {
-          babelHelpers.classCallCheck(this, _MenuBar);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
-        }
-
-        babelHelpers.createDecoratedClass(MenuBar, [{
-          key: 'links',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _MenuBar = MenuBar;
-        MenuBar = Runnable(MenuBar) || MenuBar;
-        MenuBar = View({
-          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
-        })(MenuBar) || MenuBar;
-        MenuBar = Component({
-          name: 'menu-bar'
-        })(MenuBar) || MenuBar;
-        return MenuBar;
-      })();
-
-      _export('MenuBar', MenuBar);
-    }
-  };
-});
-
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = Runnable(Module2) || Module2;
-        Module2 = View({
-          template: '<h2>Module2</h2>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          title: 'Module 2',
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
-    }
-  };
-});
-
 $__System.register('3', ['1', '6'], function (_export) {
   'use strict';
 
@@ -3420,6 +3344,39 @@ $__System.register('3', ['1', '6'], function (_export) {
   };
 });
 
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h2>Module2</h2>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          title: 'Module 2',
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
 $__System.register('5', ['1'], function (_export) {
   'use strict';
 
@@ -3449,6 +3406,52 @@ $__System.register('5', ['1'], function (_export) {
       })();
 
       _export('Module3', Module3);
+    }
+  };
+});
+
+$__System.register('2', ['1'], function (_export) {
+  'use strict';
+
+  var Component, View, Bindable, Runnable, MenuBar;
+  return {
+    setters: [function (_) {
+      Component = _.Component;
+      View = _.View;
+      Bindable = _.Bindable;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      //@Injectable
+
+      MenuBar = (function () {
+        var _instanceInitializers = {};
+
+        function MenuBar() {
+          babelHelpers.classCallCheck(this, _MenuBar);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(MenuBar, [{
+          key: 'links',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _MenuBar = MenuBar;
+        MenuBar = Runnable(MenuBar) || MenuBar;
+        MenuBar = View({
+          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
+        })(MenuBar) || MenuBar;
+        MenuBar = Component({
+          name: 'menu-bar'
+        })(MenuBar) || MenuBar;
+        return MenuBar;
+      })();
+
+      _export('MenuBar', MenuBar);
     }
   };
 });

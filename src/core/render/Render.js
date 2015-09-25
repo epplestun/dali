@@ -19,7 +19,6 @@ export class Render {
 
   static render(html, options) {
     var re = new RegExp(Render.START_DELIMITER + '([^' + Render.END_DELIMITER + ']+)?' + Render.END_DELIMITER, 'g'),
-    //reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
       reExp = /^( )?({|})(.*)*/g,
       code = 'var r=[];\n',
       cursor = 0,
@@ -67,13 +66,19 @@ export class Render {
     add(html.substr(cursor, html.length - cursor));
     code += 'return r.join("");';
 
+    //console.log(code);
+    //console.log(html);
+    //console.log(new Function(code.replace(/[\r\t\n]/g, '')).apply(options));
+
     return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
   }
 
+  /*
   static getDOM(parent) {
     let nodes = parent.childNodes[0].childNodes[1].childNodes;
     return nodes;
   }
+  */
 }
 
 Render.START_DELIMITER = "{{";

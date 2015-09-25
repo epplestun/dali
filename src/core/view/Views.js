@@ -32,73 +32,46 @@ export class Views {
         template = view.templateCached,
         instance = Injector.instances[target.name],
         value = instance[key];
-        //nodeParsed = Views.views[target.name].nodeParsedCached;
 
     let wrapper = document.createElement('div');
     wrapper.innerHTML = template.replace(/\n/gm, '');
 
-    console.log(node.innerHTML);
-    console.log(wrapper.innerHTML);
-    console.log(key, value);
-
-    /*DOM.walk2(node, wrapper, function(n1, n2) {
-      console.log(n1, n2);
-    });*/
-
-    /*
-    let wrapper = document.createElement('div');
-    wrapper.innerHTML = template;
-
-    DOM.clean(wrapper);
-    DOM.walk(wrapper, function(n) {
-      var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
-      if(n.data && !!regexp.test(n.data)) {
-        n.nodeValue = data[key];
-      }        
-    });*/
-
-    
-
-    //console.log(instance, nodeParsed.innerHTML);
-    /*
-    node.innerHTML = Render.render(
-      nodeParsed.innerHTML,
-      data
-    );
-
-    DOM.parse(node);
-
-    var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-
-    childNodes.forEach((element) => {
-      let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-      EventBinder.bind(element, attrs, target);
+    DOM.walk(node, () => {
+      DOM.cache.forEach((cacheNode) => {
+        let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
+        if(!!regexp.test(cacheNode.data)) {
+          cacheNode.node.nodeValue = instance[key];
+        }
+      });
     });
-    */
   }
 
-  static parseComponent(node, template, data, target) {
+  static parseComponent(node, template, data, target) {    
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
     let nodeParsed = Directives.parse(wrapper, data, target);
 
     if(!!node) {
-      //Views.views[target.name].nodeParsedCached = nodeParsed;
+      node.innerHTML = nodeParsed.innerHTML;
 
-      node.innerHTML = Render.render(
-        nodeParsed.innerHTML,
-        data
-      );
+      DOM.walk(node, (n) => {
+        if(n.data) {
+          DOM.cache.push({
+            node: n,
+            data: n.data.slice()
+          });
 
-      DOM.parse(node);
+          n.data = Render.render(n.data, data);
+        }
+      });
 
-      var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-
-      childNodes.forEach((element) => {
-        let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-        EventBinder.bind(element, attrs, target);
-      });    
+      DOM.parse(node).walk(node, (element) => {
+        if(element.nodeType === 1) {
+          let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+          EventBinder.bind(element, attrs, target);
+        }
+      });
     }
   }
 

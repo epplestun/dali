@@ -974,17 +974,6 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
-    key: 'walk2',
-    value: function walk2(node1, node2, callback) {
-      do {
-        callback(node1, node2);
-
-        if (!!node1 && node1.hasChildNodes() && !!node2 && node2.hasChildNodes()) {
-          DOM.walk2(node1.firstChild, node2.firstChild, callback);
-        }
-      } while ((node1 = node1.nextSibling ? node1.nextSibling : node1, node2 = node2.nextSibling ? node2.nextSibling : node2));
-    }
-  }, {
     key: 'walk',
     value: function walk(node, callback) {
       do {
@@ -994,6 +983,8 @@ var DOM = (function () {
           DOM.walk(node.firstChild, callback);
         }
       } while (node = node.nextSibling);
+
+      return DOM;
     }
   }, {
     key: 'clean',
@@ -1007,6 +998,8 @@ var DOM = (function () {
           DOM.clean(child);
         }
       }
+
+      return DOM;
     }
   }, {
     key: 'childs',
@@ -1029,6 +1022,7 @@ var DOM = (function () {
       }
 
       childNodes.forEach(function (element) {
+        //element._daliData = JSON.stringify(element.cloneNode(true));
         var componentName = Components.normalize(element);
 
         if (!!Components.exists(componentName)) {
@@ -1052,7 +1046,13 @@ var DOM = (function () {
           }
         }
       });
+
+      return DOM;
     }
+  }, {
+    key: 'cache',
+    value: [],
+    enumerable: true
   }]);
 
   return DOM;
@@ -1354,9 +1354,7 @@ var Render = (function () {
     key: 'render',
     value: function render(html, options) {
       var re = new RegExp(Render.START_DELIMITER + '([^' + Render.END_DELIMITER + ']+)?' + Render.END_DELIMITER, 'g'),
-
-      //reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
-      reExp = /^( )?({|})(.*)*/g,
+          reExp = /^( )?({|})(.*)*/g,
           code = 'var r=[];\n',
           cursor = 0,
           match;
@@ -1406,14 +1404,19 @@ var Render = (function () {
       add(html.substr(cursor, html.length - cursor));
       code += 'return r.join("");';
 
+      //console.log(code);
+      //console.log(html);
+      //console.log(new Function(code.replace(/[\r\t\n]/g, '')).apply(options));
+
       return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
     }
-  }, {
-    key: 'getDOM',
-    value: function getDOM(parent) {
-      var nodes = parent.childNodes[0].childNodes[1].childNodes;
+
+    /*
+    static getDOM(parent) {
+      let nodes = parent.childNodes[0].childNodes[1].childNodes;
       return nodes;
     }
+    */
   }]);
 
   return Render;
@@ -1618,43 +1621,18 @@ var Views = (function () {
     value: function parseModel(key, target) {
       var view = Views.views[target.name];
       node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
-      //nodeParsed = Views.views[target.name].nodeParsedCached;
 
       var wrapper = document.createElement('div');
       wrapper.innerHTML = template.replace(/\n/gm, '');
 
-      console.log(node.innerHTML);
-      console.log(wrapper.innerHTML);
-      console.log(key, value);
-
-      /*DOM.walk2(node, wrapper, function(n1, n2) {
-        console.log(n1, n2);
-      });*/
-
-      /*
-      let wrapper = document.createElement('div');
-      wrapper.innerHTML = template;
-       DOM.clean(wrapper);
-      DOM.walk(wrapper, function(n) {
-        var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
-        if(n.data && !!regexp.test(n.data)) {
-          n.nodeValue = data[key];
-        }        
-      });*/
-
-      //console.log(instance, nodeParsed.innerHTML);
-      /*
-      node.innerHTML = Render.render(
-        nodeParsed.innerHTML,
-        data
-      );
-       DOM.parse(node);
-       var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter((element) => element.nodeType === 1);
-       childNodes.forEach((element) => {
-        let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-        EventBinder.bind(element, attrs, target);
+      DOM.walk(node, function () {
+        DOM.cache.forEach(function (cacheNode) {
+          var regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
+          if (!!regexp.test(cacheNode.data)) {
+            cacheNode.node.nodeValue = instance[key];
+          }
+        });
       });
-      */
     }
   }, {
     key: 'parseComponent',
@@ -1665,21 +1643,41 @@ var Views = (function () {
       var nodeParsed = Directives.parse(wrapper, data, target);
 
       if (!!node) {
-        //Views.views[target.name].nodeParsedCached = nodeParsed;
+        node.innerHTML = nodeParsed.innerHTML;
 
-        node.innerHTML = Render.render(nodeParsed.innerHTML, data);
+        DOM.walk(node, function (n) {
+          if (n.data) {
+            DOM.cache.push({
+              node: n,
+              data: n.data.slice()
+            });
 
-        DOM.parse(node);
-
-        var childNodes = Array.prototype.slice.call(node.getElementsByTagName("*")).filter(function (element) {
-          return element.nodeType === 1;
+            n.data = Render.render(n.data, data);
+          }
         });
 
-        childNodes.forEach(function (element) {
-          var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
-          EventBinder.bind(element, attrs, target);
+        DOM.parse(node).walk(node, function (element) {
+          if (element.nodeType === 1) {
+            var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+            EventBinder.bind(element, attrs, target);
+          }
         });
       }
+
+      /*
+      if(!!node) {
+        node.innerHTML = Render.render(
+          nodeParsed.innerHTML,
+          data
+        );
+         DOM.parse(node).walk(node, (element) => {
+          if(element.nodeType === 1) {
+            let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+            EventBinder.bind(element, attrs, target);
+          }
+        });
+      }
+      */
     }
   }, {
     key: 'parseView',
