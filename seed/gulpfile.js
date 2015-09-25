@@ -17,7 +17,12 @@ gulp.task('copy-html', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('builder', ['clean', 'copy-html'], function (cb) {
+gulp.task('copy-dali', function() {
+	return gulp.src('node_modules/dalijs/dist/dali.js')
+		.pipe(gulp.dest('src/dali/'));
+});
+
+gulp.task('builder', ['clean', 'copy-html', 'copy-dali'], function (cb) {
 	builder.buildSFX('main', 'dist/main.js', {
 		sourceMaps: false,
 		config: {
