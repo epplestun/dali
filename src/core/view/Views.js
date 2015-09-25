@@ -26,7 +26,7 @@ function sameAttributes(elementAttrs, attrs) {
 export class Views {
   static views = {};
 
-  static parseModel(key, target) {    
+  static parseModel(key, target) {
     let view = Views.views[target.name]
         node = view.nodeCached,
         template = view.templateCached,
