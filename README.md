@@ -65,3 +65,6 @@ export class JsonFilter {
 ###@View
 
 ###@Bindable
+
+
+More info and complete example in [Seed](https://github.com/epplestun/dali/tree/master/seed) project.
