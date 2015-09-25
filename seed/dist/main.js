@@ -993,7 +993,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["last"] = last;
     this["ucfirst"] = ucfirst;
     this["log"] = log;
-    this["_classCallCheck"] = _classCallCheck;
     this["Component"] = Component;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
@@ -1041,7 +1040,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var _createClass = this["_createClass"];
     var HTTP = this["HTTP"];
     var _slice = this["_slice"];
-    var CacheComponents = this["CacheComponents"];
     var Components = this["Components"];
     var DataComponents = this["DataComponents"];
     var Injector = this["Injector"];
@@ -1269,64 +1267,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     }
     function log() {}
     log('util.js');
-    'use strict';
-    var _createClass = (function() {
-      function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-          var descriptor = props[i];
-          descriptor.enumerable = descriptor.enumerable || false;
-          descriptor.configurable = true;
-          if ('value' in descriptor)
-            descriptor.writable = true;
-          Object.defineProperty(target, descriptor.key, descriptor);
-        }
-      }
-      return function(Constructor, protoProps, staticProps) {
-        if (protoProps)
-          defineProperties(Constructor.prototype, protoProps);
-        if (staticProps)
-          defineProperties(Constructor, staticProps);
-        return Constructor;
-      };
-    })();
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError('Cannot call a class as a function');
-      }
-    }
-    log('CacheComponents.js');
-    var CacheComponents = (function() {
-      function CacheComponents() {
-        _classCallCheck(this, CacheComponents);
-      }
-      _createClass(CacheComponents, null, [{
-        key: 'normalize',
-        value: function normalize(name) {
-          var _context;
-          return (_context = name.toLowerCase().replace(/\W+(.)/g, function(x, chr) {
-            return chr.toUpperCase();
-          }), ucfirst).call(_context);
-        }
-      }, {
-        key: 'add',
-        value: function add(name, component, config) {
-          CacheComponents.data[name] = {
-            target: component,
-            config: config
-          };
-        }
-      }, {
-        key: 'get',
-        value: function get(name) {
-          return CacheComponents.data[name];
-        }
-      }, {
-        key: 'data',
-        value: {},
-        enumerable: true
-      }]);
-      return CacheComponents;
-    })();
     'use strict';
     log('Component.js');
     function Component(value) {
@@ -3188,7 +3128,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["_createClass"] = _createClass;
     this["HTTP"] = HTTP;
     this["_slice"] = _slice;
-    this["CacheComponents"] = CacheComponents;
     this["Components"] = Components;
     this["DataComponents"] = DataComponents;
     this["Injector"] = Injector;
@@ -3388,6 +3327,39 @@ $__System.register('3', ['1', '6'], function (_export) {
   };
 });
 
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
+        Module3 = View({
+          template: '<h2>Module3</h2>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          title: 'Module 3',
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
+
 $__System.register('2', ['1'], function (_export) {
   'use strict';
 
@@ -3430,39 +3402,6 @@ $__System.register('2', ['1'], function (_export) {
       })();
 
       _export('MenuBar', MenuBar);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = Runnable(Module3) || Module3;
-        Module3 = View({
-          template: '<h2>Module3</h2>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          title: 'Module 3',
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
     }
   };
 });

@@ -21,7 +21,6 @@ export class RouterContent {
   }
   
   change(event, route) {
-
     if(!!route.value.hasOwnProperty('title')) {
       document.title = route.value.title;
     }

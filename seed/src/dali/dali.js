@@ -195,49 +195,6 @@ function log() {
 log('util.js');
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-log('CacheComponents.js');
-
-var CacheComponents = (function () {
-  function CacheComponents() {
-    _classCallCheck(this, CacheComponents);
-  }
-
-  _createClass(CacheComponents, null, [{
-    key: 'normalize',
-    value: function normalize(name) {
-      var _context;
-
-      return (_context = name.toLowerCase().replace(/\W+(.)/g, function (x, chr) {
-        return chr.toUpperCase();
-      }), ucfirst).call(_context);
-    }
-  }, {
-    key: 'add',
-    value: function add(name, component, config) {
-      CacheComponents.data[name] = {
-        target: component,
-        config: config
-      };
-    }
-  }, {
-    key: 'get',
-    value: function get(name) {
-      return CacheComponents.data[name];
-    }
-  }, {
-    key: 'data',
-    value: {},
-    enumerable: true
-  }]);
-
-  return CacheComponents;
-})();
-'use strict';
-
 log('Component.js');
 
 function Component(value) {
@@ -1847,7 +1804,6 @@ var RouterContent = (function () {
   _createClass(RouterContent, [{
     key: 'change',
     value: function change(event, route) {
-
       if (!!route.value.hasOwnProperty('title')) {
         document.title = route.value.title;
       }
