@@ -62,17 +62,24 @@ export class Views {
       node.innerHTML = nodeParsed.innerHTML;
 
       DOM.walk(node, (n) => {
-        if(n.nodeType === 1 && n.hasAttributes()) {
-          DOM.cache.push({
-            node: n,
-            data: elementAttrs(n).slice()
-          }); 
-        } else if(n.data) {
-          DOM.cache.push({
-            node: n,
-            data: n.data.slice()
-          });
+        let regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');
 
+        if(n.nodeType === 1 && n.hasAttributes()) {
+          elementAttrs(n).forEach(attr => {
+            if(!!regexp.test(attr.value)) {
+              DOM.cache.push({
+                node: n,
+                data: elementAttrs(n).slice()
+              }); 
+            }
+          });
+        } else if(n.data) {          
+          if(!!regexp.test(n.data)) {
+            DOM.cache.push({
+              node: n,
+              data: n.data.slice()
+            });
+          }
           n.data = Render.render(n.data, data);
         }
       });

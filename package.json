@@ -1,6 +1,6 @@
 {
   "name": "dalijs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ES6 framework",
   "main": "index.js",
   "scripts": {
