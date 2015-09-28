@@ -1,18 +1,19 @@
 import {Render} from 'core/render/Render';
 import {Directive, Directives} from 'core/directive/Directive';
+import {guid} from 'core/util/util';
 
 @Directive({
   name : 'data-for'
 })
 export class DataFor {
-  render(element, data, value, config) {
+  render(element, data, value, config, target) {
     let originalClone = element.cloneNode(true);
     let parentNode = element.parentNode;
     parentNode.removeChild(element);
 
     let [iterator, , list, track, by, trackBy] = value.match(/([$a-zA-Z0-9]+)/g);
     data[list].forEach((item, index) => {
-      let contextData = {};
+      var contextData = {};
       contextData[iterator] = item;
 
       if (!!trackBy) {
@@ -27,6 +28,13 @@ export class DataFor {
       wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
       
       parentNode.appendChild(wrapper.firstChild);
+
+      DOM.parse(parentNode).walk(parentNode, (element) => {
+        if(element.nodeType === 1) {
+          element.dataset.uuid = guid();
+          EventBinder.DataCache[element.dataset.uuid] = contextData;
+        }
+      });
     });
   }
 }

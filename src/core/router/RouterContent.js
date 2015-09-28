@@ -1,4 +1,4 @@
-import {log} from 'core/util/util';
+import {log, guid} from 'core/util/util';
 import {EventBus} from 'core/event/EventBus';
 import {Router} from 'core/router/Router';
 import {Component} from 'core/component/Component';
@@ -9,11 +9,13 @@ import {Binder} from 'core/view/Bindable';
 
 log('RouterContent.js');
 
+const ROUTER_CONTENT_UUID = guid();
+
 @Component({
   name: 'router-content'
 })
 @View({
-  template: '<div id="router-content">Router content</div>'
+  template: '<div id="' + ROUTER_CONTENT_UUID + '"></div>'
 })
 export class RouterContent {
   constructor() {
@@ -25,7 +27,7 @@ export class RouterContent {
       document.title = route.value.title;
     }
 
-    let element = document.getElementById('router-content'),
+    let element = document.getElementById(ROUTER_CONTENT_UUID),
         view = Views.views[route.target.name],
         target = route.target,
         instance = Injector.instantiate(route.target);

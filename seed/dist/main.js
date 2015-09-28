@@ -1001,6 +1001,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["last"] = last;
     this["ucfirst"] = ucfirst;
     this["log"] = log;
+    this["guid"] = guid;
     this["Component"] = Component;
     this["_classCallCheck"] = _classCallCheck;
     this["_classCallCheck"] = _classCallCheck;
@@ -1078,6 +1079,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     var DataViews = this["DataViews"];
     var Views = this["Views"];
     var Router = this["Router"];
+    var ROUTER_CONTENT_UUID = this["ROUTER_CONTENT_UUID"];
     var RouterContent = this["RouterContent"];
     var RouterLink = this["RouterLink"];
     "use strict";
@@ -1274,6 +1276,13 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       return f + this.substr(1);
     }
     function log() {}
+    function guid() {
+      function _p8(s) {
+        var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+        return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+      }
+      return _p8() + _p8(true) + _p8(true) + _p8();
+    }
     log('util.js');
     'use strict';
     log('Component.js');
@@ -1618,7 +1627,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(DataFor, [{
         key: 'render',
-        value: function render(element, data, value, config) {
+        value: function render(element, data, value, config, target) {
           var originalClone = element.cloneNode(true);
           var parentNode = element.parentNode;
           parentNode.removeChild(element);
@@ -1641,6 +1650,12 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
             var wrapper = document.createElement('div');
             wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
             parentNode.appendChild(wrapper.firstChild);
+            DOM.parse(parentNode).walk(parentNode, function(element) {
+              if (element.nodeType === 1) {
+                element.dataset.uuid = guid();
+                EventBinder.DataCache[element.dataset.uuid] = contextData;
+              }
+            });
           });
         }
       }]);
@@ -2231,7 +2246,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
       _createClass(EventBinder, null, [{
         key: 'bindInstance',
-        value: function bindInstance(element, attrs, instance) {
+        value: function bindInstance(element, attrs, data, instance) {
           if (attrs.length > 0) {
             attrs.forEach(function(attr) {
               var attrName = attr.name,
@@ -2245,6 +2260,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
                   args = args.map(function(arg) {
                     return setPrimitive(arg);
                   });
+                  console.log(data, instance, args);
                   instance[methodName].apply(instance, args);
                 }, false);
               }
@@ -2260,10 +2276,15 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         key: 'bind',
         value: function bind(element, attrs, target) {
           if (attrs.length > 0) {
+            var data = EventBinder.DataCache[element.dataset.uuid] || {};
             var instance = Injector.instances[target.name];
-            EventBinder.bindInstance(element, attrs, instance);
+            EventBinder.bindInstance(element, attrs, data, instance);
           }
         }
+      }, {
+        key: 'DataCache',
+        value: {},
+        enumerable: true
       }]);
       return EventBinder;
     })();
@@ -2849,7 +2870,6 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
               if (n.nodeType === 1 && n.hasAttributes()) {
                 elementAttrs(n).forEach(function(attr) {
                   if (!!regexp.test(attr.value)) {
-                    console.log(attr);
                     DOM.cache.push({
                       node: n,
                       data: elementAttrs(n).slice()
@@ -2978,6 +2998,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           });
         }
       }, {
+        key: 'routeTo',
+        value: function routeTo(route) {
+          window.location.hash = route.value.url;
+        }
+      }, {
         key: 'routeToDefault',
         value: function routeToDefault() {
           Router.routes.forEach(function(route) {
@@ -3062,6 +3087,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
       }
     }
     log('RouterContent.js');
+    var ROUTER_CONTENT_UUID = guid();
     var RouterContent = (function() {
       function RouterContent() {
         _classCallCheck(this, _RouterContent);
@@ -3073,7 +3099,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
           if (!!route.value.hasOwnProperty('title')) {
             document.title = route.value.title;
           }
-          var element = document.getElementById('router-content'),
+          var element = document.getElementById(ROUTER_CONTENT_UUID),
               view = Views.views[route.target.name],
               target = route.target,
               instance = Injector.instantiate(route.target);
@@ -3082,7 +3108,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }]);
       var _RouterContent = RouterContent;
-      RouterContent = View({template: '<div id="router-content">Router content</div>'})(RouterContent) || RouterContent;
+      RouterContent = View({template: '<div id="' + ROUTER_CONTENT_UUID + '"></div>'})(RouterContent) || RouterContent;
       RouterContent = Component({name: 'router-content'})(RouterContent) || RouterContent;
       return RouterContent;
     })();
@@ -3174,6 +3200,7 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
     this["DataViews"] = DataViews;
     this["Views"] = Views;
     this["Router"] = Router;
+    this["ROUTER_CONTENT_UUID"] = ROUTER_CONTENT_UUID;
     this["RouterContent"] = RouterContent;
     this["RouterLink"] = RouterLink;
   })();
@@ -3269,6 +3296,39 @@ $__System.register('5', ['1'], function (_export) {
   };
 });
 
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h2>Module2</h2>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          title: 'Module 2',
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
 $__System.register('3', ['1', '6'], function (_export) {
   'use strict';
 
@@ -3296,7 +3356,6 @@ $__System.register('3', ['1', '6'], function (_export) {
           key: 'add',
           value: function add() {
             this.todos.push(this.item);
-            //this.todos.push(new Date());
           }
         }, {
           key: 'remove',
@@ -3309,6 +3368,11 @@ $__System.register('3', ['1', '6'], function (_export) {
             while (this.todos.length > 0) {
               this.todos.splice(0, 1);
             }
+          }
+        }, {
+          key: 'load',
+          value: function load(item) {
+            console.log('load ...', item);
           }
         }, {
           key: 'name',
@@ -3385,39 +3449,6 @@ $__System.register('2', ['1'], function (_export) {
       })();
 
       _export('MenuBar', MenuBar);
-    }
-  };
-});
-
-$__System.register('4', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module2;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = Runnable(Module2) || Module2;
-        Module2 = View({
-          template: '<h2>Module2</h2>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          title: 'Module 2',
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
     }
   };
 });

@@ -2,7 +2,7 @@
 
 <div>
   <ul>
-    <li *for="todo in todos">{{todo}}</li>
+    <li *for="todo in todos">{{todo}} <a _click="load(todo)">Load</a></li>
   </ul>
 
   <hr/>

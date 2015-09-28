@@ -26,7 +26,6 @@ export class Module1 {
 
   add() {
     this.todos.push(this.item);
-    //this.todos.push(new Date());
   }
 
   remove(item, index) {
@@ -37,5 +36,9 @@ export class Module1 {
     while(this.todos.length > 0) {
       this.todos.splice(0, 1);
     }
+  }
+
+  load(item) {
+    console.log('load ...', item);
   }
 }

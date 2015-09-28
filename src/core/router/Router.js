@@ -29,6 +29,10 @@ export class Router {
     });
   }
 
+  static routeTo(route) {
+    window.location.hash = route.value.url;
+  }
+
   static routeToDefault() {
     Router.routes.forEach((route) => {
       if(!!route.value.hasOwnProperty('default')) {

@@ -1,4 +1,5 @@
 import {Injector} from 'core/di/Injector';
+import {EventBus} from 'core/event/EventBus';
 
 function setPrimitive(value) {
   if (!isNaN(value)) {
@@ -17,7 +18,9 @@ function setPrimitive(value) {
 }
 
 export class EventBinder {
-  static bindInstance(element, attrs, instance) {
+  static DataCache = {};
+
+  static bindInstance(element, attrs, data, instance) {
     if (attrs.length > 0) {
       attrs.forEach((attr) => {
         let attrName = attr.name,
@@ -25,15 +28,17 @@ export class EventBinder {
 
         if (attrName.charAt(0) === '_') {
           let eventName = attrName.substring(1);
-
+          
           element.addEventListener(eventName, (e) => {
             let methodName = attrValue.match(/^(.*)\(/mi)[1];
             let args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
             args = args.length > 0 ? args.split(/,/) : [];
             args = args.map((arg) => setPrimitive(arg));
 
+            //console.log(data, instance, args);
+
             instance[methodName].apply(instance, args);
-          }, false);
+          }, false);           
         }
 
         if (attrName === 'data-model') {
@@ -47,8 +52,19 @@ export class EventBinder {
 
   static bind(element, attrs, target) {
     if (attrs.length > 0) {
+      /*
+      console.log(
+        'bind', 
+        element,
+        element.dataset.uuid, 
+        EventBinder.DataCache[element.dataset.uuid]
+      );
+      */
+
+      let data = EventBinder.DataCache[element.dataset.uuid] || {};
       let instance = Injector.instances[target.name];
-      EventBinder.bindInstance(element, attrs, instance);
+      
+      EventBinder.bindInstance(element, attrs, data, instance);
     }
   }
 }

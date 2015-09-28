@@ -192,6 +192,15 @@ function log() {
   //console.log(arguments);
 }
 
+function guid() {
+  function _p8(s) {
+    var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+    return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+  }
+
+  return _p8() + _p8(true) + _p8(true) + _p8();
+}
+
 log('util.js');
 'use strict';
 
@@ -424,7 +433,7 @@ var DataFor = (function () {
 
   _createClass(DataFor, [{
     key: 'render',
-    value: function render(element, data, value, config) {
+    value: function render(element, data, value, config, target) {
       var originalClone = element.cloneNode(true);
       var parentNode = element.parentNode;
       parentNode.removeChild(element);
@@ -455,6 +464,13 @@ var DataFor = (function () {
         wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
 
         parentNode.appendChild(wrapper.firstChild);
+
+        DOM.parse(parentNode).walk(parentNode, function (element) {
+          if (element.nodeType === 1) {
+            element.dataset.uuid = guid();
+            EventBinder.DataCache[element.dataset.uuid] = contextData;
+          }
+        });
       });
     }
   }]);
@@ -1064,7 +1080,7 @@ var EventBinder = (function () {
 
   _createClass(EventBinder, null, [{
     key: 'bindInstance',
-    value: function bindInstance(element, attrs, instance) {
+    value: function bindInstance(element, attrs, data, instance) {
       if (attrs.length > 0) {
         attrs.forEach(function (attr) {
           var attrName = attr.name,
@@ -1080,6 +1096,8 @@ var EventBinder = (function () {
               args = args.map(function (arg) {
                 return setPrimitive(arg);
               });
+
+              //console.log(data, instance, args);
 
               instance[methodName].apply(instance, args);
             }, false);
@@ -1097,10 +1115,25 @@ var EventBinder = (function () {
     key: 'bind',
     value: function bind(element, attrs, target) {
       if (attrs.length > 0) {
+        /*
+        console.log(
+          'bind', 
+          element,
+          element.dataset.uuid, 
+          EventBinder.DataCache[element.dataset.uuid]
+        );
+        */
+
+        var data = EventBinder.DataCache[element.dataset.uuid] || {};
         var instance = Injector.instances[target.name];
-        EventBinder.bindInstance(element, attrs, instance);
+
+        EventBinder.bindInstance(element, attrs, data, instance);
       }
     }
+  }, {
+    key: 'DataCache',
+    value: {},
+    enumerable: true
   }]);
 
   return EventBinder;
@@ -1735,6 +1768,11 @@ var Router = (function () {
       });
     }
   }, {
+    key: 'routeTo',
+    value: function routeTo(route) {
+      window.location.hash = route.value.url;
+    }
+  }, {
     key: 'routeToDefault',
     value: function routeToDefault() {
       Router.routes.forEach(function (route) {
@@ -1801,6 +1839,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 log('RouterContent.js');
 
+var ROUTER_CONTENT_UUID = guid();
+
 var RouterContent = (function () {
   function RouterContent() {
     _classCallCheck(this, _RouterContent);
@@ -1815,7 +1855,7 @@ var RouterContent = (function () {
         document.title = route.value.title;
       }
 
-      var element = document.getElementById('router-content'),
+      var element = document.getElementById(ROUTER_CONTENT_UUID),
           view = Views.views[route.target.name],
           target = route.target,
           instance = Injector.instantiate(route.target);
@@ -1828,7 +1868,7 @@ var RouterContent = (function () {
 
   var _RouterContent = RouterContent;
   RouterContent = View({
-    template: '<div id="router-content">Router content</div>'
+    template: '<div id="' + ROUTER_CONTENT_UUID + '"></div>'
   })(RouterContent) || RouterContent;
   RouterContent = Component({
     name: 'router-content'
