@@ -1,6 +1,5 @@
 import {Render} from 'core/render/Render';
 import {Directive, Directives} from 'core/directive/Directive';
-import {guid} from 'core/util/util';
 
 @Directive({
   name : 'data-for'
@@ -31,11 +30,8 @@ export class DataFor {
 
       DOM.parse(parentNode).walk(parentNode, (element) => {
         if(element.nodeType === 1) {
-          if(!element.dataset.hasContext) {
-            element.dataset.hasContext = true;
-            element.dataset.uuid = guid();
-
-            EventBinder.DataCache[element.dataset.uuid] = contextData;
+          if(!element.contextData) {
+            element.contextData = contextData;
           }
         }
       });

@@ -6,7 +6,6 @@ import {EventBinder} from 'core/event/EventBinder';
 import {HTTP} from 'http/HTTP';
 import {Injector} from 'core/di/Injector';
 import {Directives} from 'core/directives/Directives';
-import {guid} from 'core/util/util';
 
 function elementAttrs(element) {
   let nodeAttrs = Array.prototype.slice.call(element.attributes);
@@ -60,7 +59,10 @@ export class Views {
     let nodeParsed = Directives.parse(wrapper, data, target);
 
     if(!!node) {
-      node.innerHTML = nodeParsed.innerHTML;
+      while (node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
+      node.appendChild(nodeParsed);
 
       DOM.walk(node, (n) => {
         let regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');

@@ -467,11 +467,8 @@ var DataFor = (function () {
 
         DOM.parse(parentNode).walk(parentNode, function (element) {
           if (element.nodeType === 1) {
-            if (!element.dataset.hasContext) {
-              element.dataset.hasContext = true;
-              element.dataset.uuid = guid();
-
-              EventBinder.DataCache[element.dataset.uuid] = contextData;
+            if (!element.contextData) {
+              element.contextData = contextData;
             }
           }
         });
@@ -999,7 +996,6 @@ var DOM = (function () {
       }
 
       childNodes.forEach(function (element) {
-        //element._daliData = JSON.stringify(element.cloneNode(true));
         var componentName = Components.normalize(element);
 
         if (!!Components.exists(componentName)) {
@@ -1101,7 +1097,9 @@ var EventBinder = (function () {
                 return setPrimitive(arg);
               });
 
-              var data = EventBinder.DataCache[element.dataset.uuid];
+              //let data = EventBinder.DataCache[element.dataset.uuid];
+
+              var data = element.contextData;
 
               if (!!data) {
                 args = args.map(function (arg) {
@@ -1642,7 +1640,10 @@ var Views = (function () {
       var nodeParsed = Directives.parse(wrapper, data, target);
 
       if (!!node) {
-        node.innerHTML = nodeParsed.innerHTML;
+        while (node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
+        node.appendChild(nodeParsed);
 
         DOM.walk(node, function (n) {
           var regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');

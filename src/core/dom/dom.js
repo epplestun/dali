@@ -48,7 +48,6 @@ export class DOM {
     }
 
     childNodes.forEach((element) => {
-      //element._daliData = JSON.stringify(element.cloneNode(true));
       let componentName = Components.normalize(element);
 
       if(!!Components.exists(componentName)) {

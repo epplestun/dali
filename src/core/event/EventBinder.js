@@ -35,7 +35,9 @@ export class EventBinder {
             args = args.length > 0 ? args.split(/,/) : [];
             args = args.map((arg) => setPrimitive(arg));
 
-            let data = EventBinder.DataCache[element.dataset.uuid];
+            //let data = EventBinder.DataCache[element.dataset.uuid];
+
+            let data = element.contextData;
 
             if(!!data) {
               args = args.map(arg => {
