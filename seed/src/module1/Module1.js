@@ -25,7 +25,10 @@ export class Module1 {
   date = new Date();
 
   add() {
-    this.todos.push(this.item);
+    this.todos.push({
+      title: this.item,
+      date: new Date()
+    });
   }
 
   remove(item, index) {
