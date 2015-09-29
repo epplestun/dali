@@ -1090,16 +1090,13 @@ var EventBinder = (function () {
             var eventName = attrName.substring(1);
 
             element.addEventListener(eventName, function (e) {
+              var data = element.contextData;
               var methodName = attrValue.match(/^(.*)\(/mi)[1];
               var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
               args = args.length > 0 ? args.split(/,/) : [];
               args = args.map(function (arg) {
                 return setPrimitive(arg);
               });
-
-              //let data = EventBinder.DataCache[element.dataset.uuid];
-
-              var data = element.contextData;
 
               if (!!data) {
                 args = args.map(function (arg) {

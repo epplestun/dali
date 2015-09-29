@@ -30,14 +30,11 @@ export class EventBinder {
           let eventName = attrName.substring(1);
           
           element.addEventListener(eventName, (e) => {
+            let data = element.contextData;
             let methodName = attrValue.match(/^(.*)\(/mi)[1];
             let args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
             args = args.length > 0 ? args.split(/,/) : [];
-            args = args.map((arg) => setPrimitive(arg));
-
-            //let data = EventBinder.DataCache[element.dataset.uuid];
-
-            let data = element.contextData;
+            args = args.map((arg) => setPrimitive(arg));            
 
             if(!!data) {
               args = args.map(arg => {
