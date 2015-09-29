@@ -1,18 +1,18 @@
 # dali
 ES6 framework for creating web applications.
 
-##Introduction
+## Introduction
 *dali* use [babel](https://babeljs.io) to compile ES6 code into ES5
 
-##How to start
+## Installation
+Dali is available on npm.
 
-  $ npm install dalijs --save
+      $ npm install dalijs
 
-
-##Decorators
+## Decorators
 Decorators make it possible to annotate and modify classes and properties at design time.
 
-###@Component
+### @Component
 
 * Name
 
@@ -27,7 +27,7 @@ class MyComponent {
 }
 ```
 
-###@Inject
+### @Inject
 ```javascript
 import {Inject, HTTP} from 'dali/dali';
 
@@ -42,7 +42,7 @@ class MyComponent {
 }
 ```
 
-###@Directive
+### @Directive
 
 * Name
 
@@ -58,7 +58,7 @@ class MyDirective {
 }
 ```
 
-###@Filter
+### @Filter
 ```javascript
 import {Filter} from 'dali/dali';
 
@@ -70,7 +70,7 @@ export class JsonFilter {
 }
 ```
 
-###@RouterConfig
+### @RouterConfig
 
 * Title
 * Default
@@ -86,7 +86,7 @@ import {RouterConfig} from 'dali/dali';
 })
 ```
 
-###@Runnable
+### @Runnable
 
 ```javascript
 import {Runnable} from 'dali/dali';
@@ -95,7 +95,7 @@ import {Runnable} from 'dali/dali';
 class Test {}
 ```
 
-###@View
+### @View
 
 * Template
 * TemplateURL
@@ -110,7 +110,7 @@ class Test {
 }
 ```
 
-###@Bindable
+### @Bindable
 ```javascript
 import {Bindable} from 'dali/dali';
 
