@@ -1640,7 +1640,9 @@ var Views = (function () {
         while (node.firstChild) {
           node.removeChild(node.firstChild);
         }
-        node.appendChild(nodeParsed);
+        node.appendChild(nodeParsed.firstChild);
+
+        //node.parentNode.replaceChild(nodeParsed, node);
 
         DOM.walk(node, function (n) {
           var regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');
