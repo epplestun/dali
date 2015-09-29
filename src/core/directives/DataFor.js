@@ -31,8 +31,12 @@ export class DataFor {
 
       DOM.parse(parentNode).walk(parentNode, (element) => {
         if(element.nodeType === 1) {
-          element.dataset.uuid = guid();
-          EventBinder.DataCache[element.dataset.uuid] = contextData;
+          if(!element.dataset.hasContext) {
+            element.dataset.hasContext = true;
+            element.dataset.uuid = guid();
+
+            EventBinder.DataCache[element.dataset.uuid] = contextData;
+          }
         }
       });
     });

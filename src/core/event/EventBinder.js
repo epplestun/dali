@@ -20,7 +20,7 @@ function setPrimitive(value) {
 export class EventBinder {
   static DataCache = {};
 
-  static bindInstance(element, attrs, data, instance) {
+  static bindInstance(element, attrs, instance) {
     if (attrs.length > 0) {
       attrs.forEach((attr) => {
         let attrName = attr.name,
@@ -35,7 +35,17 @@ export class EventBinder {
             args = args.length > 0 ? args.split(/,/) : [];
             args = args.map((arg) => setPrimitive(arg));
 
-            //console.log(data, instance, args);
+            let data = EventBinder.DataCache[element.dataset.uuid];
+
+            if(!!data) {
+              args = args.map(arg => {
+                if(!!data.hasOwnProperty(arg)) {
+                  arg = data[arg];
+                }
+
+                return arg;
+              });
+            }
 
             instance[methodName].apply(instance, args);
           }, false);           
@@ -52,19 +62,8 @@ export class EventBinder {
 
   static bind(element, attrs, target) {
     if (attrs.length > 0) {
-      /*
-      console.log(
-        'bind', 
-        element,
-        element.dataset.uuid, 
-        EventBinder.DataCache[element.dataset.uuid]
-      );
-      */
-
-      let data = EventBinder.DataCache[element.dataset.uuid] || {};
-      let instance = Injector.instances[target.name];
-      
-      EventBinder.bindInstance(element, attrs, data, instance);
+      let instance = Injector.instances[target.name];      
+      EventBinder.bindInstance(element, attrs, instance);
     }
   }
 }

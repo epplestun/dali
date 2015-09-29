@@ -467,8 +467,12 @@ var DataFor = (function () {
 
         DOM.parse(parentNode).walk(parentNode, function (element) {
           if (element.nodeType === 1) {
-            element.dataset.uuid = guid();
-            EventBinder.DataCache[element.dataset.uuid] = contextData;
+            if (!element.dataset.hasContext) {
+              element.dataset.hasContext = true;
+              element.dataset.uuid = guid();
+
+              EventBinder.DataCache[element.dataset.uuid] = contextData;
+            }
           }
         });
       });
@@ -1080,7 +1084,7 @@ var EventBinder = (function () {
 
   _createClass(EventBinder, null, [{
     key: 'bindInstance',
-    value: function bindInstance(element, attrs, data, instance) {
+    value: function bindInstance(element, attrs, instance) {
       if (attrs.length > 0) {
         attrs.forEach(function (attr) {
           var attrName = attr.name,
@@ -1097,7 +1101,17 @@ var EventBinder = (function () {
                 return setPrimitive(arg);
               });
 
-              //console.log(data, instance, args);
+              var data = EventBinder.DataCache[element.dataset.uuid];
+
+              if (!!data) {
+                args = args.map(function (arg) {
+                  if (!!data.hasOwnProperty(arg)) {
+                    arg = data[arg];
+                  }
+
+                  return arg;
+                });
+              }
 
               instance[methodName].apply(instance, args);
             }, false);
@@ -1115,19 +1129,8 @@ var EventBinder = (function () {
     key: 'bind',
     value: function bind(element, attrs, target) {
       if (attrs.length > 0) {
-        /*
-        console.log(
-          'bind', 
-          element,
-          element.dataset.uuid, 
-          EventBinder.DataCache[element.dataset.uuid]
-        );
-        */
-
-        var data = EventBinder.DataCache[element.dataset.uuid] || {};
         var instance = Injector.instances[target.name];
-
-        EventBinder.bindInstance(element, attrs, data, instance);
+        EventBinder.bindInstance(element, attrs, instance);
       }
     }
   }, {

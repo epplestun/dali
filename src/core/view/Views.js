@@ -53,7 +53,7 @@ export class Views {
     });
   }
 
-  static parseComponent(node, template, data, target) {    
+  static parseComponent(node, template, data, target) {
     let wrapper = document.createElement('div');
     wrapper.innerHTML = Render.normalize(template);
 
