@@ -1,11 +1,13 @@
 {
   "name": "dalijs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "ES6 framework",
   "keywords": [
     "javascript",
     "framework",
     "ES6"
+    "dali",
+    "dalijs"
   ],
   "main": "index.js",
   "scripts": {},
