@@ -74,4 +74,14 @@ export class DOM {
 
     return DOM;
   }
+
+  static fragment(node) {
+    let fragment = document.createDocumentFragment();
+    
+    while(node.firstChild) {
+      fragment.appendChild(node.firstChild);
+    }
+
+    return fragment;
+  }
 }

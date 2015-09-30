@@ -62,10 +62,8 @@ export class Views {
       while (node.firstChild) {
         node.removeChild(node.firstChild);
       }
-      
-      node.appendChild(nodeParsed);
 
-      //node.parentNode.replaceChild(nodeParsed, node);
+      node.appendChild(DOM.fragment(nodeParsed));
 
       DOM.walk(node, (n) => {
         let regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');

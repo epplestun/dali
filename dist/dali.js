@@ -1023,6 +1023,17 @@ var DOM = (function () {
       return DOM;
     }
   }, {
+    key: 'fragment',
+    value: function fragment(node) {
+      var fragment = document.createDocumentFragment();
+
+      while (node.firstChild) {
+        fragment.appendChild(node.firstChild);
+      }
+
+      return fragment;
+    }
+  }, {
     key: 'cache',
     value: [],
     enumerable: true
@@ -1640,9 +1651,8 @@ var Views = (function () {
         while (node.firstChild) {
           node.removeChild(node.firstChild);
         }
-        node.appendChild(nodeParsed.firstChild);
 
-        //node.parentNode.replaceChild(nodeParsed, node);
+        node.appendChild(DOM.fragment(nodeParsed));
 
         DOM.walk(node, function (n) {
           var regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');
