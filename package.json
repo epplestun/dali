@@ -1,17 +1,20 @@
 {
   "name": "dalijs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "ES6 framework",
+  "keywords": [
+    "javascript",
+    "framework",
+    "ES6"
+  ],
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/epplestun/dali.git"
   },
-  "author": "",
-  "license": "Apache-2.0",
+  "author": "Iván Rodríguez <epplestun@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/epplestun/dali/issues"
   },
