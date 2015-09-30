@@ -2,10 +2,15 @@
 ES6 framework for creating web applications.
 
 ## Introduction
-*dali* use [babel](https://babeljs.io) to compile ES6 code into ES5
+**dali** use [babel](https://babeljs.io) to compile ES6 code into ES5.
+
+**dali** allows to use features of ES6 and some of ES7 like decorators, class properties, export extensions or function bind syntax.
+
+**dali is currently in development phase. We don't recommend using for production applications.**
 
 ## Installation
-Dali is available on npm.
+**dali** is available on npm.
+
 ```shell
 $ npm install dalijs
 ```
@@ -24,7 +29,6 @@ import {Component} from 'dali/dali';
     name : 'my-component'
 })
 class MyComponent {
-
 }
 ```
 
@@ -34,12 +38,11 @@ import {Inject, HTTP} from 'dali/dali';
 
 @Inject(HTTP)
 class MyComponent {
-    constructor(http) {
-        http.get('url').then((response) => {
-            console.log(reponse);
-        });
-    }
-
+  constructor(http) {
+    http.get('url').then((response) => {
+      console.log(reponse);
+    });
+  }
 }
 ```
 
@@ -51,11 +54,11 @@ class MyComponent {
 import {Directive} from 'dali/dali';
 
 @Directive({
-    name : 'my-directive'
+  name : 'my-directive'
 })
 class MyDirective {
-    render(data, element, value) {
-    }
+  render(data, element, value) {
+  }
 }
 ```
 
@@ -93,7 +96,8 @@ import {RouterConfig} from 'dali/dali';
 import {Runnable} from 'dali/dali';
 
 @Runnable
-class Test {}
+class Test {
+}
 ```
 
 ### @View
@@ -116,8 +120,8 @@ class Test {
 import {Bindable} from 'dali/dali';
 
 class Test {
-    @Bindable
-    name;
+  @Bindable
+  name;
 }
 ```
 
