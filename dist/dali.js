@@ -123,22 +123,62 @@ var HTTP = (function () {
     }
   }, {
     key: "put",
-    value: function put() {}
+    value: function put() {
+      options.method = 'PUT';
+      options.url = url;
+
+      return this.init(options);
+    }
   }, {
     key: "delete",
-    value: function _delete() {}
+    value: function _delete() {
+      options.method = 'DELETE';
+      options.url = url;
+
+      return this.init(options);
+    }
   }, {
     key: "head",
-    value: function head() {}
+    value: function head() {
+      options.method = 'HEAD';
+      options.url = url;
+
+      return this.init(options);
+    }
   }, {
     key: "trace",
-    value: function trace() {}
+    value: function trace() {
+      options.method = 'TRACE';
+      options.url = url;
+
+      return this.init(options);
+    }
   }, {
     key: "options",
-    value: function options() {}
+    value: (function (_options) {
+      function options() {
+        return _options.apply(this, arguments);
+      }
+
+      options.toString = function () {
+        return _options.toString();
+      };
+
+      return options;
+    })(function () {
+      options.method = 'OPTIONS';
+      options.url = url;
+
+      return this.init(options);
+    })
   }, {
     key: "patch",
-    value: function patch() {}
+    value: function patch() {
+      options.method = 'PATCH';
+      options.url = url;
+
+      return this.init(options);
+    }
   }]);
 
   return HTTP;

@@ -105,20 +105,44 @@ export class HTTP {
   }
 
   static put() {
+    options.method = 'PUT';
+    options.url = url;
+
+    return this.init(options);
   }
 
   static delete() {
+    options.method = 'DELETE';
+    options.url = url;
+
+    return this.init(options);
   }
 
   static head() {
+    options.method = 'HEAD';
+    options.url = url;
+
+    return this.init(options);
   }
 
   static trace() {
+    options.method = 'TRACE';
+    options.url = url;
+
+    return this.init(options);
   }
 
   static options() {
+    options.method = 'OPTIONS';
+    options.url = url;
+
+    return this.init(options);
   }
 
   static patch() {
+    options.method = 'PATCH';
+    options.url = url;
+
+    return this.init(options);
   }
 }
