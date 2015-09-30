@@ -3398,6 +3398,52 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
+$__System.register('2', ['1'], function (_export) {
+  'use strict';
+
+  var Component, View, Bindable, Runnable, MenuBar;
+  return {
+    setters: [function (_) {
+      Component = _.Component;
+      View = _.View;
+      Bindable = _.Bindable;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      //@Injectable
+
+      MenuBar = (function () {
+        var _instanceInitializers = {};
+
+        function MenuBar() {
+          babelHelpers.classCallCheck(this, _MenuBar);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(MenuBar, [{
+          key: 'links',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _MenuBar = MenuBar;
+        MenuBar = Runnable(MenuBar) || MenuBar;
+        MenuBar = View({
+          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
+        })(MenuBar) || MenuBar;
+        MenuBar = Component({
+          name: 'menu-bar'
+        })(MenuBar) || MenuBar;
+        return MenuBar;
+      })();
+
+      _export('MenuBar', MenuBar);
+    }
+  };
+});
+
 $__System.register('3', ['1', '6', '7', '8'], function (_export) {
   'use strict';
 
@@ -3498,52 +3544,6 @@ $__System.register('3', ['1', '6', '7', '8'], function (_export) {
   };
 });
 
-$__System.register('2', ['1'], function (_export) {
-  'use strict';
-
-  var Component, View, Bindable, Runnable, MenuBar;
-  return {
-    setters: [function (_) {
-      Component = _.Component;
-      View = _.View;
-      Bindable = _.Bindable;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      //@Injectable
-
-      MenuBar = (function () {
-        var _instanceInitializers = {};
-
-        function MenuBar() {
-          babelHelpers.classCallCheck(this, _MenuBar);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'links', _instanceInitializers);
-        }
-
-        babelHelpers.createDecoratedClass(MenuBar, [{
-          key: 'links',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [{ path: '/m1', name: 'Module 1' }, { path: '/m2', name: 'Module 2' }, { path: '/m3', name: 'Module 3' }];
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _MenuBar = MenuBar;
-        MenuBar = Runnable(MenuBar) || MenuBar;
-        MenuBar = View({
-          template: '<nav><a *for="link in links" router-link="{{link.path}}" title="{{link.name}}">{{link.name}}</a></nav>'
-        })(MenuBar) || MenuBar;
-        MenuBar = Component({
-          name: 'menu-bar'
-        })(MenuBar) || MenuBar;
-        return MenuBar;
-      })();
-
-      _export('MenuBar', MenuBar);
-    }
-  };
-});
-
 $__System.register('5', ['1'], function (_export) {
   'use strict';
 
@@ -3610,6 +3610,71 @@ $__System.register('4', ['1'], function (_export) {
   };
 });
 
+$__System.register('8', ['1'], function (_export) {
+  'use strict';
+
+  var Json, JsonPropertyOrder, JsonIgnoreProperties, JsonProperty, JsonIgnore, Todo;
+  return {
+    setters: [function (_) {
+      Json = _.Json;
+      JsonPropertyOrder = _.JsonPropertyOrder;
+      JsonIgnoreProperties = _.JsonIgnoreProperties;
+      JsonProperty = _.JsonProperty;
+      JsonIgnore = _.JsonIgnore;
+    }],
+    execute: function () {
+      Todo = (function () {
+        var _instanceInitializers = {};
+
+        function Todo() {
+          babelHelpers.classCallCheck(this, _Todo);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'title', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'description', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'from', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'to', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(Todo, [{
+          key: 'title',
+          decorators: [JsonProperty],
+          initializer: function initializer() {
+            return "";
+          },
+          enumerable: true
+        }, {
+          key: 'description',
+          decorators: [JsonProperty],
+          initializer: function initializer() {
+            return "";
+          },
+          enumerable: true
+        }, {
+          key: 'from',
+          decorators: [JsonIgnore],
+          initializer: function initializer() {
+            return new Date();
+          },
+          enumerable: true
+        }, {
+          key: 'to',
+          decorators: [JsonProperty],
+          initializer: function initializer() {
+            return new Date();
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Todo = Todo;
+        Todo = JsonIgnoreProperties('from', 'to')(Todo) || Todo;
+        Todo = JsonPropertyOrder('description', 'title')(Todo) || Todo;
+        Todo = Json(Todo) || Todo;
+        return Todo;
+      })();
+
+      _export('Todo', Todo);
+    }
+  };
+});
+
 $__System.register('7', ['1'], function (_export) {
   'use strict';
 
@@ -3665,71 +3730,6 @@ $__System.register('6', ['1'], function (_export) {
       })();
 
       _export('DateFilter', DateFilter);
-    }
-  };
-});
-
-$__System.register('8', ['1'], function (_export) {
-  'use strict';
-
-  var Json, JsonPropertyOrder, JsonIgnoreProperties, JsonProperty, JsonIgnore, Todo;
-  return {
-    setters: [function (_) {
-      Json = _.Json;
-      JsonPropertyOrder = _.JsonPropertyOrder;
-      JsonIgnoreProperties = _.JsonIgnoreProperties;
-      JsonProperty = _.JsonProperty;
-      JsonIgnore = _.JsonIgnore;
-    }],
-    execute: function () {
-      Todo = (function () {
-        var _instanceInitializers = {};
-
-        function Todo() {
-          babelHelpers.classCallCheck(this, _Todo);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'title', _instanceInitializers);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'description', _instanceInitializers);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'from', _instanceInitializers);
-          babelHelpers.defineDecoratedPropertyDescriptor(this, 'to', _instanceInitializers);
-        }
-
-        babelHelpers.createDecoratedClass(Todo, [{
-          key: 'title',
-          decorators: [JsonProperty],
-          initializer: function initializer() {
-            return "title";
-          },
-          enumerable: true
-        }, {
-          key: 'description',
-          decorators: [JsonProperty],
-          initializer: function initializer() {
-            return "desc";
-          },
-          enumerable: true
-        }, {
-          key: 'from',
-          decorators: [JsonIgnore],
-          initializer: function initializer() {
-            return new Date();
-          },
-          enumerable: true
-        }, {
-          key: 'to',
-          decorators: [JsonProperty],
-          initializer: function initializer() {
-            return new Date();
-          },
-          enumerable: true
-        }], null, _instanceInitializers);
-        var _Todo = Todo;
-        Todo = JsonIgnoreProperties('from', 'to')(Todo) || Todo;
-        Todo = JsonPropertyOrder('description', 'title')(Todo) || Todo;
-        Todo = Json(Todo) || Todo;
-        return Todo;
-      })();
-
-      _export('Todo', Todo);
     }
   };
 });
