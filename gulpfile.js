@@ -10,6 +10,7 @@ gulp.task('clean', function(cb) {
 gulp.task('default', ['clean'], function () {
     return gulp.src([
         "src/http/*.js",
+        "src/json/*.js",
         "src/core/util/*.js",
         "src/core/component/*.js",
         "src/core/di/*.js",

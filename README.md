@@ -125,6 +125,59 @@ class Test {
 }
 ```
 
+### @Json
+```javascript
+import {Json} from 'dali/dali';
+
+@Json
+class Test {
+}
+
+Test.fromJson(...)
+
+var model = new Test();
+test.toJson();
+```
+
+### @JsonPropertyOrder
+```javascript
+import {JsonPropertyOrder} from 'dali/dali';
+
+@JsonPropertyOrder('description', 'title')
+class Test {
+}
+```
+
+### @JsonIgnoreProperties
+```javascript
+import {JsonIgnoreProperties} from 'dali/dali';
+
+@JsonIgnoreProperties('from', 'to')
+class Test {
+}
+```
+
+### @JsonProperty
+```javascript
+import {JsonProperty} from 'dali/dali';
+
+class Test {
+  @JsonProperty
+  title = "title";
+}
+```
+
+### @JsonIgnore
+```javascript
+import {JsonIgnore} from 'dali/dali';
+
+@Json
+class Test {
+  @JsonIgnore
+  from = new Date();
+}
+```
+
 More info and complete example in [Seed](https://github.com/epplestun/dali/tree/master/seed) project.
 
 ## License

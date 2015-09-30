@@ -994,6 +994,11 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
   var _retrieveGlobal = $__System.get("@@global-helpers").prepareGlobal(__module.id, null, null);
   (function() {
     this["_classCallCheck"] = _classCallCheck;
+    this["Json"] = Json;
+    this["JsonProperty"] = JsonProperty;
+    this["JsonIgnore"] = JsonIgnore;
+    this["JsonIgnoreProperties"] = JsonIgnoreProperties;
+    this["JsonPropertyOrder"] = JsonPropertyOrder;
     this["_toConsumableArray"] = _toConsumableArray;
     this["isDescriptor"] = isDescriptor;
     this["decorate"] = decorate;
@@ -1212,25 +1217,135 @@ $__System.registerDynamic("1", [], false, function(__require, __exports, __modul
         }
       }, {
         key: "put",
-        value: function put() {}
+        value: function put() {
+          options.method = 'PUT';
+          options.url = url;
+          return this.init(options);
+        }
       }, {
         key: "delete",
-        value: function _delete() {}
+        value: function _delete() {
+          options.method = 'DELETE';
+          options.url = url;
+          return this.init(options);
+        }
       }, {
         key: "head",
-        value: function head() {}
+        value: function head() {
+          options.method = 'HEAD';
+          options.url = url;
+          return this.init(options);
+        }
       }, {
         key: "trace",
-        value: function trace() {}
+        value: function trace() {
+          options.method = 'TRACE';
+          options.url = url;
+          return this.init(options);
+        }
       }, {
         key: "options",
-        value: function options() {}
+        value: (function(_options) {
+          function options() {
+            return _options.apply(this, arguments);
+          }
+          options.toString = function() {
+            return _options.toString();
+          };
+          return options;
+        })(function() {
+          options.method = 'OPTIONS';
+          options.url = url;
+          return this.init(options);
+        })
       }, {
         key: "patch",
-        value: function patch() {}
+        value: function patch() {
+          options.method = 'PATCH';
+          options.url = url;
+          return this.init(options);
+        }
       }]);
       return HTTP;
     })();
+    'use strict';
+    function Json(target) {
+      target.fromJson = function(json) {
+        var instance = new this();
+        Object.keys(json).forEach(function(property) {
+          instance[property] = json[property];
+        });
+        return instance;
+      };
+      Object.assign(target.prototype, {toJson: function toJson() {
+          var json = this;
+          if (!!this.jsonIgnoredProperties) {
+            this.jsonIgnoredProperties.forEach(function(property) {
+              delete json[property];
+            });
+          }
+          if (!!this.jsonProperties) {
+            this.jsonProperties.forEach(function(property) {
+              if (!json.hasOwnProperty(property)) {
+                delete json[property];
+              }
+            });
+          }
+          var originalProperties = Object.keys(this),
+              propertiesOrder = this.jsonPropertiesOrder;
+          var newOrder = propertiesOrder.concat(originalProperties).filter(function(value, index, self) {
+            return self.indexOf(value) === index;
+          });
+          var outputJson = {};
+          newOrder.forEach(function(property) {
+            outputJson[property] = json[property];
+          });
+          return JSON.stringify(outputJson, null, '');
+        }});
+    }
+    function JsonProperty(target, key) {
+      if (!target.jsonProperties) {
+        target.jsonProperties = [key];
+      } else {
+        if (!target.jsonProperties[key]) {
+          target.jsonProperties.push(key);
+        }
+      }
+    }
+    function JsonIgnore(target, key) {
+      if (!target.jsonIgnoredProperties) {
+        target.jsonIgnoredProperties = [key];
+      } else {
+        if (!target.jsonIgnoredProperties[key]) {
+          target.jsonIgnoredProperties.push(key);
+        }
+      }
+    }
+    function JsonIgnoreProperties() {
+      for (var _len = arguments.length,
+          properties = Array(_len),
+          _key = 0; _key < _len; _key++) {
+        properties[_key] = arguments[_key];
+      }
+      return function decorator(target) {
+        if (!target.prototype.jsonIgnoredProperties) {
+          target.prototype.jsonIgnoredProperties = [];
+        }
+        properties.forEach(function(property) {
+          target.prototype.jsonIgnoredProperties.push(property);
+        });
+      };
+    }
+    function JsonPropertyOrder() {
+      for (var _len2 = arguments.length,
+          properties = Array(_len2),
+          _key2 = 0; _key2 < _len2; _key2++) {
+        properties[_key2] = arguments[_key2];
+      }
+      return function decorator(target) {
+        target.prototype.jsonPropertiesOrder = properties;
+      };
+    }
     'use strict';
     var _slice = Array.prototype.slice;
     function _toConsumableArray(arr) {
@@ -3283,102 +3398,68 @@ $__System.register('0', ['1', '2', '3', '4', '5'], function (_export) {
   };
 });
 
-$__System.register('4', ['1'], function (_export) {
+$__System.register('3', ['1', '6', '7', '8'], function (_export) {
   'use strict';
 
-  var RouterConfig, View, Runnable, Module2;
+  var RouterConfig, View, Runnable, Inject, DateFilter, Service, Todo, Module1;
   return {
     setters: [function (_) {
       RouterConfig = _.RouterConfig;
       View = _.View;
       Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module2 = (function () {
-        function Module2() {
-          babelHelpers.classCallCheck(this, _Module2);
-        }
-
-        var _Module2 = Module2;
-        Module2 = Runnable(Module2) || Module2;
-        Module2 = View({
-          template: '<h2>Module2</h2>'
-        })(Module2) || Module2;
-        Module2 = RouterConfig({
-          title: 'Module 2',
-          path: '/m2'
-        })(Module2) || Module2;
-        return Module2;
-      })();
-
-      _export('Module2', Module2);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = Runnable(Module3) || Module3;
-        Module3 = View({
-          template: '<h2>Module3</h2>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          title: 'Module 3',
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
-    }
-  };
-});
-
-$__System.register('3', ['1', '6'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, DateFilter, Module1;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
+      Inject = _.Inject;
     }, function (_2) {
       DateFilter = _2.DateFilter;
+    }, function (_3) {
+      Service = _3.Service;
+    }, function (_4) {
+      Todo = _4.Todo;
     }],
     execute: function () {
       Module1 = (function () {
         var _instanceInitializers = {};
+        var _instanceInitializers = {};
+        babelHelpers.createDecoratedClass(Module1, [{
+          key: 'name',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return "My First App!!";
+          },
+          enumerable: true
+        }, {
+          key: 'todos',
+          decorators: [Bindable],
+          initializer: function initializer() {
+            return [];
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
 
-        function Module1() {
+        function Module1(service) {
           babelHelpers.classCallCheck(this, _Module1);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'name', _instanceInitializers);
           babelHelpers.defineDecoratedPropertyDescriptor(this, 'todos', _instanceInitializers);
           this.date = new Date();
+
+          service.get().then(this.insert.bind(this));
         }
 
         babelHelpers.createDecoratedClass(Module1, [{
+          key: 'insert',
+          value: function insert(data) {
+            var _this = this;
+
+            JSON.parse(data).forEach((function (item) {
+              _this.todos.push(Todo.fromJson(item));
+            }).bind(this));
+          }
+        }, {
           key: 'add',
           value: function add() {
-            this.todos.push({
+            this.todos.push(Todo.fromJson({
               title: this.item,
               date: new Date()
-            });
+            }));
           }
         }, {
           key: 'remove',
@@ -3397,22 +3478,9 @@ $__System.register('3', ['1', '6'], function (_export) {
           value: function load(item) {
             console.log('load ...', item);
           }
-        }, {
-          key: 'name',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return "My First App!!";
-          },
-          enumerable: true
-        }, {
-          key: 'todos',
-          decorators: [Bindable],
-          initializer: function initializer() {
-            return [];
-          },
-          enumerable: true
         }], null, _instanceInitializers);
         var _Module1 = Module1;
+        Module1 = Inject(Service)(Module1) || Module1;
         Module1 = Runnable(Module1) || Module1;
         Module1 = View({
           templateUrl: 'module1/module1_view.html'
@@ -3476,6 +3544,101 @@ $__System.register('2', ['1'], function (_export) {
   };
 });
 
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
+        Module3 = View({
+          template: '<h2>Module3</h2>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          title: 'Module 3',
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
+
+$__System.register('4', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module2;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module2 = (function () {
+        function Module2() {
+          babelHelpers.classCallCheck(this, _Module2);
+        }
+
+        var _Module2 = Module2;
+        Module2 = Runnable(Module2) || Module2;
+        Module2 = View({
+          template: '<h2>Module2</h2>'
+        })(Module2) || Module2;
+        Module2 = RouterConfig({
+          title: 'Module 2',
+          path: '/m2'
+        })(Module2) || Module2;
+        return Module2;
+      })();
+
+      _export('Module2', Module2);
+    }
+  };
+});
+
+$__System.register('7', ['1'], function (_export) {
+  'use strict';
+
+  var Inject, HTTP, Service;
+  return {
+    setters: [function (_) {
+      Inject = _.Inject;
+      HTTP = _.HTTP;
+    }],
+    execute: function () {
+      Service = (function () {
+        function Service() {
+          babelHelpers.classCallCheck(this, Service);
+        }
+
+        babelHelpers.createClass(Service, [{
+          key: 'get',
+          value: function get() {
+            return HTTP.get('data.json');
+          }
+        }]);
+        return Service;
+      })();
+
+      _export('Service', Service);
+    }
+  };
+});
+
 $__System.register('6', ['1'], function (_export) {
   'use strict';
 
@@ -3502,6 +3665,71 @@ $__System.register('6', ['1'], function (_export) {
       })();
 
       _export('DateFilter', DateFilter);
+    }
+  };
+});
+
+$__System.register('8', ['1'], function (_export) {
+  'use strict';
+
+  var Json, JsonPropertyOrder, JsonIgnoreProperties, JsonProperty, JsonIgnore, Todo;
+  return {
+    setters: [function (_) {
+      Json = _.Json;
+      JsonPropertyOrder = _.JsonPropertyOrder;
+      JsonIgnoreProperties = _.JsonIgnoreProperties;
+      JsonProperty = _.JsonProperty;
+      JsonIgnore = _.JsonIgnore;
+    }],
+    execute: function () {
+      Todo = (function () {
+        var _instanceInitializers = {};
+
+        function Todo() {
+          babelHelpers.classCallCheck(this, _Todo);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'title', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'description', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'from', _instanceInitializers);
+          babelHelpers.defineDecoratedPropertyDescriptor(this, 'to', _instanceInitializers);
+        }
+
+        babelHelpers.createDecoratedClass(Todo, [{
+          key: 'title',
+          decorators: [JsonProperty],
+          initializer: function initializer() {
+            return "title";
+          },
+          enumerable: true
+        }, {
+          key: 'description',
+          decorators: [JsonProperty],
+          initializer: function initializer() {
+            return "desc";
+          },
+          enumerable: true
+        }, {
+          key: 'from',
+          decorators: [JsonIgnore],
+          initializer: function initializer() {
+            return new Date();
+          },
+          enumerable: true
+        }, {
+          key: 'to',
+          decorators: [JsonProperty],
+          initializer: function initializer() {
+            return new Date();
+          },
+          enumerable: true
+        }], null, _instanceInitializers);
+        var _Todo = Todo;
+        Todo = JsonIgnoreProperties('from', 'to')(Todo) || Todo;
+        Todo = JsonPropertyOrder('description', 'title')(Todo) || Todo;
+        Todo = Json(Todo) || Todo;
+        return Todo;
+      })();
+
+      _export('Todo', Todo);
     }
   };
 });

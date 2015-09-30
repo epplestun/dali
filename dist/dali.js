@@ -185,6 +185,111 @@ var HTTP = (function () {
 })();
 'use strict';
 
+function Json(target) {
+  target.fromJson = function (json) {
+    var instance = new this();
+
+    Object.keys(json).forEach(function (property) {
+      instance[property] = json[property];
+    });
+
+    return instance;
+  };
+
+  Object.assign(target.prototype, {
+    toJson: function toJson() {
+      var json = this;
+
+      if (!!this.jsonIgnoredProperties) {
+        this.jsonIgnoredProperties.forEach(function (property) {
+          delete json[property];
+        });
+      }
+
+      if (!!this.jsonProperties) {
+        this.jsonProperties.forEach(function (property) {
+          if (!json.hasOwnProperty(property)) {
+            delete json[property];
+          }
+        });
+      }
+
+      //
+      // Apply property mappers
+      //
+      /*
+      target.prototype.jsonProperties.filter((property) => {
+        return property.hasOwnProperty('conf');
+      }).forEach((property) => {
+        console.log(property.key, property.conf, json[property.key]);
+        json[property.key] = json[property.key]
+      });
+      */
+
+      var originalProperties = Object.keys(this),
+          propertiesOrder = this.jsonPropertiesOrder;
+
+      var newOrder = propertiesOrder.concat(originalProperties).filter(function (value, index, self) {
+        return self.indexOf(value) === index;
+      });
+
+      var outputJson = {};
+      newOrder.forEach(function (property) {
+        outputJson[property] = json[property];
+      });
+
+      return JSON.stringify(outputJson, null, '');
+    }
+  });
+}
+
+function JsonProperty(target, key) {
+  if (!target.jsonProperties) {
+    target.jsonProperties = [key];
+  } else {
+    if (!target.jsonProperties[key]) {
+      target.jsonProperties.push(key);
+    }
+  }
+}
+
+function JsonIgnore(target, key) {
+  if (!target.jsonIgnoredProperties) {
+    target.jsonIgnoredProperties = [key];
+  } else {
+    if (!target.jsonIgnoredProperties[key]) {
+      target.jsonIgnoredProperties.push(key);
+    }
+  }
+}
+
+function JsonIgnoreProperties() {
+  for (var _len = arguments.length, properties = Array(_len), _key = 0; _key < _len; _key++) {
+    properties[_key] = arguments[_key];
+  }
+
+  return function decorator(target) {
+    if (!target.prototype.jsonIgnoredProperties) {
+      target.prototype.jsonIgnoredProperties = [];
+    }
+
+    properties.forEach(function (property) {
+      target.prototype.jsonIgnoredProperties.push(property);
+    });
+  };
+}
+
+function JsonPropertyOrder() {
+  for (var _len2 = arguments.length, properties = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    properties[_key2] = arguments[_key2];
+  }
+
+  return function decorator(target) {
+    target.prototype.jsonPropertiesOrder = properties;
+  };
+}
+'use strict';
+
 var _slice = Array.prototype.slice;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }

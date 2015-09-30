@@ -1,4 +1,4 @@
-function Json(target) {
+export function Json(target) {
   target.fromJson = function(json) {
     let instance = new this();
     
@@ -56,7 +56,7 @@ function Json(target) {
   })
 }
 
-function JsonProperty(target, key) {
+export function JsonProperty(target, key) {
   if(!target.jsonProperties) {
     target.jsonProperties = [key];
   } else {
@@ -66,7 +66,7 @@ function JsonProperty(target, key) {
   }
 }
 
-function JsonIgnore(target, key) {
+export function JsonIgnore(target, key) {
   if(!target.jsonIgnoredProperties) {
     target.jsonIgnoredProperties = [key];
   } else {
@@ -76,7 +76,7 @@ function JsonIgnore(target, key) {
   }
 }
 
-function JsonIgnoreProperties(...properties) {
+export function JsonIgnoreProperties(...properties) {
   return function decorator(target) {
     if(!target.prototype.jsonIgnoredProperties) {
       target.prototype.jsonIgnoredProperties = [];
@@ -88,36 +88,8 @@ function JsonIgnoreProperties(...properties) {
   }
 }
 
-function JsonPropertyOrder(...properties) {
+export function JsonPropertyOrder(...properties) {
   return function decorator(target) {
     target.prototype.jsonPropertiesOrder = properties;
   }
 }
-
-@Json
-@JsonPropertyOrder('description', 'title')
-@JsonIgnoreProperties('from', 'to')
-class Todo {
-  @JsonProperty
-  title = "title";
-
-  @JsonProperty
-  description = "desc";
-
-  @JsonIgnore
-  from = new Date();
-  
-  @JsonProperty
-  to = new Date();
-}
-
-let todo = new Todo();
-console.log(todo.toJson());
-console.log('----------------------------------------');
-
-let i = Todo.fromJson({
-  'description' : 'Descripción',
-  'title' : 'Título',
-  'from' : '2015-01-07T00:00:00.000'
-});
-console.log(i.toJson());
