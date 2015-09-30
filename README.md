@@ -180,7 +180,7 @@ class Test {
 }
 ```
 
-More info and complete example in [Seed](https://github.com/epplestun/dali/tree/master/seed) project.
+More info and complete example in [Seed](https://github.com/epplestun/dali-seed) project.
 
 ## License
 
