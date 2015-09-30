@@ -34,14 +34,16 @@ class MyComponent {
 
 ### @Inject
 ```javascript
-import {Inject, HTTP} from 'dali/dali';
+import {Inject} from 'dali/dali';
 
-@Inject(HTTP)
+class Test {
+  myMethod() {}
+}
+
+@Inject(Test)
 class MyComponent {
-  constructor(http) {
-    http.get('url').then((response) => {
-      console.log(reponse);
-    });
+  constructor(test) {
+    test.myMethod();
   }
 }
 ```

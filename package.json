@@ -1,6 +1,6 @@
 {
   "name": "dalijs",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "ES6 framework",
   "keywords": [
     "javascript",
@@ -27,6 +27,8 @@
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-concat": "^2.6.0",
+    "babel-eslint": "^4.1.3",
+    "gulp-eslint": "^1.0.0",
     "systemjs": "^0.18.17",
     "systemjs-builder": "^0.13.5"
   }

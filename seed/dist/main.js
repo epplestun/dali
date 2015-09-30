@@ -3444,6 +3444,39 @@ $__System.register('2', ['1'], function (_export) {
   };
 });
 
+$__System.register('5', ['1'], function (_export) {
+  'use strict';
+
+  var RouterConfig, View, Runnable, Module3;
+  return {
+    setters: [function (_) {
+      RouterConfig = _.RouterConfig;
+      View = _.View;
+      Runnable = _.Runnable;
+    }],
+    execute: function () {
+      Module3 = (function () {
+        function Module3() {
+          babelHelpers.classCallCheck(this, _Module3);
+        }
+
+        var _Module3 = Module3;
+        Module3 = Runnable(Module3) || Module3;
+        Module3 = View({
+          template: '<h2>Module3</h2>'
+        })(Module3) || Module3;
+        Module3 = RouterConfig({
+          title: 'Module 3',
+          path: '/m3'
+        })(Module3) || Module3;
+        return Module3;
+      })();
+
+      _export('Module3', Module3);
+    }
+  };
+});
+
 $__System.register('3', ['1', '6', '7', '8'], function (_export) {
   'use strict';
 
@@ -3540,39 +3573,6 @@ $__System.register('3', ['1', '6', '7', '8'], function (_export) {
       })();
 
       _export('Module1', Module1);
-    }
-  };
-});
-
-$__System.register('5', ['1'], function (_export) {
-  'use strict';
-
-  var RouterConfig, View, Runnable, Module3;
-  return {
-    setters: [function (_) {
-      RouterConfig = _.RouterConfig;
-      View = _.View;
-      Runnable = _.Runnable;
-    }],
-    execute: function () {
-      Module3 = (function () {
-        function Module3() {
-          babelHelpers.classCallCheck(this, _Module3);
-        }
-
-        var _Module3 = Module3;
-        Module3 = Runnable(Module3) || Module3;
-        Module3 = View({
-          template: '<h2>Module3</h2>'
-        })(Module3) || Module3;
-        Module3 = RouterConfig({
-          title: 'Module 3',
-          path: '/m3'
-        })(Module3) || Module3;
-        return Module3;
-      })();
-
-      _export('Module3', Module3);
     }
   };
 });
@@ -3675,35 +3675,6 @@ $__System.register('8', ['1'], function (_export) {
   };
 });
 
-$__System.register('7', ['1'], function (_export) {
-  'use strict';
-
-  var Inject, HTTP, Service;
-  return {
-    setters: [function (_) {
-      Inject = _.Inject;
-      HTTP = _.HTTP;
-    }],
-    execute: function () {
-      Service = (function () {
-        function Service() {
-          babelHelpers.classCallCheck(this, Service);
-        }
-
-        babelHelpers.createClass(Service, [{
-          key: 'get',
-          value: function get() {
-            return HTTP.get('data.json');
-          }
-        }]);
-        return Service;
-      })();
-
-      _export('Service', Service);
-    }
-  };
-});
-
 $__System.register('6', ['1'], function (_export) {
   'use strict';
 
@@ -3730,6 +3701,34 @@ $__System.register('6', ['1'], function (_export) {
       })();
 
       _export('DateFilter', DateFilter);
+    }
+  };
+});
+
+$__System.register('7', ['1'], function (_export) {
+  'use strict';
+
+  var HTTP, Service;
+  return {
+    setters: [function (_) {
+      HTTP = _.HTTP;
+    }],
+    execute: function () {
+      Service = (function () {
+        function Service() {
+          babelHelpers.classCallCheck(this, Service);
+        }
+
+        babelHelpers.createClass(Service, [{
+          key: 'get',
+          value: function get() {
+            return HTTP.get('data.json');
+          }
+        }]);
+        return Service;
+      })();
+
+      _export('Service', Service);
     }
   };
 });
