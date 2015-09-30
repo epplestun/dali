@@ -1,4 +1,4 @@
-import {Inject, HTTP} from 'dali/dali';
+import {HTTP} from 'dali/dali';
 
 export class Service {
   get() {
