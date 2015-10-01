@@ -165,7 +165,7 @@ var HTTP = (function () {
           });
         }
 
-        if (this.withCredentials) {
+        if (options.withCredentials) {
           request.withCredentials = true;
         }
 
@@ -704,6 +704,7 @@ var DataModel = (function () {
 
       var instance = Injector.instances[target.name];
 
+      var bValue = null;
       Object.defineProperty(instance, value, {
         get: function get() {
           return bValue;

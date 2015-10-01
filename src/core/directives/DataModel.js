@@ -15,6 +15,7 @@ export class DataModel {
 
     let instance = Injector.instances[target.name];
 
+    var bValue = null;
     Object.defineProperty(instance, value, {
       get: function () {
         return bValue;

@@ -60,7 +60,7 @@ export class HTTP {
         });
       }
 
-      if (this.withCredentials) {
+      if (options.withCredentials) {
         request.withCredentials = true;
       }
 
