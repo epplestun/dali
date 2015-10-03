@@ -1,3 +1,5 @@
+import {Filter} from 'core/filters/Filter';
+
 export function Json(target) {
   target.fromJson = function(json) {
     let instance = new this();
@@ -91,5 +93,12 @@ export function JsonIgnoreProperties(...properties) {
 export function JsonPropertyOrder(...properties) {
   return function decorator(target) {
     target.prototype.jsonPropertiesOrder = properties;
+  }
+}
+
+@Filter
+export class JsonFilter {
+  render(value, extra) {
+    return JSON.stringify(value, null, '\t');
   }
 }

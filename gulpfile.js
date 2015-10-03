@@ -24,9 +24,8 @@ gulp.task('lint', function() {
 
 gulp.task('build', ['clean', 'lint'], function () {
   return gulp.src([
-      "src/core/util/*.js",
-      "src/http/*.js",
-      "src/json/*.js",
+      "src/core/util/*.js",  
+      "src/http/*.js",    
       "src/core/component/*.js",
       "src/core/di/*.js",
       "src/core/directives/*.js",
@@ -39,7 +38,8 @@ gulp.task('build', ['clean', 'lint'], function () {
       "src/core/runnable/*.js",        
       "src/core/view/*.js",
       "src/core/router/*.js",
-      "src/core/bootstrap.js"
+      "src/core/bootstrap.js",      
+      "src/json/*.js"
     ])
     .pipe(babel({ 
     	optional: [
