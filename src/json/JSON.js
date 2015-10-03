@@ -1,3 +1,12 @@
+import {Filter} from 'core/filters/Filter';
+
+@Filter
+class JsonFilter {
+  render(value, extra) {
+    return JSON.stringify(value, null, ' ');
+  }
+}
+
 export function Json(target) {
   target.fromJson = function(json) {
     let instance = new this();
