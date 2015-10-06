@@ -1,6 +1,11 @@
 export class Evaluator {
   eval(data, code) {
-    var context = data;
-    return eval('context.' + code);
+    let args = Object.keys(data),
+        values = args.map(function(value) {
+          return data[value];
+        });
+
+    let executor = new Function(args, 'return ' + code);
+    return executor.apply(executor, values);
   }
 }

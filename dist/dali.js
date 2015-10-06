@@ -1129,8 +1129,18 @@ var Evaluator = (function () {
   _createClass(Evaluator, [{
     key: 'eval',
     value: function _eval(data, code) {
+      var args = Object.keys(data),
+          values = args.map(function (value) {
+        return data[value];
+      });
+
+      var executor = new Function(args, 'return ' + code);
+      return executor.apply(executor, values);
+
+      /*
       var context = data;
       return eval('context.' + code);
+      */
     }
   }]);
 
