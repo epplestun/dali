@@ -1,5 +1,6 @@
 import {Render} from 'core/render/Render';
-import {Directive, Directives} from 'core/directive/Directive';
+import {Directive} from 'core/directives/Directive';
+import {Directives} from 'core/directives/Directives';
 
 @Directive({
   name : 'data-for'

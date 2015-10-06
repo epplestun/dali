@@ -2,11 +2,14 @@ import {Render} from 'core/render/Render';
 
 var assert = require("assert");
 
-describe('Render', () => {
+describe.only('Render', () => {
   describe('#normalize()', () => {
     it('should be have normalized HTML', () => {
       let original = "<p *for=\"item in items\">{{name}}</p>";
       let expected = "<p data-for=\"item in items\">{{name}}</p>";
+
+
+      console.log(original, Render.normalize(original));
 
       assert.equal(expected, Render.normalize(original));
     });

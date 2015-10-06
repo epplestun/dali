@@ -1,5 +1,4 @@
-import {log} from 'core/util/util';
-import {decorate} from 'core/util/util';
+import {log, decorate} from 'core/util/util';
 
 log('Inject.js');
 

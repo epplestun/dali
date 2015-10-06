@@ -2,7 +2,7 @@ import {first} from 'core/util/util';
 import {Injector} from 'core/di/Injector';
 import {EventBus, EventNameNormalizer} from 'core/event/EventBus';
 import {Views} from 'core/view/Views';
-import {Directive} from 'core/directive/Directive';
+import {Directive} from 'core/directives/Directive';
 
 @Directive({
   name : 'data-model'

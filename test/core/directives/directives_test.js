@@ -23,6 +23,8 @@ assert.equal(
 );
 */
 
+import {DataIf} from 'core/directives/DataIf';
+
 var assert = require("assert");
 
 describe.skip('Directives', () => {

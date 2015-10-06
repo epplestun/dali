@@ -1,4 +1,4 @@
-import {Directive} from 'core/directive/Directive';
+import {Directive} from 'core/directives/Directive';
 
 @Directive({
   name : 'data-if'
