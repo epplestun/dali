@@ -568,7 +568,7 @@ var DataIf = (function () {
 
   _createClass(DataIf, [{
     key: 'render',
-    value: function render(data, element, value) {
+    value: function render(element, data, value) {
       if (!data[value]) {
         element.parentNode.removeChild(element);
       }
@@ -1415,8 +1415,6 @@ var Render = (function () {
         //console.log(directive, Directives.get(directive).config);
         coreDirectives.push(directive.replace(Directives.PREFIX, ''));
       }
-
-      console.log(coreDirectives);
 
       var pattern = '\\*(' + coreDirectives.join('|') + ')';
       var regExp = new RegExp(pattern, "gm");
