@@ -14,7 +14,7 @@ export class Render {
     let pattern = '\\*(' + coreDirectives.join('|') + ')';
     let regExp = new RegExp(pattern, "gm");
 
-    return html.replace(regExp, (p1, p2) => Directives.PREFIX + p2);
+    return  html.replace(regExp, (p1, p2) => Directives.PREFIX + p2);
   }
 
   static render(html, options) {

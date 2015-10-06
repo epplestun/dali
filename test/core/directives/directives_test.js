@@ -24,11 +24,38 @@ assert.equal(
 */
 
 import {DataIf} from 'core/directives/DataIf';
+import {DataFor} from 'core/directives/DataFor';
+import {DataModel} from 'core/directives/DataModel';
 
 var assert = require("assert");
+var jsdom = require('mocha-jsdom');
 
 describe.skip('Directives', () => {
-  describe('For', () => {
+
+  jsdom();
+
+  describe('If', () => {
+    describe('#render()', () => {
+      it('remove p element from div', () => {
+        let data = {
+          isVisible : false
+        };
+        let value = 'isVisible';
+
+        let element = document.createElement('p');
+        let container = document.createElement('div');
+        container.appendChild(element);
+
+        let dataIf = new DataIf();
+
+        dataIf.render(element, data, value);
+
+        assert.equal(container.childNodes.length, 0);
+      });
+    });
+  });
+
+  describe.skip('For', () => {
     describe('#render()', () => {
       it('FOR ->', () => {
         assert.equal(true, false);
@@ -36,15 +63,7 @@ describe.skip('Directives', () => {
     });
   });
 
-  describe('If', () => {
-    describe('#render()', () => {
-      it('IF ->', () => {
-        assert.equal(true, false);
-      });
-    });
-  });
-
-  describe('Model', () => {
+  describe.skip('Model', () => {
     describe('#render()', () => {
       it('MODEL ->', () => {
         assert.equal(true, false);

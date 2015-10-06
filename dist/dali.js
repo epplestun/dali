@@ -562,13 +562,18 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var DataIf = (function () {
-  function DataIf() {
+  function DataIf(evaluator) {
     _classCallCheck(this, _DataIf);
+
+    this.evaluator = evaluator;
   }
 
   _createClass(DataIf, [{
     key: 'render',
     value: function render(element, data, value) {
+      //console.log('this.evaluator', this, this.evaluator);
+      //if (this.evaluator.eval(data, value)) {
+
       if (!data[value]) {
         element.parentNode.removeChild(element);
       }
@@ -576,6 +581,7 @@ var DataIf = (function () {
   }]);
 
   var _DataIf = DataIf;
+  DataIf = Inject(Evaluator)(DataIf) || DataIf;
   DataIf = Directive({
     name: 'data-if'
   })(DataIf) || DataIf;
