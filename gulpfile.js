@@ -4,7 +4,15 @@ var concat = require('gulp-concat');
 var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
-var babelMocha = require('babel/register');
+var babelMocha = require('babel/register')({
+  experimental: true,
+  optional: [
+        "es7.decorators",
+        "es7.classProperties",
+        "es7.exportExtensions",
+        "es7.functionBind"
+      ]
+});
 
 gulp.task('clean', function(cb) {
   return del(['dist'], cb);
@@ -27,7 +35,7 @@ gulp.task('lint', function() {
 gulp.task('test', function() {
   return gulp.src(['test/**/*.js'])
     .pipe(mocha({
-      //reporter: 'list',
+      //reporter: 'min',
       compilers: {
         js: babelMocha
       }
