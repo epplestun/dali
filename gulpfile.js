@@ -6,19 +6,17 @@ var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
 var babelMocha = require('babel/register')({
   resolveModuleSource: function(source, filename) {
-
-    //console.log(source);
-    //console.log(filename);
-
     if(
       source.startsWith('core') || 
       source.startsWith('http') || 
       source.startsWith('json')
     ) {
-      return '../../../src/' + source;
-    } else {
-      return source;
+      source = '../../../src/' + source;
     }
+
+    //console.log(source, source.startsWith('core'));
+
+    return source;
   },
   
   optional: [

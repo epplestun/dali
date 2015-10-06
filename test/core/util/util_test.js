@@ -3,35 +3,35 @@ import {
   last,
   ucfirst,
   guid
-} from '../../../src/core/util/util.js';
+} from 'core/util/util';
 
 var assert = require("assert");
 
-describe('Utils', function() {
-  describe('#first()', function () {
-    it('should return the first element of array', function () {
+describe('Utils', () => {
+  describe('#first()', () => {
+    it('should return the first element of array', () => {
       let data = [1, 2, 3];
       assert.equal(1, data::first());
     });
   });
 
-  describe('#last()', function () {
-    it('should return the last element of array', function () {
+  describe('#last()', () => {
+    it('should return the last element of array', () => {
       let data = [1, 2, 3];
       assert.equal(3, data::last());
     });
   });
 
-  describe('#ucfirst()', function () {
-    it('should return the first letter capitalized', function () {
+  describe('#ucfirst()', () => {
+    it('should return the first letter capitalized', () => {
       let string = "ivan";
 
       assert.equal("Ivan", string::ucfirst());
     });
   });
 
-  describe('#guid()', function () {
-    it('should return valid guid', function () {
+  describe('#guid()', () => {
+    it('should return valid guid', () => {
       let uuid = guid();
 
       assert.equal(
