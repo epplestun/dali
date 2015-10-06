@@ -1,5 +1,5 @@
-# dali
-ES6 framework for creating web applications. [![Build Status](https://travis-ci.org/epplestun/dali.svg?branch=master)](https://travis-ci.org/epplestun/dali)
+# dali [![Build Status](https://travis-ci.org/epplestun/dali.svg?branch=master)](https://travis-ci.org/epplestun/dali)
+ES6 framework for creating web applications.
 
 ## Introduction
 **dali** use [babel](https://babeljs.io) to compile ES6 code into ES5.
