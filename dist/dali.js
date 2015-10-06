@@ -1416,6 +1416,8 @@ var Render = (function () {
         coreDirectives.push(directive.replace(Directives.PREFIX, ''));
       }
 
+      console.log(coreDirectives);
+
       var pattern = '\\*(' + coreDirectives.join('|') + ')';
       var regExp = new RegExp(pattern, "gm");
 

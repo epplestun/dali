@@ -11,6 +11,8 @@ export class Render {
       coreDirectives.push(directive.replace(Directives.PREFIX, ''));
     }
 
+    console.log(coreDirectives);
+
     let pattern = '\\*(' + coreDirectives.join('|') + ')';
     let regExp = new RegExp(pattern, "gm");
 

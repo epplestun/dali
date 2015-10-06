@@ -4,7 +4,7 @@ import {Directive} from 'core/directive/Directive';
   name : 'data-if'
 })
 export class DataIf {
-  render(data, element, value) {
+  render(element, data, value) {
     if (!data[value]) {
       element.parentNode.removeChild(element);
     }
