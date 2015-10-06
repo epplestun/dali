@@ -1,6 +1,4 @@
 /node_modules/
-/test/
-/src_back/
 npm-debug.log
 dali.iml
 .idea/
