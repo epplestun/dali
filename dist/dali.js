@@ -1136,11 +1136,6 @@ var Evaluator = (function () {
 
       var executor = new Function(args, 'return ' + code);
       return executor.apply(executor, values);
-
-      /*
-      var context = data;
-      return eval('context.' + code);
-      */
     }
   }]);
 

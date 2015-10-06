@@ -34,7 +34,7 @@ gulp.task('test', function() {
     }));
 });
 
-gulp.task('build', ['clean', 'lint'], function () {
+gulp.task('build', ['clean', 'lint', 'test'], function () {
   return gulp.src([
       "src/core/util/*.js",  
       "src/http/*.js",    
