@@ -3,6 +3,8 @@ var del = require('del');
 var concat = require('gulp-concat');
 var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
+var mocha = require('gulp-mocha');
+var babelMocha = require('babel/register');
 
 gulp.task('clean', function(cb) {
   return del(['dist'], cb);
@@ -20,6 +22,16 @@ gulp.task('lint', function() {
       }))
       .pipe(eslint.format())
       .pipe(eslint.failOnError());
+});
+
+gulp.task('test', function() {
+  return gulp.src(['test/**/*.js'])
+    .pipe(mocha({
+      //reporter: 'list',
+      compilers: {
+        js: babelMocha
+      }
+    }));
 });
 
 gulp.task('build', ['clean', 'lint'], function () {
