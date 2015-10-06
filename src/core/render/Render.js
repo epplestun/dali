@@ -72,13 +72,6 @@ export class Render {
 
     return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
   }
-
-  /*
-  static getDOM(parent) {
-    let nodes = parent.childNodes[0].childNodes[1].childNodes;
-    return nodes;
-  }
-  */
 }
 
 Render.START_DELIMITER = "{{";

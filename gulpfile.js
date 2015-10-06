@@ -5,13 +5,28 @@ var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
 var babelMocha = require('babel/register')({
-  experimental: true,
+  resolveModuleSource: function(source, filename) {
+
+    //console.log(source);
+    //console.log(filename);
+
+    if(
+      source.startsWith('core') || 
+      source.startsWith('http') || 
+      source.startsWith('json')
+    ) {
+      return '../../../src/' + source;
+    } else {
+      return source;
+    }
+  },
+  
   optional: [
-        "es7.decorators",
-        "es7.classProperties",
-        "es7.exportExtensions",
-        "es7.functionBind"
-      ]
+    "es7.decorators",
+    "es7.classProperties",
+    "es7.exportExtensions",
+    "es7.functionBind"
+  ]
 });
 
 gulp.task('clean', function(cb) {
