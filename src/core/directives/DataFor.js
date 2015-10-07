@@ -1,12 +1,13 @@
 import {Render} from 'core/render/Render';
 import {Directive} from 'core/directives/Directive';
 import {Directives} from 'core/directives/Directives';
+import {DOM} from 'core/dom/dom';
 
 @Directive({
   name : 'data-for'
 })
 export class DataFor {
-  render(element, data, value, config, target) {
+  render(element, data, value, config) {
     let originalClone = element.cloneNode(true);
     let parentNode = element.parentNode;
     parentNode.removeChild(element);
@@ -26,7 +27,7 @@ export class DataFor {
       let childParsed = Directives.parseElement(child, contextData);
       let wrapper = document.createElement('div');
       wrapper.innerHTML = Render.render(childParsed.outerHTML, contextData);
-      
+
       parentNode.appendChild(wrapper.firstChild);
 
       DOM.parse(parentNode).walk(parentNode, (element) => {

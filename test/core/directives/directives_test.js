@@ -1,6 +1,6 @@
 import {Injector} from 'core/di/Injector';
 import {DataIf} from 'core/directives/DataIf';
-//import {DataFor} from 'core/directives/DataFor';
+import {DataFor} from 'core/directives/DataFor';
 //import {DataModel} from 'core/directives/DataModel';
 
 var assert = require("assert");
@@ -45,10 +45,44 @@ describe('Directives', () => {
     });
   });
 
-  describe.skip('For', () => {
+  describe('For', () => {
     describe('#render()', () => {
-      it('FOR ->', () => {
-        assert.equal(true, false);
+      let dataFor = Injector.get(DataFor),
+          value = 'item in items',
+          config = { name: 'data-for' };
+
+      it('repeat <p> element three times', () => {
+        let data = {
+          items: [1, 2, 3]
+        };
+
+        let element = document.createElement('p'),
+            container = document.createElement('div');
+        container.appendChild(element);
+
+        dataFor.render(element, data, value, config);
+
+        assert.equal(container.childNodes.length, data.items.length);
+      });
+
+      it('repeat <p> element three times and <p> text are: 1, 2, 3', () => {
+        let data = {
+          items: [1, 2, 3]
+        };
+
+        let element = document.createElement('p');
+        element.innerHTML = '{{item}}';
+        
+        let container = document.createElement('div');
+        container.appendChild(element);
+
+        dataFor.render(element, data, value, config);
+
+        assert.equal(container.childNodes.length, data.items.length);
+
+        data.items.forEach((value, index) => {
+          assert.equal(container.childNodes[index].innerHTML, value);  
+        });
       });
     });
   });
