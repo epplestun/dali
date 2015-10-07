@@ -4,3 +4,7 @@ node_js:
 before_script:
   - npm install -g gulp
 script: gulp
+notifications:
+  email:
+    on_success: change
+    on_failure: always
