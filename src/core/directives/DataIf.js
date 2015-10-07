@@ -1,6 +1,6 @@
 import {Inject} from 'core/di/Inject';
-import {Evaluator} from 'core/evaluator/Evaluator';
 import {Directive} from 'core/directives/Directive';
+import {Evaluator} from 'core/evaluator/Evaluator';
 
 @Directive({
   name : 'data-if'
@@ -12,10 +12,7 @@ export class DataIf {
   }
 
   render(element, data, value) {
-    //console.log('this.evaluator', this, this.evaluator);
-    //if (this.evaluator.eval(data, value)) {
-
-    if(!data[value]) {
+    if(!this.evaluator.eval(data, value)) {
       element.parentNode.removeChild(element);
     }
   }

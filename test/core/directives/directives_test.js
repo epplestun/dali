@@ -1,56 +1,46 @@
-/*
+import {Injector} from 'core/di/Injector';
 import {DataIf} from 'core/directives/DataIf';
-
-var assert = require("assert");
-
-let dataFor = new DataFor(),
-    original = "<p *for=\"item in items\">{{name}}</p>",
-    expected = "<p>1</p><p>2</p><p>3</p>";
-
-let element = document.createElement('div'),
-    data = {
-      items: [1, 2, 3]
-    },
-    value = "",
-    config = {
-      name: 'data-for'
-    },
-    target = {};
-
-assert.equal(
-  expected, 
-  dataFor.render(element, data, value, config, target)
-);
-*/
-
-import {DataIf} from 'core/directives/DataIf';
-import {DataFor} from 'core/directives/DataFor';
-import {DataModel} from 'core/directives/DataModel';
+//import {DataFor} from 'core/directives/DataFor';
+//import {DataModel} from 'core/directives/DataModel';
 
 var assert = require("assert");
 var jsdom = require('mocha-jsdom');
 
-describe.skip('Directives', () => {
+describe('Directives', () => {
 
   jsdom();
 
   describe('If', () => {
     describe('#render()', () => {
-      it('remove p element from div', () => {
+      let dataIf = Injector.get(DataIf),
+          value = 'isVisible';
+
+      it('remove <p> element from <div>', () => {
         let data = {
           isVisible : false
-        };
-        let value = 'isVisible';
+        };        
 
-        let element = document.createElement('p');
-        let container = document.createElement('div');
+        let element = document.createElement('p'),
+            container = document.createElement('div');
         container.appendChild(element);
-
-        let dataIf = new DataIf();
 
         dataIf.render(element, data, value);
 
         assert.equal(container.childNodes.length, 0);
+      });
+
+      it('do not remove <p> element from <div>', () => {
+        let data = {
+          isVisible : true
+        };
+            
+        let element = document.createElement('p'),
+            container = document.createElement('div');
+        container.appendChild(element);
+
+        dataIf.render(element, data, value);
+
+        assert.equal(container.childNodes.length, 1);
       });
     });
   });
