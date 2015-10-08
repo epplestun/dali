@@ -4,29 +4,31 @@ var assert = require("assert");
 
 class Target {}
 
-describe.skip('Injector', () => {
-
-  let instance = Injector.get(Target);
+describe('Injector', () => {
 
   describe('#hasInstance()', () => {
     it('should be have instance of Target', () => {
-      assert.equal(Injector.hasInstance(Target), true);
+      Injector.get(Target);
+
+      assert.equal(Injector.hasInstance(Target.name), true);
     });
   });
 
   describe('#instantiate()', () => {
     it('should be have run method', () => {
-      //assert.equal(true, false);
+      let instance = Injector.get(Target);
+
+      assert.equal(instance instanceof Target, true);
     });
   });
 
-  describe('#resolve()', () => {
+  describe.skip('#resolve()', () => {
     it('should be have run method', () => {
       //assert.equal(true, false);
     });
   });
 
-  describe('#get()', () => {
+  describe.skip('#get()', () => {
     it('should be have run method', () => {
       //assert.equal(true, false);
     });
