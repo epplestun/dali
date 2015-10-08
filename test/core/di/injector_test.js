@@ -1,11 +1,14 @@
-import {Inject, Injector} from 'core/di/Injector';
+import {Inject} from 'core/di/Inject';
+import {Injector} from 'core/di/Injector';
 
 var assert = require("assert");
 
+class TargetChild {}
+
+@Inject(TargetChild)
 class Target {}
 
 describe('Injector', () => {
-
   describe('#hasInstance()', () => {
     it('should be have instance of Target', () => {
       Injector.get(Target);
@@ -33,4 +36,10 @@ describe('Injector', () => {
       //assert.equal(true, false);
     });
   });
+});
+
+describe('Inject', () => {
+  it('should be have static dependecies property', () => {
+    assert.equal(Target.hasOwnProperty('dependencies'), true);
+  })
 });
