@@ -1,42 +1,27 @@
 import {DOM} from 'core/dom/dom';
+import {Views} from 'core/view/Views';
 import {Component} from 'core/component/Component';
 import {Components} from 'core/component/Components';
 
 var assert = require('assert');
 var sinon = require('sinon-es6')
 var jsdom = require('mocha-jsdom');
+var originalDOMParse = DOM.parse;
+var originalViewsParse = Views.parse;
 
 @Component({
   name: 'test-app'
 })
 class TestApp {}
 
-
-/*
-function test() {
-  return 'test';
-}
-
-function test2() {
-  return test();
-}
-*/
-
 describe('Components', () => {
 
   jsdom();
-  
-  //var sandbox;
 
-  //beforeEach(function() {
-    //sandbox = sinon.sandbox.create();
-    //sandbox.stub(DOM.parse);
-    //sandbox.spy(window.console, 'log');
-  //});
-
-  //afterEach(function() {
-    //sandbox.restore();
-  //});  
+  afterEach(() => {
+    DOM.parse = originalDOMParse;
+    Views.parse = originalViewsParse;
+  });
 
   describe('#normalize()', () => {
     it('component name should be have the first letter uppercase', () => {
@@ -71,19 +56,23 @@ describe('Components', () => {
     })
   });
 
-  describe.skip('#parse()', () => {
-    it('...');
+  describe('#parse()', () => {
+    it('should be call parse method of Views', () => {
+      Views.parse = sinon.spy();
+
+      Components.parse(document.createElement('div'), null, TestApp);
+
+      assert.equal(Views.parse.called, true);
+    });
   });
 
-  describe.skip('#run()', () => {
+  describe('#run()', () => {
     it('should be call parse method of DOM', () => {
-      //sinon.spy(test);
-      
-      test2();      
+      DOM.parse = sinon.spy();
 
-      //assert.equal(test.called, true);
+      Components.run(document.createElement('div'));
 
-      sinon.assert.calledOnce(console.log)
+      assert.equal(DOM.parse.called, true);
     });
   });
 });
