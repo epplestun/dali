@@ -3,16 +3,16 @@ import {Views} from 'core/view/Views';
 import {Component} from 'core/component/Component';
 import {Components} from 'core/component/Components';
 
-var assert = require('assert');
-var sinon = require('sinon-es6')
-var jsdom = require('mocha-jsdom');
-var originalDOMParse = DOM.parse;
-var originalViewsParse = Views.parse;
+var assert = require('assert'),
+  sinon = require('sinon-es6'),
+  jsdom = require('mocha-jsdom'),
+  originalDOMParse = DOM.parse,
+  originalViewsParse = Views.parse;
 
 @Component({
   name: 'test-app'
-})
-class TestApp {}
+}) class TestApp {
+}
 
 describe('Components', () => {
 
