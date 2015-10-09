@@ -40,7 +40,7 @@ export class DOM {
     return childNodes;
   }
 
-  static parse(node) {    
+  static parse(node) {
     let childNodes = DOM.childs(node);
 
     while (node.firstChild) {
