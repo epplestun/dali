@@ -70,7 +70,7 @@ export class DOM {
             node.appendChild(element);
           }
           
-          let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+          let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
           Components.parse(element, attrs, Components.get(componentName));
         } else {
           throw new Error('Error, no instance for component: ' + componentName);

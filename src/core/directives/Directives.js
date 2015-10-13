@@ -1,5 +1,6 @@
 import {DataDirectives} from 'core/directives/DataDirectives';
 import {Components} from 'core/component/Components';
+import {DOM} from 'core/dom/dom';
 
 export class Directives {
   static has(name) {
@@ -16,7 +17,7 @@ export class Directives {
 
   static parseElement(element, data) {
     if (!!element.hasAttributes()) {
-      let directives = elementAttrs(element)
+      let directives = DOM.attrs(element)
         .filter((attr) => Directives.has(attr.name))
         .map((attr) => {
           return {
@@ -38,7 +39,7 @@ export class Directives {
 
     childNodes.forEach((element) => {
       if (!!element.hasAttributes()) {
-        let directives = elementAttrs(element)
+        let directives = DOM.attrs(element)
           .filter((attr) => Directives.has(attr.name))
           .map((attr) => {
             return {

@@ -59,11 +59,11 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
   return gulp.src([
       "src/core/util/*.js",  
       "src/http/*.js",    
+      "src/core/evaluator/*.js",
       "src/core/component/*.js",
       "src/core/di/*.js",
+      "src/core/dom/*.js",      
       "src/core/directives/*.js",
-      "src/core/dom/*.js",
-      "src/core/evaluator/*.js",
       "src/core/event/*.js",
       "src/core/filters/*.js",
       "src/core/module/*.js",
