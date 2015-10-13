@@ -23,6 +23,8 @@ export class EventBus {
             return token;
           }
         }
+
+        delete EventBus.topics[m];
       }
     }
 
@@ -51,7 +53,7 @@ export class EventBus {
       }
     };
 
-    setTimeout(notify, 0);
+    notify();
 
     return true;
   }
