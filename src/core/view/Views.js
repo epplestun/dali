@@ -7,24 +7,6 @@ import {HTTP} from 'http/HTTP';
 import {Injector} from 'core/di/Injector';
 import {Directives} from 'core/directives/Directives';
 
-/*
-function elementAttrs(element) {
-  let nodeAttrs = Array.prototype.slice.call(element.attributes);
-
-  return nodeAttrs.map((attribute) => {
-    return {
-      name: attribute.name,
-      value: attribute.value,
-      escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
-    };
-  });
-}
-
-function sameAttributes(elementAttrs, attrs) {
-  return elementAttrs.length === attrs.length && JSON.stringify(elementAttrs) === JSON.stringify(attrs);
-}
-*/
-
 export class Views {
   static views = {};
 
