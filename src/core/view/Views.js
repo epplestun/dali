@@ -7,6 +7,7 @@ import {HTTP} from 'http/HTTP';
 import {Injector} from 'core/di/Injector';
 import {Directives} from 'core/directives/Directives';
 
+/*
 function elementAttrs(element) {
   let nodeAttrs = Array.prototype.slice.call(element.attributes);
 
@@ -14,7 +15,7 @@ function elementAttrs(element) {
     return {
       name: attribute.name,
       value: attribute.value,
-      escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"') //"
+      escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
     };
   });
 }
@@ -22,6 +23,7 @@ function elementAttrs(element) {
 function sameAttributes(elementAttrs, attrs) {
   return elementAttrs.length === attrs.length && JSON.stringify(elementAttrs) === JSON.stringify(attrs);
 }
+*/
 
 export class Views {
   static views = {};
@@ -69,11 +71,11 @@ export class Views {
         let regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');
 
         if(n.nodeType === 1 && n.hasAttributes()) {
-          elementAttrs(n).forEach(attr => {
+          DOM.attrs(n).forEach(attr => {
             if(!!regexp.test(attr.value)) {
               DOM.cache.push({
                 node: n,
-                data: elementAttrs(n).slice()
+                data: DOM.attrs(n).slice()
               }); 
             }
           });
@@ -90,7 +92,7 @@ export class Views {
 
       DOM.parse(node).walk(node, (element) => {
         if(element.nodeType === 1) {
-          let attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+          let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
           EventBinder.bind(element, attrs, target);
         }
       });

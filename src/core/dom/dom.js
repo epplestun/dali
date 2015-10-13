@@ -4,6 +4,18 @@ export class DOM {
 
   static cache = [];
 
+  static attrs(node) {
+    let nodeAttrs = Array.prototype.slice.call(node.attributes);
+
+    return nodeAttrs.map((attribute) => {
+      return {
+        name: attribute.name,
+        value: attribute.value,
+        escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
+      };
+    });
+  }
+
   static walk(node, callback) {
     do {
       callback(node);
