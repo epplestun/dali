@@ -417,11 +417,11 @@ function Inject() {
 
   return decorate(InjectHandlerDescriptor, args);
 }
-'use strict';
+"use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Injector = (function () {
   function Injector() {
@@ -429,16 +429,14 @@ var Injector = (function () {
   }
 
   _createClass(Injector, null, [{
-    key: 'hasInstance',
+    key: "hasInstance",
     value: function hasInstance(name) {
       return !!Injector.instances.hasOwnProperty(name);
     }
   }, {
-    key: 'instantiate',
+    key: "instantiate",
     value: function instantiate(target) {
       var instance = undefined;
-
-      console.log('target', target);
 
       if (!!Injector.hasInstance(target.name)) {
         instance = Injector.instances[target.name];
@@ -450,7 +448,7 @@ var Injector = (function () {
       return instance;
     }
   }, {
-    key: 'resolve',
+    key: "resolve",
     value: function resolve(target) {
       var dependencies = {};
 
@@ -466,12 +464,12 @@ var Injector = (function () {
       return Object(result) === result ? result : instance;
     }
   }, {
-    key: 'get',
+    key: "get",
     value: function get(target) {
       return Injector.instantiate(target);
     }
   }, {
-    key: 'instances',
+    key: "instances",
     value: {},
     enumerable: true
   }]);
