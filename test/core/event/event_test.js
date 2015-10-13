@@ -1,8 +1,16 @@
 import {EventBus} from 'core/event/EventBus';
 import {EventNameNormalizer} from 'core/event/EventNameNormalizer';
+import {EventBinder} from 'core/event/EventBinder';
 
 var assert = require('assert'),
-    sinon = require('sinon-es6');
+    sinon = require('sinon-es6'),
+    jsdom = require('mocha-jsdom');
+
+class Target {
+  click() {
+    console.log('click');
+  }
+}
 
 describe('EventBus', () => {
   let topic1 = 'my_test_topic_1',
@@ -47,9 +55,6 @@ describe('EventBus', () => {
 });
 
 describe('EventNameNormalizer', () => {
-
-  class Target {}
-
   describe('#normalize()', () => {
     it('should be target name plus eventname uppercased', () => {
       assert.equal(
@@ -61,11 +66,19 @@ describe('EventNameNormalizer', () => {
 });
 
 describe('EventBinder', () => {
-  describe('#bindInstance()', () => {
-    it('...');
-  });
+  jsdom();
 
   describe('#bind()', () => {
-    it('...');
+    it('should be register target method to event', () => {
+      let element = document.createElement('button');
+      let attrs = [{ name: '_click', value: 'click()' }];
+
+      sinon.spy(element, 'addEventListener');
+
+      EventBinder.bind(element, attrs, Target);
+
+      assert.equal(element.addEventListener.called, true);
+      assert.equal(element.addEventListener.calledWith('click'), true);
+    });
   });
 });

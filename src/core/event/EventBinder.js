@@ -28,7 +28,7 @@ export class EventBinder {
 
         if (attrName.charAt(0) === '_') {
           let eventName = attrName.substring(1);
-          
+
           element.addEventListener(eventName, (e) => {
             let data = element.contextData;
             let methodName = attrValue.match(/^(.*)\(/mi)[1];
