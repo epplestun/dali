@@ -1025,6 +1025,19 @@ var DOM = (function () {
   }
 
   _createClass(DOM, null, [{
+    key: 'attrs',
+    value: function attrs(node) {
+      var nodeAttrs = Array.prototype.slice.call(node.attributes);
+
+      return nodeAttrs.map(function (attribute) {
+        return {
+          name: attribute.name,
+          value: attribute.value,
+          escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
+        };
+      });
+    }
+  }, {
     key: 'walk',
     value: function walk(node, callback) {
       do {
@@ -1264,6 +1277,8 @@ var EventBus = (function () {
               return token;
             }
           }
+
+          delete EventBus.topics[m];
         }
       }
 
@@ -1293,7 +1308,7 @@ var EventBus = (function () {
         }
       };
 
-      setTimeout(notify, 0);
+      notify();
 
       return true;
     }
@@ -1669,14 +1684,15 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+/*
 function elementAttrs(element) {
-  var nodeAttrs = Array.prototype.slice.call(element.attributes);
+  let nodeAttrs = Array.prototype.slice.call(element.attributes);
 
-  return nodeAttrs.map(function (attribute) {
+  return nodeAttrs.map((attribute) => {
     return {
       name: attribute.name,
       value: attribute.value,
-      escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"') //"
+      escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
     };
   });
 }
@@ -1684,6 +1700,7 @@ function elementAttrs(element) {
 function sameAttributes(elementAttrs, attrs) {
   return elementAttrs.length === attrs.length && JSON.stringify(elementAttrs) === JSON.stringify(attrs);
 }
+*/
 
 var Views = (function () {
   function Views() {
@@ -1733,11 +1750,11 @@ var Views = (function () {
           var regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');
 
           if (n.nodeType === 1 && n.hasAttributes()) {
-            elementAttrs(n).forEach(function (attr) {
+            DOM.attrs(n).forEach(function (attr) {
               if (!!regexp.test(attr.value)) {
                 DOM.cache.push({
                   node: n,
-                  data: elementAttrs(n).slice()
+                  data: DOM.attrs(n).slice()
                 });
               }
             });
@@ -1754,7 +1771,7 @@ var Views = (function () {
 
         DOM.parse(node).walk(node, function (element) {
           if (element.nodeType === 1) {
-            var attrs = !!element.hasAttributes() ? elementAttrs(element) : [];
+            var attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
             EventBinder.bind(element, attrs, target);
           }
         });
