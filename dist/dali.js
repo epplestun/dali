@@ -772,39 +772,45 @@ var DOM = (function () {
   _createClass(DOM, null, [{
     key: 'attrs',
     value: function attrs(node) {
-      var nodeAttrs = Array.prototype.slice.call(node.attributes);
+      if (!!node) {
+        var nodeAttrs = Array.prototype.slice.call(node.attributes);
 
-      return nodeAttrs.map(function (attribute) {
-        return {
-          name: attribute.name,
-          value: attribute.value,
-          escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
-        };
-      });
+        return nodeAttrs.map(function (attribute) {
+          return {
+            name: attribute.name,
+            value: attribute.value,
+            escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
+          };
+        });
+      }
     }
   }, {
     key: 'walk',
     value: function walk(node, callback) {
-      do {
-        callback(node);
+      if (!!node) {
+        do {
+          callback(node);
 
-        if (!!node && node.hasChildNodes()) {
-          DOM.walk(node.firstChild, callback);
-        }
-      } while (node = node.nextSibling);
+          if (!!node && node.hasChildNodes()) {
+            DOM.walk(node.firstChild, callback);
+          }
+        } while (node = node.nextSibling);
+      }
 
       return DOM;
     }
   }, {
     key: 'clean',
     value: function clean(node) {
-      for (var n = 0; n < node.childNodes.length; n++) {
-        var child = node.childNodes[n];
-        if (child.nodeType === 8 || child.nodeType === 3 && !/\S/.test(child.nodeValue)) {
-          node.removeChild(child);
-          n--;
-        } else if (child.nodeType === 1) {
-          DOM.clean(child);
+      if (!!node) {
+        for (var n = 0; n < node.childNodes.length; n++) {
+          var child = node.childNodes[n];
+          if (child.nodeType === 8 || child.nodeType === 3 && !/\S/.test(child.nodeValue)) {
+            node.removeChild(child);
+            n--;
+          } else if (child.nodeType === 1) {
+            DOM.clean(child);
+          }
         }
       }
 
@@ -814,46 +820,51 @@ var DOM = (function () {
     key: 'childs',
     value: function childs(node) {
       var childNodes = [];
-      DOM.walk(node, function (n) {
-        childNodes.push(n);
-      });
-      childNodes.shift();
+
+      if (!!node) {
+        DOM.walk(node, function (n) {
+          childNodes.push(n);
+        });
+        childNodes.shift();
+      }
 
       return childNodes;
     }
   }, {
     key: 'parse',
     value: function parse(node) {
-      var childNodes = DOM.childs(node);
+      if (!!node) {
+        var childNodes = DOM.childs(node);
 
-      while (node.firstChild) {
-        node.removeChild(node.firstChild);
-      }
+        while (node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
 
-      childNodes.forEach(function (element) {
-        var componentName = Components.normalize(element);
+        childNodes.forEach(function (element) {
+          var componentName = Components.normalize(element);
 
-        if (!!Components.exists(componentName)) {
-          if (!!Injector.hasInstance(componentName)) {
+          if (!!Components.exists(componentName)) {
+            if (!!Injector.hasInstance(componentName)) {
+              if (element.parentNode) {
+                element.parentNode.appendChild(element);
+              } else {
+                node.appendChild(element);
+              }
+
+              var attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
+              Components.parse(element, attrs, Components.get(componentName));
+            } else {
+              throw new Error('Error, no instance for component: ' + componentName);
+            }
+          } else {
             if (element.parentNode) {
               element.parentNode.appendChild(element);
             } else {
               node.appendChild(element);
             }
-
-            var attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
-            Components.parse(element, attrs, Components.get(componentName));
-          } else {
-            throw new Error('Error, no instance for component: ' + componentName);
           }
-        } else {
-          if (element.parentNode) {
-            element.parentNode.appendChild(element);
-          } else {
-            node.appendChild(element);
-          }
-        }
-      });
+        });
+      }
 
       return DOM;
     }
@@ -862,8 +873,10 @@ var DOM = (function () {
     value: function fragment(node) {
       var fragment = document.createDocumentFragment();
 
-      while (node.firstChild) {
-        fragment.appendChild(node.firstChild);
+      if (!!node) {
+        while (node.firstChild) {
+          fragment.appendChild(node.firstChild);
+        }
       }
 
       return fragment;
@@ -1683,24 +1696,6 @@ function View(viewConfig) {
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-/*
-function elementAttrs(element) {
-  let nodeAttrs = Array.prototype.slice.call(element.attributes);
-
-  return nodeAttrs.map((attribute) => {
-    return {
-      name: attribute.name,
-      value: attribute.value,
-      escaped: attribute.value.replace(/(^|[^\\])"/g, '$1\\\"')
-    };
-  });
-}
-
-function sameAttributes(elementAttrs, attrs) {
-  return elementAttrs.length === attrs.length && JSON.stringify(elementAttrs) === JSON.stringify(attrs);
-}
-*/
 
 var Views = (function () {
   function Views() {

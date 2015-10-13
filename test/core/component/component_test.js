@@ -11,7 +11,8 @@ var assert = require('assert'),
 
 @Component({
   name: 'test-app'
-}) class TestApp {
+}) 
+class TestApp {
 }
 
 describe('Components', () => {
