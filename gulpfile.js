@@ -4,6 +4,12 @@ var concat = require('gulp-concat');
 var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
+var babelOptions = [
+  "es7.decorators",
+  "es7.classProperties",
+  "es7.exportExtensions",
+  "es7.functionBind"
+];
 var babelMocha = require('babel/register')({
   resolveModuleSource: function(source, filename) {
     if(
@@ -19,13 +25,9 @@ var babelMocha = require('babel/register')({
     return source;
   },
   
-  optional: [
-    "es7.decorators",
-    "es7.classProperties",
-    "es7.exportExtensions",
-    "es7.functionBind"
-  ]
+  optional: babelOptions
 });
+
 
 gulp.task('clean', function(cb) {
   return del(['dist'], cb);
@@ -75,12 +77,7 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
       "src/json/*.js"
     ])
     .pipe(babel({ 
-    	optional: [
-        "es7.decorators",
-        "es7.classProperties",
-        "es7.exportExtensions",
-        "es7.functionBind"
-      ],
+    	optional: babelOptions,
     	modules: 'ignore'
     }))
     .pipe(concat('dali.js'))

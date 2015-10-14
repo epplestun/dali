@@ -2,18 +2,13 @@ import {DOM} from 'core/dom/dom';
 import {Views} from 'core/view/Views';
 import {Component} from 'core/component/Component';
 import {Components} from 'core/component/Components';
+import {TestApp} from './TestApp';
 
 var assert = require('assert'),
   sinon = require('sinon-es6'),
   jsdom = require('mocha-jsdom'),
   originalDOMParse = DOM.parse,
   originalViewsParse = Views.parse;
-
-@Component({
-  name: 'test-app'
-}) 
-class TestApp {
-}
 
 describe('Components', () => {
 

@@ -1,12 +1,8 @@
 import {Inject} from 'core/di/Inject';
 import {Injector} from 'core/di/Injector';
+import {Target} from './Target';
 
 var assert = require("assert");
-
-class TargetChild {}
-
-@Inject(TargetChild)
-class Target {}
 
 describe('Injector', () => {
   describe('#hasInstance()', () => {

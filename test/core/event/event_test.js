@@ -1,16 +1,11 @@
 import {EventBus} from 'core/event/EventBus';
 import {EventNameNormalizer} from 'core/event/EventNameNormalizer';
 import {EventBinder} from 'core/event/EventBinder';
+import {Target} from './Target';
 
 var assert = require('assert'),
     sinon = require('sinon-es6'),
     jsdom = require('mocha-jsdom');
-
-class Target {
-  click() {
-    console.log('click');
-  }
-}
 
 describe('EventBus', () => {
   let topic1 = 'my_test_topic_1',

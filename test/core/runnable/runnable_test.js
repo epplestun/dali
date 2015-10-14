@@ -1,14 +1,11 @@
-import {Runnable} from 'core/runnable/Runnable';
+import {Target} from './Target';
 
 var assert = require("assert");
 
 describe('Runnable', () => {
   describe('#run()', () => {
     it('should be have run method', () => {
-      @Runnable
-      class Subject {}
-
-      assert.equal(true, !!Subject.prototype.run);
+      assert.equal(true, !!Target.prototype.run);
     });
   });
 });
