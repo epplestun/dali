@@ -63,6 +63,7 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
       "src/http/*.js",    
       "src/core/evaluator/*.js",
       "src/core/component/*.js",
+      "src/core/async/*.js",
       "src/core/di/*.js",
       "src/core/dom/*.js",      
       "src/core/directives/*.js",

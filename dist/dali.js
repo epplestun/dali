@@ -402,6 +402,42 @@ var DataComponents = (function () {
 
   return DataComponents;
 })();
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AsyncTask = (function () {
+  function AsyncTask(code) {
+    _classCallCheck(this, AsyncTask);
+
+    this.code = code;
+  }
+
+  _createClass(AsyncTask, [{
+    key: "execute",
+    value: function execute() {
+      var code = "var command = " + this.code.toString() + ";";
+      code += "onmessage = function(e) { var result = command.apply(command, e.data.args); postMessage(result); }";
+
+      var args = [].slice.call(arguments);
+      var blob = new Blob([code]);
+      var worker = new Worker(window.URL.createObjectURL(blob));
+
+      return new Promise(function (resolve, reject) {
+        worker.addEventListener('message', function (e) {
+          resolve(e.data);
+        }, false);
+        worker.postMessage({
+          args: args
+        });
+      });
+    }
+  }]);
+
+  return AsyncTask;
+})();
 'use strict';
 
 log('Inject.js');
