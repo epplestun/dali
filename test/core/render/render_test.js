@@ -18,7 +18,7 @@ describe('Render', () => {
       let data = {
             items: [1,2,3]
           },
-          original = "<p *for=\"item in items\">{{item}}</p>",
+          original = "{{test}}<p *for=\"item in items\">{{item}}</p>",
           expected = "<p data-for=\"item in items\"></p>";
 
       assert.equal(expected, Render.render(
