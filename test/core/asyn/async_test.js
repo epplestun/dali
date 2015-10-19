@@ -10,7 +10,7 @@ describe.skip('AsyncTask', () => {
       });
 
       task.execute(2, 2).then((result) => {
-        //console.log('Result', result);
+        console.log('Result', result);
         assert.equal(result, 4);
       });
     });
