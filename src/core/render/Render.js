@@ -55,7 +55,7 @@ export class Render {
 
         options['filter'] = filterName.filter;
         options['filterValue'] = filterName.value;
-        
+
         add(html.slice(cursor, match.index))('this.filter' + '(this.' + value + ', this.filterValue)', true);
       } else {
         add(html.slice(cursor, match.index))('this.' + match[1], true);
