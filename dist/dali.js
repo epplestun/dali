@@ -408,34 +408,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var WorkerMock = (function () {
-  function WorkerMock(code) {
-    _classCallCheck(this, WorkerMock);
-
-    this.code = code;
-  }
-
-  _createClass(WorkerMock, [{
-    key: 'addEventListener',
-    value: function addEventListener(subject, callback) {
-      var command = this.code;
-
-      this.callback = function (data) {
-        callback({
-          data: command.apply(command, data.args)
-        });
-      };
-    }
-  }, {
-    key: 'postMessage',
-    value: function postMessage(data) {
-      this.callback(data);
-    }
-  }]);
-
-  return WorkerMock;
-})();
-
 var AsyncTask = (function () {
   function AsyncTask(code) {
     _classCallCheck(this, AsyncTask);
