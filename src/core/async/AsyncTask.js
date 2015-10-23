@@ -1,30 +1,21 @@
-class NodeWorker {
+
+class WorkerMock {
   constructor(code) {
-
-    console.log(process.on);
-    console.log(process.send);
-
     this.code = code;
   }
 
-  addEventListener() {
+  addEventListener(subject, callback) {
+    let command = this.code;
 
+    this.callback = (data) => {
+      callback({
+        data: command.apply(command, data.args)
+      });
+    };
   }
 
-  terminate() {
-
-  }
-
-  close() {
-
-  }
-
-  dispatchEvent() {
-
-  }
-
-  postMessage() {
-
+  postMessage(data) {
+    this.callback(data);
   }
 }
 
@@ -46,15 +37,8 @@ export class AsyncTask {
     var worker;
 
     if(this.isNode()) {
-      var command = this.code;
-      worker = new NodeWorker(function() {
-        this.onmessage = function(e) {
-          var result = command.apply(command, e.data.args);
-          postMessage(result);
-        };
-      });
+      worker = new WorkerMock(this.code);
     } else {
-
       if(this.hasWorkerSupport()) {
         var code = "var command = " + this.code.toString() + ";";
         code += "onmessage = function(e) { var result = command.apply(command, e.data.args); postMessage(result); self.close(); }";
@@ -66,7 +50,7 @@ export class AsyncTask {
     }
 
     return new Promise((resolve, reject) => {
-      worker.addEventListener('message', function(e) {
+      worker.addEventListener('message', (e) => {
         resolve(e.data);
       }, false);
       worker.postMessage({

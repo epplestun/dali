@@ -1,18 +1,18 @@
 import {AsyncTask} from 'core/async/AsyncTask';
 
-var assert = require("assert");
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised"); 
+chai.use(chaiAsPromised);
+chai.should();
 
-describe.skip('AsyncTask', () => {
+describe('AsyncTask', () => {
   describe('#execute()', () => {
     it('should execute task in background', () => {
       let task = new AsyncTask((a, b) => {
         return a + b;
       });
-
-      task.execute(2, 2).then((result) => {
-        console.log('Result', result);
-        assert.equal(result, 4);
-      });
+    
+      return task.execute(2, 2).should.become(4);
     });
   });
 });
