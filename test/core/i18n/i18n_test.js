@@ -23,16 +23,16 @@ describe('i18n', () => {
 
   describe('i18nDate', () => {
     it('date timezone Europe/Madrid', () => {
-      let date = new Date(2015, 9, 27, 13, 15, 40);
+      let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       
-      assert.equal(i18n.from(date, config).format('short'), '10/27/2015, 13:15:40');
+      assert.equal(i18n.from(date, config).format('short'), '10/27/2015, 14:15:40');
     });
 
     it('date timezone Atlantic/Canary', () => {
-      let date = new Date(2015, 9, 27, 13, 15, 40);
+      let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       config.timezone = 'Atlantic/Canary';
 
-      assert.equal(i18n.from(date, config).format('short'), '10/27/2015, 12:15:40');
+      assert.equal(i18n.from(date, config).format('short'), '10/27/2015, 13:15:40');
     });
   });
 
