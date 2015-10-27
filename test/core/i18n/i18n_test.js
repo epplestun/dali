@@ -1,10 +1,8 @@
 import {i18n} from 'core/i18n/i18n';
 
-var assert = require('assert'),
-    sinon = require('sinon-es6'),
-    jsdom = require('mocha-jsdom');
+var assert = require('assert');
 
-describe.only('i18n', () => {
+describe('i18n', () => {
     
   let config = {
     locale: 'es-ES',
