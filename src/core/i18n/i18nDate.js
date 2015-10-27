@@ -6,6 +6,13 @@ export class i18nDate {
       options.timeZone = config.timezone;
     }
 
+    if(!!options.hour12) {
+      options.hour12 = true;
+    } else {
+      options.hour12 = false;
+    }
+      
+
     return options;
   }
 }

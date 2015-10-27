@@ -5,15 +5,15 @@ var assert = require('assert');
 describe('i18n', () => {
     
   let config = {
-    locale: 'es-ES',
+    locale: 'en-US',
     timezone: 'Europe/Madrid',
     //timezone: 'Atlantic/Canary',
     currency: 'EUR',
     //translations: 'locale_es_ES.json'
     translations: {
-      es_ES : {
+      en_US : {
         app : {
-          title: 'Título',
+          title: 'Title',
           total: 'Total: {{total, plural, =0 { You have no new messages } =1 { You have one new message } other { You have # new messages }}}',
           gender: '{{friendGender, gender, male { Invite him } female { Invite her } other { Invite them }}}'
         }
@@ -25,14 +25,14 @@ describe('i18n', () => {
     it('date timezone Europe/Madrid', () => {
       let date = new Date(2015, 9, 27, 13, 15, 40);
       
-      assert.equal(i18n.from(date, config).format('short'), '2015-10-27 13:15:40');
+      assert.equal(i18n.from(date, config).format('short'), '10/27/2015, 13:15:40');
     });
 
     it('date timezone Atlantic/Canary', () => {
       let date = new Date(2015, 9, 27, 13, 15, 40);
       config.timezone = 'Atlantic/Canary';
 
-      assert.equal(i18n.from(date, config).format('short'), '2015-10-27 12:15:40');
+      assert.equal(i18n.from(date, config).format('short'), '10/27/2015, 12:15:40');
     });
   });
 
@@ -42,7 +42,7 @@ describe('i18n', () => {
     });
 
     it('currency', () => {
-      assert.equal(i18n.from(1518.23, config).format('currency'), '€ 1,518.23');
+      assert.equal(i18n.from(1518.23, config).format('currency'), '€1,518.23');
     });
 
     it('percent', () => {
@@ -52,7 +52,7 @@ describe('i18n', () => {
 
   describe('i18nTranslate', () => {
     it('translate', () => {
-      assert.equal(i18n.from('app.title', config).format(), 'Título');
+      assert.equal(i18n.from('app.title', config).format(), 'Title');
     });
 
     it('translate plural zero', () => {
