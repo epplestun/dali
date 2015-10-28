@@ -206,7 +206,20 @@ describe('i18n', () => {
         assert.equal(element.textContent, 'You have 10 new messages');
         assert.equal(element.hasAttribute('i18n'), false);
         assert.equal(element.hasAttribute('i18n-value'), false);
-      });     
+      });   
+
+      it.skip('i18n date LT format', () => {
+        let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
+        let datai18n = Injector.get(Datai18n);
+
+        let element = document.createElement('p');
+        element.setAttribute("i18n", date);
+
+        datai18n.render(element);
+
+        assert.equal(element.textContent, 'Title');
+        assert.equal(element.hasAttribute('i18n'), false);
+      });  
     });
   });
 });

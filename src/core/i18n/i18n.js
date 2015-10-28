@@ -4,6 +4,16 @@ import {i18nTranslate} from 'core/i18n/i18nTranslate';
 
 export class i18n {  
   static from(input, config) {
+    /*
+    if(!isNaN(Date.parse(input))) {
+      input = Date.parse(input);
+    }
+
+    if(!isNaN(input)) {
+      input = JSON.parse(input);
+    }
+    */
+    
     return new i18n(input, config);
   }
 
@@ -56,15 +66,6 @@ export class i18n {
 
 
 /*
-@Directive({
-  name: 'data-i18n'
-})
-export class i18n {
-  render(element, data, value) {
-    console.log('data-i18n', element, data, value);
-  }
-}
-
 @i18n({
   locale: 'es_ES',
   timezone: 'Europe/Madrid',
@@ -87,6 +88,7 @@ if currency set currency property
 
 /*
 <p i18n="title"></p>
-<p i18n="date | format:'short'"></p>
+<p i18n="date | format:'LT'"></p>
+<p>{{date|format:'LT'}}</p>
 <p i18n="number"></p>
 */
