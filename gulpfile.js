@@ -61,6 +61,7 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
   return gulp.src([
       "src/core/util/*.js",  
       "src/http/*.js",    
+      "src/core/i18n/*.js",
       "src/core/evaluator/*.js",
       "src/core/component/*.js",
       "src/core/async/*.js",

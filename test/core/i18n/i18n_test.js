@@ -47,61 +47,61 @@ describe('i18n', () => {
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format(''), '10/27/2015, 13:15:40');
     });
 
-    it('date timezone Europe/Madrid LT', () => {
+    it('date timezone Europe/Madrid LT format', () => {
       let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LT'), '2:15 PM');
     });
 
-    it('date timezone Europe/Madrid LTS', () => {
+    it('date timezone Europe/Madrid LTS format', () => {
       let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LTS'), '2:15:40 PM');
     });
 
-    it('date timezone Europe/Madrid L', () => {
+    it('date timezone Europe/Madrid L format', () => {
       let date = new Date(Date.UTC(2015, 9, 1, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('L'), '10/01/2015');
     });
 
-    it('date timezone Europe/Madrid l', () => {
+    it('date timezone Europe/Madrid l format', () => {
       let date = new Date(Date.UTC(2015, 9, 1, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('l'), '10/1/2015');
     });
 
-    it('date timezone Europe/Madrid LL', () => {
+    it('date timezone Europe/Madrid LL format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LL'), 'October 28, 2015');
     });
 
-    it('date timezone Europe/Madrid ll', () => {
+    it('date timezone Europe/Madrid ll format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('ll'), 'Oct 28, 2015');
     });
 
-    it('date timezone Europe/Madrid LLL', () => {
+    it('date timezone Europe/Madrid LLL format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LLL'), 'October 28, 2015, 2:15 PM');
     });
 
-    it('date timezone Europe/Madrid lll', () => {
+    it('date timezone Europe/Madrid lll format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('lll'), 'Oct 28, 2015, 2:15 PM');
     });
 
-    it('date timezone Europe/Madrid LLLL', () => {
+    it('date timezone Europe/Madrid LLLL format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LLLL'), 'Wednesday, October 28, 2015, 2:15 PM');
     });
 
-    it('date timezone Europe/Madrid llll', () => {
+    it('date timezone Europe/Madrid llll format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
       assert.equal(i18n.from(date, i18nConfig.getConfig()).format('llll'), 'Wed, Oct 28, 2015, 2:15 PM');

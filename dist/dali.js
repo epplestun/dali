@@ -89,6 +89,10 @@ function guid() {
   return _p8() + _p8(true) + _p8(true) + _p8();
 }
 
+function merge(obj1, obj2) {
+  return Object.assign(obj1, obj2);
+}
+
 log('util.js');
 "use strict";
 
@@ -274,6 +278,481 @@ var HTTP = (function () {
   }]);
 
   return HTTP;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Datai18n = (function () {
+  function Datai18n() {
+    _classCallCheck(this, _Datai18n);
+  }
+
+  _createClass(Datai18n, [{
+    key: 'render',
+    value: function render(element) {
+      var i18nLabel = element.getAttribute('i18n'),
+          i18nValue = element.getAttribute('i18n-value');
+
+      if (!!i18nValue) {
+        i18nValue = JSON.parse(i18nValue);
+      }
+
+      element.appendChild(document.createTextNode(i18n.from(i18nLabel, i18nConfig.getConfig()).format(i18nValue)));
+      element.removeAttribute('i18n');
+      element.removeAttribute('i18n-value');
+    }
+  }]);
+
+  var _Datai18n = Datai18n;
+  Datai18n = Directive({
+    name: 'data-i18n'
+  })(Datai18n) || Datai18n;
+  return Datai18n;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var i18n = (function () {
+  _createClass(i18n, null, [{
+    key: 'from',
+    value: function from(input, config) {
+      return new i18n(input, config);
+    }
+  }]);
+
+  function i18n(input, config) {
+    _classCallCheck(this, i18n);
+
+    this.input = input;
+    this.config = config;
+  }
+
+  /*
+  @Directive({
+    name: 'data-i18n'
+  })
+  export class i18n {
+    render(element, data, value) {
+      console.log('data-i18n', element, data, value);
+    }
+  }
+  
+  @i18n({
+    locale: 'es_ES',
+    timezone: 'Europe/Madrid',
+    currency: 'EUR'
+  })
+  export class Target {
+    @Bindable
+    title = "app.title";
+  
+    @Bindable
+    date = new Date();
+  
+    @Bindable
+    number = 100034;
+  }
+  
+  style: decimal | currency
+  if currency set currency property   
+  */
+
+  /*
+  <p i18n="title"></p>
+  <p i18n="date | format:'short'"></p>
+  <p i18n="number"></p>
+  */
+
+  _createClass(i18n, [{
+    key: 'isDate',
+    value: function isDate(input) {
+      return input instanceof Date;
+    }
+  }, {
+    key: 'isNumber',
+    value: function isNumber(input) {
+      return typeof input === 'number';
+    }
+  }, {
+    key: 'isString',
+    value: function isString(input) {
+      return typeof input === 'string';
+    }
+  }, {
+    key: 'locale',
+    value: function locale(input) {
+      return input.replace('-', '_');
+    }
+  }, {
+    key: 'format',
+    value: function format(opts) {
+      if (!!this.isDate(this.input)) {
+        var formatter = opts;
+        var options = i18nDate.fromFormat(formatter, this.config);
+
+        return this.input.toLocaleString(this.config.locale, options);
+      }
+
+      if (!!this.isNumber(this.input)) {
+        var formatter = opts;
+        var options = i18nNumber.fromFormat(formatter, this.config);
+
+        if (formatter === i18nNumber.PERCENT) {
+          this.input /= 100;
+        }
+
+        return this.input.toLocaleString(this.config.locale, options);
+      }
+
+      if (!!this.isString(this.input)) {
+        var map = this.config.translations[this.locale(this.config.locale)];
+        return i18nTranslate.from(map, this.input).translate(opts);
+      }
+    }
+  }]);
+
+  return i18n;
+})();
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var i18nConfig = (function () {
+  function i18nConfig() {
+    _classCallCheck(this, i18nConfig);
+  }
+
+  _createClass(i18nConfig, null, [{
+    key: "init",
+    value: function init(config) {
+      i18nConfig.config = config;
+    }
+  }, {
+    key: "setConfig",
+    value: function setConfig(config) {
+      i18nConfig.config = config;
+    }
+  }, {
+    key: "getConfig",
+    value: function getConfig() {
+      return i18nConfig.config;
+    }
+  }]);
+
+  return i18nConfig;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var i18nDate = (function () {
+  function i18nDate() {
+    _classCallCheck(this, i18nDate);
+  }
+
+  _createClass(i18nDate, null, [{
+    key: 'fromFormat',
+
+    /**
+     * Formats
+     *
+     * LT   -> 8:30 PM
+     * LTS  -> 8:30:25 PM
+     * L    -> 09/04/1986
+     * l    -> 9/4/1986
+     * LL   -> September 4 1986
+     * ll   -> Sep 4 1986
+     * LLL  -> September 4 1986 8:30 PM
+     * lll  -> Sep 4 1986 8:30 PM
+     * LLLL -> Thursday, September 4 1986 8:30 PM
+     * llll -> Thu, Sep 4 1986 8:30 PM
+     */
+
+    value: function fromFormat(format, config) {
+      var options = {};
+
+      if (!!config.timezone) {
+        options.timeZone = config.timezone;
+      }
+
+      if (!!options.hour12) {
+        options.hour12 = true;
+      } else {
+        options.hour12 = false;
+      }
+
+      if (!!format) {
+        return i18nDate.createFromFormat(format, options);
+      } else {
+        return options;
+      }
+    }
+  }, {
+    key: 'createFromFormat',
+    value: function createFromFormat(format, options) {
+      var outputOptions = JSON.parse(JSON.stringify(options));
+      var dateOptions = i18nDateFormatter.from(format).getOptions();
+
+      return merge(outputOptions, dateOptions);
+    }
+  }]);
+
+  return i18nDate;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var i18nDateFormatter = (function () {
+  function i18nDateFormatter() {
+    _classCallCheck(this, i18nDateFormatter);
+  }
+
+  _createClass(i18nDateFormatter, null, [{
+    key: 'from',
+    value: function from(format) {
+      if (format === 'LT') {
+        return new LT();
+      }
+
+      if (format === 'LTS') {
+        return new LTS();
+      }
+
+      if (format === 'L') {
+        return new L();
+      }
+
+      if (format === 'l') {
+        return new l();
+      }
+
+      if (format === 'LL') {
+        return new LL();
+      }
+
+      if (format === 'll') {
+        return new ll();
+      }
+
+      if (format === 'LLL') {
+        return new LLL();
+      }
+
+      if (format === 'lll') {
+        return new lll();
+      }
+
+      if (format === 'LLLL') {
+        return new LLLL();
+      }
+
+      if (format === 'llll') {
+        return new llll();
+      }
+    }
+  }]);
+
+  return i18nDateFormatter;
+})();
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var i18nNumber = (function () {
+  function i18nNumber() {
+    _classCallCheck(this, i18nNumber);
+  }
+
+  _createClass(i18nNumber, null, [{
+    key: 'fromFormat',
+    value: function fromFormat(format, config) {
+      var options = {
+        style: i18nNumber.DECIMAL
+      };
+
+      if (format === i18nNumber.CURRENCY) {
+        options.style = i18nNumber.CURRENCY;
+        options.currency = config.currency;
+      }
+
+      if (format === i18nNumber.PERCENT) {
+        options.style = i18nNumber.PERCENT;
+      }
+
+      return options;
+    }
+  }]);
+
+  return i18nNumber;
+})();
+
+i18nNumber.DECIMAL = 'decimal';
+i18nNumber.PERCENT = 'percent';
+i18nNumber.CURRENCY = 'currency';
+'use strict';
+
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var i18nTranslate = (function () {
+  _createClass(i18nTranslate, null, [{
+    key: 'from',
+    value: function from(map, path) {
+      return new i18nTranslate(map, path);
+    }
+  }]);
+
+  function i18nTranslate(map, path) {
+    _classCallCheck(this, i18nTranslate);
+
+    this.map = map;
+    this.path = path;
+  }
+
+  _createClass(i18nTranslate, [{
+    key: 'index',
+    value: function index(obj, is, value) {
+      if (typeof is == 'string') return this.index(obj, is.split('.'), value);else if (is.length === 1 && value !== undefined) return obj[is[0]] = value;else if (is.length === 0) return obj;else return this.index(obj[is[0]], is.slice(1), value);
+    }
+  }, {
+    key: 'isZero',
+    value: function isZero(input) {
+      return input === 0;
+    }
+  }, {
+    key: 'isOne',
+    value: function isOne(input) {
+      return input === 1;
+    }
+  }, {
+    key: 'isGreaterThanOne',
+    value: function isGreaterThanOne(input) {
+      return input > 1;
+    }
+  }, {
+    key: 'plural',
+    value: function plural(value, opts) {
+      var output = undefined;
+
+      if (!!this.isZero(value)) {
+        var _gi$exec = /=0 \{(.*?)\}/ig.exec(opts);
+
+        var _gi$exec2 = _slicedToArray(_gi$exec, 2);
+
+        var v = _gi$exec2[1];
+
+        output = v.trim();
+      }
+
+      if (!!this.isOne(value)) {
+        var _gi$exec3 = /=1 \{(.*?)\}/ig.exec(opts);
+
+        var _gi$exec32 = _slicedToArray(_gi$exec3, 2);
+
+        var v = _gi$exec32[1];
+
+        output = v.trim();
+      }
+
+      if (!!this.isGreaterThanOne(value)) {
+        var _otherGi$exec = /other \{(.*?)\}/ig.exec(opts);
+
+        var _otherGi$exec2 = _slicedToArray(_otherGi$exec, 2);
+
+        var v = _otherGi$exec2[1];
+
+        output = v.trim().replace('#', value);
+      }
+
+      return output;
+    }
+  }, {
+    key: 'isMale',
+    value: function isMale(input) {
+      return input.toLowerCase() === 'male';
+    }
+  }, {
+    key: 'isFemale',
+    value: function isFemale(input) {
+      return input.toLowerCase() === 'female';
+    }
+  }, {
+    key: 'gender',
+    value: function gender(value, opts) {
+      var output = undefined;
+
+      if (!!this.isMale(value)) {
+        var _maleGi$exec = /male \{(.*?)\}/ig.exec(opts);
+
+        var _maleGi$exec2 = _slicedToArray(_maleGi$exec, 2);
+
+        var v = _maleGi$exec2[1];
+
+        output = v.trim();
+      } else if (!!this.isFemale(value)) {
+        var _femaleGi$exec = /female \{(.*?)\}/ig.exec(opts);
+
+        var _femaleGi$exec2 = _slicedToArray(_femaleGi$exec, 2);
+
+        var v = _femaleGi$exec2[1];
+
+        output = v.trim();
+      } else {
+        var _otherGi$exec3 = /other \{(.*?)\}/ig.exec(opts);
+
+        var _otherGi$exec32 = _slicedToArray(_otherGi$exec3, 2);
+
+        var v = _otherGi$exec32[1];
+
+        output = v.trim();
+      }
+
+      return output;
+    }
+  }, {
+    key: 'translate',
+    value: function translate(values) {
+      var value = this.index(this.map, this.path),
+          match = undefined,
+          re = new RegExp("{{(.*)?}}", "g");
+
+      if (!!values) {
+        while (match = re.exec(value)) {
+          var _match$1$split = match[1].split(',');
+
+          var _match$1$split2 = _slicedToArray(_match$1$split, 3);
+
+          var variable = _match$1$split2[0];
+          var callback = _match$1$split2[1];
+          var options = _match$1$split2[2];
+
+          value = this[callback.trim()].call(this, values[variable], options.trim());
+        }
+      }
+
+      return value;
+    }
+  }]);
+
+  return i18nTranslate;
 })();
 'use strict';
 
