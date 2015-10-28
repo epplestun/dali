@@ -32,6 +32,7 @@ export class i18n {
     if(!!this.isDate(this.input)) {
       let formatter = opts;
       let options = i18nDate.fromFormat(formatter, this.config);
+
       return this.input.toLocaleString(this.config.locale, options);
     }
 

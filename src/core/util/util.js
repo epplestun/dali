@@ -83,6 +83,9 @@ export function guid() {
   return _p8() + _p8(true) + _p8(true) + _p8();
 }
 
+export function merge(obj1, obj2) {
+  return Object.assign(obj1, obj2);
+}
 
 
 log('util.js');
