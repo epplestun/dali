@@ -6,13 +6,28 @@ import {i18n} from 'core/i18n/i18n';
 @Directive({
   name : 'data-i18n'
 })
-export class Datai18n {
-  render(element) {
+export class DataI18n {
+  render(element, data, value) {
     let i18nLabel = element.getAttribute('i18n'),
         i18nValue = element.getAttribute('i18n-value');
 
     if(!!i18nValue) {
       i18nValue = JSON.parse(i18nValue);
+    }
+
+    if(!!data && !!value) {
+      i18nValue = "LT";
+      
+      if(value.indexOf('|') > -1) {
+        let [v, f] = value.split('|').map((s) => { 
+          return s.trim();
+        });
+
+        i18nLabel = data[v];
+        i18nValue = f;
+      } else {
+        i18nLabel = data[value];
+      }
     }
 
     element.appendChild(

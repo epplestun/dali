@@ -2,7 +2,7 @@ import {i18nConfig} from 'core/i18n/i18nConfig';
 import {i18n} from 'core/i18n/i18n';
 
 import {Injector} from 'core/di/Injector';
-import {Datai18n} from 'core/i18n/Datai18n';
+import {DataI18n} from 'core/i18n/Datai18n';
 
 var assert = require('assert');
 var jsdom = require('mocha-jsdom');
@@ -155,7 +155,7 @@ describe('i18n', () => {
   describe('i18nDirective', () => {    
     describe('#render', () => {
       it('i18n attribute translation', () => {
-        let datai18n = Injector.get(Datai18n);
+        let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
         element.setAttribute("i18n", "app.title");
@@ -167,7 +167,7 @@ describe('i18n', () => {
       }); 
 
       it('i18n attribute plural zero translation', () => {
-        let datai18n = Injector.get(Datai18n);
+        let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
         element.setAttribute("i18n", "app.total");
@@ -181,7 +181,7 @@ describe('i18n', () => {
       });  
 
       it('i18n attribute plural one translation', () => {
-        let datai18n = Injector.get(Datai18n);
+        let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
         element.setAttribute("i18n", "app.total");
@@ -195,7 +195,7 @@ describe('i18n', () => {
       });  
 
       it('i18n attribute plural more than one translation', () => {
-        let datai18n = Injector.get(Datai18n);
+        let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
         element.setAttribute("i18n", "app.total");
@@ -208,16 +208,17 @@ describe('i18n', () => {
         assert.equal(element.hasAttribute('i18n-value'), false);
       });   
 
-      it.skip('i18n date LT format', () => {
-        let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
-        let datai18n = Injector.get(Datai18n);
+      it('i18n date LT format', () => {
+        let data = {
+          date : new Date(Date.UTC(2015, 9, 27, 13, 15, 40))
+        };
+        let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
-        element.setAttribute("i18n", date);
 
-        datai18n.render(element);
+        datai18n.render(element, data, 'date | LTS');
 
-        assert.equal(element.textContent, 'Title');
+        assert.equal(element.textContent, '2:15:40 PM');
         assert.equal(element.hasAttribute('i18n'), false);
       });  
     });

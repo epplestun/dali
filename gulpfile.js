@@ -61,7 +61,6 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
   return gulp.src([
       "src/core/util/*.js",  
       "src/http/*.js",    
-      "src/core/i18n/*.js",
       "src/core/evaluator/*.js",
       "src/core/component/*.js",
       "src/core/async/*.js",
@@ -76,7 +75,8 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
       "src/core/view/*.js",
       "src/core/router/*.js",
       "src/core/bootstrap.js",     
-      "src/json/*.js"
+      "src/json/*.js",
+      "src/core/i18n/**/*.js"
     ])
     .pipe(babel({ 
     	optional: babelOptions,
