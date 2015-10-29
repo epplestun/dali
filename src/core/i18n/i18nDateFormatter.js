@@ -1,13 +1,13 @@
-import {LT} from 'core/i18n/date/LT';
-import {LTS} from 'core/i18n/date/LTS';
-import {L} from 'core/i18n/date/L';
-import {l} from 'core/i18n/date/l';
-import {LL} from 'core/i18n/date/LL';
-import {ll} from 'core/i18n/date/ll';
-import {LLL} from 'core/i18n/date/LLL';
-import {lll} from 'core/i18n/date/lll';
-import {LLLL} from 'core/i18n/date/LLLL';
-import {llll} from 'core/i18n/date/llll';
+import {LT} from 'core/i18n/date/Time'; // Time
+import {LTS} from 'core/i18n/date/TimeSeconds'; // TimeSeconds
+import {L} from 'core/i18n/date/MonthDayYearNumeric'; // MonthDayYearNumeric
+import {l} from 'core/i18n/date/MonthDayYear2Digit'; // MonthDayYear2Digit
+import {LL} from 'core/i18n/date/MonthNameDayMonthYear'; // MonthNameDayMonthYear
+import {ll} from 'core/i18n/date/MonthNameShortDayMonthYear'; // MonthNameShortDayMonthYear
+import {LLL} from 'core/i18n/date/MonthNameDayMonthYearTime'; // MonthNameDayMonthYearTime
+import {lll} from 'core/i18n/date/MonthNameShortDayMonthYearTime'; // MonthNameShortDayMonthYearTime
+import {LLLL} from 'core/i18n/date/DayOfWeekMonthNameDayYearTime'; // DayOfWeekMonthNameDayYearTime
+import {llll} from 'core/i18n/date/DayOfWeekShortMonthNameShortDayYearTime'; // DayOfWeekShortMonthNameShortDayYearTime
 
 export class i18nDateFormatter {
   static from(format) {
