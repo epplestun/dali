@@ -33,7 +33,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-eslint": "^1.0.0",
     "gulp-mocha": "^2.1.3",
-    "jsdom": "^6.5.1",
+    "jsdom": "^7.0.2",
     "mocha": "^2.3.3",
     "mocha-jsdom": "^1.0.0",
     "sinon-es6": "0.0.3",

@@ -158,54 +158,47 @@ describe('i18n', () => {
         let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
-        element.setAttribute("i18n", "app.title");
+        element.dataset.i18n = "app.title";
 
         datai18n.render(element);
 
         assert.equal(element.textContent, 'Title');
-        assert.equal(element.hasAttribute('i18n'), false);
       }); 
 
       it('i18n attribute plural zero translation', () => {
         let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
-        element.setAttribute("i18n", "app.total");
-        element.setAttribute("i18n-value", JSON.stringify({ total: 0 }));
+        element.dataset.i18n = "app.total";
+        element.dataset.i18nValue = JSON.stringify({ total: 0 })
 
         datai18n.render(element);
 
         assert.equal(element.textContent, 'You have no new messages');
-        assert.equal(element.hasAttribute('i18n'), false);
-        assert.equal(element.hasAttribute('i18n-value'), false);
       });  
 
       it('i18n attribute plural one translation', () => {
         let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
-        element.setAttribute("i18n", "app.total");
-        element.setAttribute("i18n-value", JSON.stringify({ total: 1 }));
+        element.dataset.i18n = "app.total";
+        element.dataset.i18nValue = JSON.stringify({ total: 1 })
 
         datai18n.render(element);
 
         assert.equal(element.textContent, 'You have one new message');
-        assert.equal(element.hasAttribute('i18n'), false);
-        assert.equal(element.hasAttribute('i18n-value'), false);
       });  
 
       it('i18n attribute plural more than one translation', () => {
         let datai18n = Injector.get(DataI18n);
 
         let element = document.createElement('p');
-        element.setAttribute("i18n", "app.total");
-        element.setAttribute("i18n-value", JSON.stringify({ total: 10 }));
+        element.dataset.i18n = "app.total";
+        element.dataset.i18nValue = JSON.stringify({ total: 10 });
 
         datai18n.render(element);
 
         assert.equal(element.textContent, 'You have 10 new messages');
-        assert.equal(element.hasAttribute('i18n'), false);
-        assert.equal(element.hasAttribute('i18n-value'), false);
       });   
 
       it('i18n date LT format', () => {
@@ -219,7 +212,6 @@ describe('i18n', () => {
         datai18n.render(element, data, 'date | LTS');
 
         assert.equal(element.textContent, '2:15:40 PM');
-        assert.equal(element.hasAttribute('i18n'), false);
       });  
     });
   });

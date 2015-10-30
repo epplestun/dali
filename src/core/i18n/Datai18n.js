@@ -8,8 +8,8 @@ import {i18n} from 'core/i18n/i18n';
 })
 export class DataI18n {
   render(element, data, value) {
-    let i18nLabel = element.getAttribute('i18n'),
-        i18nValue = element.getAttribute('i18n-value');
+    let i18nLabel = element.dataset.i18n,
+        i18nValue = element.dataset.i18nValue;
 
     if(!!i18nValue) {
       i18nValue = JSON.parse(i18nValue);
@@ -33,7 +33,5 @@ export class DataI18n {
     element.appendChild(
       document.createTextNode(i18n.from(i18nLabel, i18nConfig.getConfig()).format(i18nValue))
     );
-    element.removeAttribute('i18n');
-    element.removeAttribute('i18n-value');
   }
 }

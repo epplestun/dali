@@ -2220,8 +2220,8 @@ var DataI18n = (function () {
   _createClass(DataI18n, [{
     key: 'render',
     value: function render(element, data, value) {
-      var i18nLabel = element.getAttribute('i18n'),
-          i18nValue = element.getAttribute('i18n-value');
+      var i18nLabel = element.dataset.i18n,
+          i18nValue = element.dataset.i18nValue;
 
       if (!!i18nValue) {
         i18nValue = JSON.parse(i18nValue);
@@ -2248,8 +2248,6 @@ var DataI18n = (function () {
       }
 
       element.appendChild(document.createTextNode(i18n.from(i18nLabel, i18nConfig.getConfig()).format(i18nValue)));
-      element.removeAttribute('i18n');
-      element.removeAttribute('i18n-value');
     }
   }]);
 
