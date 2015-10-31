@@ -8,9 +8,6 @@ import {i18n} from 'core/i18n/i18n';
 })
 export class DataI18n {
   render(element, data, value) {
-
-    console.log(arguments);
-
     let i18nLabel = element.dataset.i18n,
         i18nValue = element.dataset.i18nValue;
 
