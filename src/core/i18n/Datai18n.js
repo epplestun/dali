@@ -8,6 +8,9 @@ import {i18n} from 'core/i18n/i18n';
 })
 export class DataI18n {
   render(element, data, value) {
+
+    console.log(arguments);
+
     let i18nLabel = element.dataset.i18n,
         i18nValue = element.dataset.i18nValue;
 
@@ -23,10 +26,10 @@ export class DataI18n {
           return s.trim();
         });
 
-        i18nLabel = data[v];
+        i18nLabel = data[v] ? data[v] : i18nLabel;
         i18nValue = f;
       } else {
-        i18nLabel = data[value];
+        i18nLabel = data[value] ? data[value] : i18nLabel;
       }
     }
 

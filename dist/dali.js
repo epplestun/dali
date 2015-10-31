@@ -2220,6 +2220,9 @@ var DataI18n = (function () {
   _createClass(DataI18n, [{
     key: 'render',
     value: function render(element, data, value) {
+
+      console.log(arguments);
+
       var i18nLabel = element.dataset.i18n,
           i18nValue = element.dataset.i18nValue;
 
@@ -2240,10 +2243,10 @@ var DataI18n = (function () {
           var v = _value$split$map2[0];
           var f = _value$split$map2[1];
 
-          i18nLabel = data[v];
+          i18nLabel = data[v] ? data[v] : i18nLabel;
           i18nValue = f;
         } else {
-          i18nLabel = data[value];
+          i18nLabel = data[value] ? data[value] : i18nLabel;
         }
       }
 
