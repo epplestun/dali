@@ -31,6 +31,7 @@ describe('i18n', () => {
     config.timezone = 'Europe/Madrid';
     i18nConfig.init(config);
 
+    /*
     var _attrToDataKey = function (val) {
       var out = val.substr(5);
       return out.split('-').map(function (part, inx) {
@@ -87,6 +88,7 @@ describe('i18n', () => {
         }
       });
     }
+    */
   });  
 
   describe('i18nDate', () => {
@@ -209,7 +211,7 @@ describe('i18n', () => {
     });
   });
 
-  describe('i18nDirective', () => {    
+  describe.skip('i18nDirective', () => {    
     describe('#render', () => {
       it('i18n attribute translation', () => {
         let datai18n = Injector.get(DataI18n);
