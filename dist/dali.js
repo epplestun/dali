@@ -2220,9 +2220,6 @@ var DataI18n = (function () {
   _createClass(DataI18n, [{
     key: 'render',
     value: function render(element, data, value) {
-
-      console.log(arguments);
-
       var i18nLabel = element.dataset.i18n,
           i18nValue = element.dataset.i18nValue;
 
