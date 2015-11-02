@@ -4,6 +4,7 @@ node_js:
 before_script:
   - npm cache clean
   - npm install -g gulp
+cache: false
 script: gulp
 notifications:
   email:
