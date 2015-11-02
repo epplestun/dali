@@ -20,7 +20,7 @@ task.execute(2, 2).then((data) => {
 });
 */
 
-describe('AsyncTask', () => {
+describe.skip('AsyncTask', () => {
   describe('#execute()', () => {
     it('should execute task in background', (done) => {
       let task = new AsyncTask((a, b) => {
