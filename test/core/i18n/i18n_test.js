@@ -175,7 +175,7 @@ describe('i18n', () => {
     });
 
     it('percent', () => {
-      assert.equal(i18n.from(27, i18nConfig.getConfig()).format('percent'), '27%');
+      assert.equal(i18n.from(27, i18nConfig.getConfig()).format('percent'), '27.0%');
     });
   });
 
