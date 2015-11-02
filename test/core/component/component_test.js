@@ -14,11 +14,9 @@ describe('Components', () => {
 
   jsdom();
 
-  afterEach((done) => {
+  afterEach(() => {
     DOM.parse = originalDOMParse;
     Views.parse = originalViewsParse;
-
-    done();
   });
 
   describe('#normalize()', () => {
