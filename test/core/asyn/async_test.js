@@ -1,4 +1,4 @@
-import {Async} from 'core/async/AsyncTask';
+import {Async} from 'core/async/Async';
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised"); 
@@ -18,17 +18,3 @@ describe('Async', () => {
     task.execute(2, 2).should.become(4).notify(done);
   });
 });
-
-/*
-describe('AsyncTask', () => {
-  describe('#execute()', () => {
-    it('should execute task in background', (done) => {
-      let task = new AsyncTask((a, b) => {
-        return a + b;
-      });
-
-      task.execute(2, 2).should.become(4).notify(done);
-    });
-  });
-});
-*/
