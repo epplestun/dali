@@ -7,7 +7,7 @@ import {DataI18n} from 'core/i18n/Datai18n';
 var assert = require('assert');
 var jsdom = require('mocha-jsdom');
 
-describe.skip('i18n', () => {  
+describe('i18n', () => {  
     
   jsdom();
 
@@ -31,7 +31,6 @@ describe.skip('i18n', () => {
     config.timezone = 'Europe/Madrid';
     i18nConfig.init(config);
 
-    /*
     var _attrToDataKey = function (val) {
       var out = val.substr(5);
       return out.split('-').map(function (part, inx) {
@@ -87,7 +86,6 @@ describe.skip('i18n', () => {
         }
       });
     }
-    */
   });  
 
   describe('i18nDate', () => {
