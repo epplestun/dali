@@ -50,7 +50,7 @@ gulp.task('lint', function() {
 gulp.task('test', function() {
   return gulp.src(['test/**/*.js'])
     .pipe(mocha({
-      //reporter: 'min',
+      reporter: 'list',
       timeout: 20000,
       compilers: {
         js: babelMocha
