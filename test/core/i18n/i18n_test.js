@@ -31,6 +31,7 @@ describe('i18n', () => {
     config.timezone = 'Europe/Madrid';
     i18nConfig.init(config);
 
+    /*
     var _attrToDataKey = function (val) {
       var out = val.substr(5);
       return out.split('-').map(function (part, inx) {
@@ -39,10 +40,9 @@ describe('i18n', () => {
         }
         return part.charAt(0).toUpperCase() + part.substr(1);
       }).join('');
-    }
+    };
     var _datasetProxy = null;
     var _getNodeDataAttrs = function (el) {
-      var i = 0;
       var atts = el.attributes;
       var len = atts.length;
       var attr;
@@ -50,8 +50,8 @@ describe('i18n', () => {
       var proxy = {};
       var datakey;
 
-      for (; i < len; i++) {
-        attr = atts[ i ].nodeName;
+      for (var i = 0; i < len; i++) {
+        attr = atts[i].nodeName;
         if (attr.indexOf('data-') === 0) {
           datakey = _attrToDataKey(attr);
 
@@ -69,7 +69,7 @@ describe('i18n', () => {
                 return _datasetMap[datakey];
               },
               set: function (val) {
-                _datasetMap[ datakey ] = val;
+                _datasetMap[datakey] = val;
                 el.setAttribute(attr, val);
               }
             })
@@ -77,7 +77,7 @@ describe('i18n', () => {
         }
       }
       return proxy;
-    }
+    };
 
     if (!!global && !!global.window && !!global.window.Element && !global.window.Element.prototype.hasOwnProperty('dataset')) {
       Object.defineProperty(global.window.Element.prototype, 'dataset', {
@@ -87,6 +87,7 @@ describe('i18n', () => {
         }
       });
     }
+    */
   });  
 
   describe('i18nDate', () => {
