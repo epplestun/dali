@@ -1,25 +1,25 @@
-import {AsyncTask} from 'core/async/AsyncTask';
+import {Async} from 'core/async/AsyncTask';
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised"); 
 chai.use(chaiAsPromised);
 chai.should();
 
-/*
-// TODO
-@Async
-class MyTask {
-  execute(a, b) {
-    return a + b;
+describe('Async', () => {
+  @Async
+  class MyTask {
+    execute(a, b) {
+      return a + b;
+    }
   }
-}
 
-let task = new MyTask();
-task.execute(2, 2).then((data) => {
-  console.log(data);
+  it('should execute task in background using @Async decorator', (done) => {
+    let task = new MyTask();
+    task.execute(2, 2).should.become(4).notify(done);
+  });
 });
-*/
 
+/*
 describe('AsyncTask', () => {
   describe('#execute()', () => {
     it('should execute task in background', (done) => {
@@ -31,3 +31,4 @@ describe('AsyncTask', () => {
     });
   });
 });
+*/
