@@ -7,7 +7,7 @@ import {DataI18n} from 'core/i18n/Datai18n';
 var assert = require('assert');
 var jsdom = require('mocha-jsdom');
 
-describe('i18n', () => {  
+describe.skip('i18n', () => {  
     
   jsdom();
 
