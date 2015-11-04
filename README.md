@@ -180,6 +180,24 @@ class Test {
 }
 ```
 
+### @Async
+
+```javascript
+import {Async} from 'dali/dali';
+
+@Async
+class MyTask {
+  execute(a, b) {
+    return a+ b;
+  }
+}
+
+var task = new MyTask();
+task.execute(2, 2).then((result) => {
+  console.log(result);
+});
+```
+
 More info and complete example in [Seed](https://github.com/epplestun/dali-seed) project.
 
 ## License
