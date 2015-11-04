@@ -23,7 +23,7 @@ Decorators make it possible to annotate and modify classes and properties at des
 * Name
 
 ```javascript
-import {Component} from 'dali/dali';
+import {Component} from 'dali';
 
 @Component({
     name : 'my-component'
@@ -34,7 +34,7 @@ class MyComponent {
 
 ### @Inject
 ```javascript
-import {Inject} from 'dali/dali';
+import {Inject} from 'dali';
 
 class Test {
   myMethod() {}
@@ -53,7 +53,7 @@ class MyComponent {
 * Name
 
 ```javascript
-import {Directive} from 'dali/dali';
+import {Directive} from 'dali';
 
 @Directive({
   name : 'my-directive'
@@ -66,7 +66,7 @@ class MyDirective {
 
 ### @Filter
 ```javascript
-import {Filter} from 'dali/dali';
+import {Filter} from 'dali';
 
 @Filter
 export class JsonFilter {
@@ -83,7 +83,7 @@ export class JsonFilter {
 * Path
 
 ```javascript
-import {RouterConfig} from 'dali/dali';
+import {RouterConfig} from 'dali';
 
 @RouterConfig({
   title: 'Module 1',
@@ -95,7 +95,7 @@ import {RouterConfig} from 'dali/dali';
 ### @Runnable
 
 ```javascript
-import {Runnable} from 'dali/dali';
+import {Runnable} from 'dali';
 
 @Runnable
 class Test {
@@ -108,7 +108,7 @@ class Test {
 * TemplateURL
 
 ```javascript
-import {View} from 'dali/dali';
+import {View} from 'dali';
 
 @View({
   templateUrl: 'module1/module1_view.html'
@@ -119,7 +119,7 @@ class Test {
 
 ### @Bindable
 ```javascript
-import {Bindable} from 'dali/dali';
+import {Bindable} from 'dali';
 
 class Test {
   @Bindable
@@ -129,7 +129,7 @@ class Test {
 
 ### @Json
 ```javascript
-import {Json} from 'dali/dali';
+import {Json} from 'dali';
 
 @Json
 class Test {
@@ -143,7 +143,7 @@ test.toJson();
 
 ### @JsonPropertyOrder
 ```javascript
-import {JsonPropertyOrder} from 'dali/dali';
+import {JsonPropertyOrder} from 'dali';
 
 @JsonPropertyOrder('description', 'title')
 class Test {
@@ -152,7 +152,7 @@ class Test {
 
 ### @JsonIgnoreProperties
 ```javascript
-import {JsonIgnoreProperties} from 'dali/dali';
+import {JsonIgnoreProperties} from 'dali';
 
 @JsonIgnoreProperties('from', 'to')
 class Test {
@@ -161,7 +161,7 @@ class Test {
 
 ### @JsonProperty
 ```javascript
-import {JsonProperty} from 'dali/dali';
+import {JsonProperty} from 'dali';
 
 class Test {
   @JsonProperty
@@ -171,7 +171,7 @@ class Test {
 
 ### @JsonIgnore
 ```javascript
-import {JsonIgnore} from 'dali/dali';
+import {JsonIgnore} from 'dali';
 
 @Json
 class Test {
@@ -183,7 +183,7 @@ class Test {
 ### @Async
 
 ```javascript
-import {Async} from 'dali/dali';
+import {Async} from 'dali';
 
 @Async
 class MyTask {
