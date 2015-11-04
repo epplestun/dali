@@ -105,7 +105,7 @@ export class Views {
 
   static resolve(view, node, target, instance) {
     if (!!view) {
-      var promise;
+      let promise;
 
       if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
         promise = HTTP.get(view[Views.TEMPLATE_URL]);
@@ -115,7 +115,7 @@ export class Views {
         throw new Exception("View need templateUrl or template attributes");
       }
 
-      promise.then(function (template) {
+      promise.then((template) => {
         view.templateCached = template;
         view.nodeCached = node;
         

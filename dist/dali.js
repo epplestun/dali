@@ -93,6 +93,20 @@ function merge(obj1, obj2) {
   return Object.assign(obj1, obj2);
 }
 
+function cloneFunc(func) {
+  var reFn = /^function\s*([^\s(]*)\s*\(([^)]*)\)[^{]*\{([^]*)\}$/gi,
+      s = func.toString().replace(/^\s|\s$/g, ''),
+      m = reFn.exec(s);
+  if (!m || !m.length) return;
+  var conf = {
+    name: m[1] || '',
+    args: m[2].replace(/\s+/g, '').split(','),
+    body: m[3] || ''
+  };
+  var clone = Function.prototype.constructor.apply(this, [].concat(conf.args, conf.body));
+  return clone;
+}
+
 log('util.js');
 "use strict";
 
@@ -408,38 +422,27 @@ var DataComponents = (function () {
 })();
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+function isNode() {
+  return 'object' === typeof process && Object.prototype.toString.call(process) === '[object process]';
+}
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function hasWorkerSupport() {
+  return typeof window.Worker !== 'undefined' && typeof window.Blob !== 'undefined' && typeof window.URL.createObjectURL == 'function';
+}
 
-var AsyncTask = (function () {
-  function AsyncTask(code) {
-    _classCallCheck(this, AsyncTask);
+function Async(target) {
+  var _execute = cloneFunc(target.prototype.execute);
 
-    this.code = code;
-  }
-
-  _createClass(AsyncTask, [{
-    key: 'isNode',
-    value: function isNode() {
-      return 'object' === typeof process && Object.prototype.toString.call(process) === '[object process]';
-    }
-  }, {
-    key: 'hasWorkerSupport',
-    value: function hasWorkerSupport() {
-      return typeof window.Worker !== 'undefined' && typeof window.Blob !== 'undefined' && typeof window.URL.createObjectURL == 'function';
-    }
-  }, {
-    key: 'execute',
-    value: function execute() {
+  Object.assign(target.prototype, {
+    execute: function execute() {
       var args = [].slice.call(arguments);
       var worker;
 
-      if (this.isNode()) {
-        worker = new WorkerMock(this.code);
+      if (isNode()) {
+        worker = new WorkerMock(_execute);
       } else {
-        if (this.hasWorkerSupport()) {
-          var code = "var command = " + this.code.toString() + ";";
+        if (hasWorkerSupport()) {
+          var code = "var command = " + _execute.toString() + ";";
           code += "onmessage = function(e) { var result = command.apply(command, e.data.args); postMessage(result); self.close(); }";
 
           worker = new Worker(window.URL.createObjectURL(new Blob([code])));
@@ -457,10 +460,8 @@ var AsyncTask = (function () {
         });
       });
     }
-  }]);
-
-  return AsyncTask;
-})();
+  });
+}
 'use strict';
 
 log('Inject.js');
@@ -1846,7 +1847,7 @@ var Views = (function () {
     key: 'resolve',
     value: function resolve(view, node, target, instance) {
       if (!!view) {
-        var promise;
+        var promise = undefined;
 
         if (!!view.hasOwnProperty(Views.TEMPLATE_URL)) {
           promise = HTTP.get(view[Views.TEMPLATE_URL]);
@@ -1941,19 +1942,17 @@ var Router = (function () {
       });
     }
   }, {
+    key: 'load',
+    value: function load() {
+      var history = window.location.hash;
+      window.location.hash = '#' + +new Date();
+      window.location.hash = history;
+    }
+  }, {
     key: 'run',
     value: function run() {
-      if (window.location.hash.length === 0) {
-        Router.routeToDefault();
-      } else {
-        if (Router.exists()) {
-          Router.route();
-        } else {
-          throw new Error('404');
-        }
-      }
-
       window.addEventListener('hashchange', Router.route, false);
+      window.addEventListener('load', Router.load, false);
     }
   }, {
     key: 'routes',

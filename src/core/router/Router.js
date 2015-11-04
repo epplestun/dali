@@ -41,18 +41,15 @@ export class Router {
     });
   }
 
-  static run() {
-    if(window.location.hash.length === 0) {
-      Router.routeToDefault();
-    } else {
-      if(Router.exists()) {
-        Router.route();
-      } else {
-        throw new Error('404');
-      } 
-    }
+  static load() {
+    let history = window.location.hash;
+    window.location.hash = '#' + +new Date();
+    window.location.hash = history;
+  }
 
+  static run() {
     window.addEventListener('hashchange', Router.route, false);
+    window.addEventListener('load', Router.load, false);
   }
 }
 
