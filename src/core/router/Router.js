@@ -48,6 +48,10 @@ export class Router {
   }
 
   static run() {
+    if (window.location.hash.length === 0) {
+      Router.routeToDefault();
+    }
+
     window.addEventListener('hashchange', Router.route, false);
     window.addEventListener('load', Router.load, false);
   }
