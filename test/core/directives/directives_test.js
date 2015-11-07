@@ -1,6 +1,7 @@
 import {Injector} from 'core/di/Injector';
 import {DataIf} from 'core/directives/DataIf';
 import {DataFor} from 'core/directives/DataFor';
+import {DataStyle} from 'core/directives/DataStyle';
 //import {DataModel} from 'core/directives/DataModel';
 
 var assert = require("assert");
@@ -33,6 +34,7 @@ describe('Directives', () => {
         let data = {
           isVisible : true
         };
+
             
         let element = document.createElement('p'),
             container = document.createElement('div');
@@ -85,6 +87,35 @@ describe('Directives', () => {
         });
       });
     });
+  });
+
+  describe('Style', () => {
+    describe('#render', () => {
+      let dataStyle = Injector.get(DataStyle),
+          value = "'font-style' : prop1, 'color': prop2";
+
+      it('apply style to the element', () => {
+        let data = {
+          prop1 : 'italic',
+          prop2 : 'red'
+        };
+
+        let element = document.createElement('p'),
+          container = document.createElement('div');
+        container.appendChild(element);
+
+        dataStyle.render(element, data, value);
+
+        assert.equal(element.style.fontStyle, data.prop1);
+        assert.equal(element.style.color, data.prop2);
+      });
+    })
+  });
+
+  describe.skip('Class', () => {
+    describe('#render', () => {
+      it('apply class name to the element');
+    })
   });
 
   describe.skip('Model', () => {
