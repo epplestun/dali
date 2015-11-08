@@ -1,13 +1,10 @@
-export class i18nConfig {
-  static init(config) {
-    i18nConfig.config = config;
-  }
+import {decorate} from 'core/util/util';
+import {i18n} from 'core/i18n/i18n';
 
-  static setConfig(config) {
-    i18nConfig.config = config;
-  }
+function i18nConfigHandlerDescriptor(target, value) {
+  i18n.configs = value;
+}
 
-  static getConfig() {
-    return i18nConfig.config;
-  }
+export function i18nConfig(arg) {
+  return decorate(i18nConfigHandlerDescriptor, arg);
 }

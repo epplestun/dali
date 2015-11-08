@@ -1,35 +1,34 @@
-import {i18nConfig} from 'core/i18n/i18nConfig';
 import {i18n} from 'core/i18n/i18n';
-
+import {i18nConfig} from 'core/i18n/i18nConfig';
 import {Injector} from 'core/di/Injector';
 import {DataI18n} from 'core/i18n/Datai18n';
 
 var assert = require('assert');
 var jsdom = require('mocha-jsdom');
 
+@i18nConfig({
+  locale: 'en-US',
+  timezone: 'Europe/Madrid',
+  currency: 'EUR',
+  translations: {
+    en_US : {
+      app : {
+        title: 'Title',
+        total: 'Total: {{total, plural, =0 { You have no new messages } =1 { You have one new message } other { You have # new messages }}}',
+        gender: '{{friendGender, gender, male { Invite him } female { Invite her } other { Invite them }}}'
+      }
+    }
+  }
+})
+class MockTarget {
+
+}
+
 describe('i18n', () => {
     
   jsdom();
 
-  let config = {
-    locale: 'en-US',
-    timezone: 'Europe/Madrid',
-    currency: 'EUR',
-    //translations: 'locale_en_US.json'
-    translations: {
-      en_US : {
-        app : {
-          title: 'Title',
-          total: 'Total: {{total, plural, =0 { You have no new messages } =1 { You have one new message } other { You have # new messages }}}',
-          gender: '{{friendGender, gender, male { Invite him } female { Invite her } other { Invite them }}}'
-        }
-      }
-    }
-  };
-
   before(() => {
-    i18nConfig.init(config);
-
     var _attrToDataKey = function (val) {
       var out = val.substr(5);
       return out.split('-').map(function (part, inx) {
@@ -88,126 +87,125 @@ describe('i18n', () => {
   });
 
   beforeEach(() => {
-    config.timezone = 'Europe/Madrid';
+    i18n.setConfig('timezone', 'Europe/Madrid');
   });  
 
   describe('i18nDate', () => {
     it('date timezone Europe/Madrid', () => {
       let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format(''), '10/27/2015, 14:15:40');
+      assert.equal(i18n.from(date, i18n.getConfig()).format(''), '10/27/2015, 14:15:40');
     });
 
     it('date timezone Atlantic/Canary', () => {
       let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
-      config.timezone = 'Atlantic/Canary';
-      i18nConfig.init(config);
+      i18n.setConfig('timezone', 'Atlantic/Canary');
 
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format(''), '10/27/2015, 13:15:40');
+      assert.equal(i18n.from(date, i18n.getConfig()).format(''), '10/27/2015, 13:15:40');
     });
 
     it('date timezone Europe/Madrid LT format', () => {
       let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LT'), '2:15 PM');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('LT'), '2:15 PM');
     });
 
     it('date timezone Europe/Madrid LTS format', () => {
       let date = new Date(Date.UTC(2015, 9, 27, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LTS'), '2:15:40 PM');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('LTS'), '2:15:40 PM');
     });
 
     it('date timezone Europe/Madrid L format', () => {
       let date = new Date(Date.UTC(2015, 9, 1, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('L'), '10/01/2015');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('L'), '10/01/2015');
     });
 
     it('date timezone Europe/Madrid l format', () => {
       let date = new Date(Date.UTC(2015, 9, 1, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('l'), '10/1/2015');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('l'), '10/1/2015');
     });
 
     it('date timezone Europe/Madrid LL format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LL'), 'October 28, 2015');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('LL'), 'October 28, 2015');
     });
 
     it('date timezone Europe/Madrid ll format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('ll'), 'Oct 28, 2015');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('ll'), 'Oct 28, 2015');
     });
 
     it('date timezone Europe/Madrid LLL format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LLL'), 'October 28, 2015, 2:15 PM');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('LLL'), 'October 28, 2015, 2:15 PM');
     });
 
     it('date timezone Europe/Madrid lll format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('lll'), 'Oct 28, 2015, 2:15 PM');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('lll'), 'Oct 28, 2015, 2:15 PM');
     });
 
     it('date timezone Europe/Madrid LLLL format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('LLLL'), 'Wednesday, October 28, 2015, 2:15 PM');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('LLLL'), 'Wednesday, October 28, 2015, 2:15 PM');
     });
 
     it('date timezone Europe/Madrid llll format', () => {
       let date = new Date(Date.UTC(2015, 9, 28, 13, 15, 40));
       
-      assert.equal(i18n.from(date, i18nConfig.getConfig()).format('llll'), 'Wed, Oct 28, 2015, 2:15 PM');
+      assert.equal(i18n.from(date, i18n.getConfig()).format('llll'), 'Wed, Oct 28, 2015, 2:15 PM');
     });
   });
 
   describe('i18nNumber', () => {
     it('decimal', () => {    
-      assert.equal(i18n.from(1185.23, i18nConfig.getConfig()).format(), '1,185.23');
+      assert.equal(i18n.from(1185.23, i18n.getConfig()).format(), '1,185.23');
     });
 
     it('currency', () => {
-      assert.equal(i18n.from(1518.23, i18nConfig.getConfig()).format('currency'), '€1,518.23');
+      assert.equal(i18n.from(1518.23, i18n.getConfig()).format('currency'), '€1,518.23');
     });
 
     it('percent', () => {
-      assert.equal(i18n.from(27, i18nConfig.getConfig()).format('percent'), '27%');
+      assert.equal(i18n.from(27, i18n.getConfig()).format('percent'), '27%');
     });
   });
 
   describe('i18nTranslate', () => {
     it('translate', () => {
-      assert.equal(i18n.from('app.title', i18nConfig.getConfig()).format(), 'Title');
+      assert.equal(i18n.from('app.title', i18n.getConfig()).format(), 'Title');
     });
 
     it('translate plural zero', () => {
-      assert.equal(i18n.from('app.total', i18nConfig.getConfig()).format({ total: 0 }), 'You have no new messages');
+      assert.equal(i18n.from('app.total', i18n.getConfig()).format({ total: 0 }), 'You have no new messages');
     });
 
     it('translate plural one', () => {
-      assert.equal(i18n.from('app.total', i18nConfig.getConfig()).format({ total: 1 }), 'You have one new message');
+      assert.equal(i18n.from('app.total', i18n.getConfig()).format({ total: 1 }), 'You have one new message');
     });
 
     it('translate plural more than one', () => {
-      assert.equal(i18n.from('app.total', i18nConfig.getConfig()).format({ total: 10 }), 'You have 10 new messages');
+      assert.equal(i18n.from('app.total', i18n.getConfig()).format({ total: 10 }), 'You have 10 new messages');
     });
 
     it('translate gender male', () => {
-      assert.equal(i18n.from('app.gender', i18nConfig.getConfig()).format({ friendGender: 'male' }), 'Invite him');
+      assert.equal(i18n.from('app.gender', i18n.getConfig()).format({ friendGender: 'male' }), 'Invite him');
     });
 
     it('translate gender female', () => {
-      assert.equal(i18n.from('app.gender', i18nConfig.getConfig()).format({ friendGender: 'female' }), 'Invite her');
+      assert.equal(i18n.from('app.gender', i18n.getConfig()).format({ friendGender: 'female' }), 'Invite her');
     });
 
     it('translate gender other', () => {
-      assert.equal(i18n.from('app.gender', i18nConfig.getConfig()).format({ friendGender: 'other' }), 'Invite them');
+      assert.equal(i18n.from('app.gender', i18n.getConfig()).format({ friendGender: 'other' }), 'Invite them');
     });
   });
 

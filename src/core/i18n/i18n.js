@@ -2,7 +2,9 @@ import {i18nDate} from 'core/i18n/i18nDate';
 import {i18nNumber} from 'core/i18n/i18nNumber';
 import {i18nTranslate} from 'core/i18n/i18nTranslate';
 
-export class i18n {  
+export class i18n {
+  static configs = null;
+
   static from(input, config) {    
     return new i18n(input, config);
   }
@@ -10,7 +12,15 @@ export class i18n {
   constructor(input, config) {
     this.input = input;
     this.config = config;
-  }  
+  }
+
+  static getConfig() {
+    return i18n.configs;
+  }
+
+  static setConfig(key, value) {
+    i18n.configs[key] = value;
+  }
 
   isDate(input) {
     return input instanceof Date;

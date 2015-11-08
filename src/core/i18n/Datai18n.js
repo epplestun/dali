@@ -31,7 +31,7 @@ export class DataI18n {
     }
 
     element.appendChild(
-      document.createTextNode(i18n.from(i18nLabel, i18nConfig.getConfig()).format(i18nValue))
+      document.createTextNode(i18n.from(i18nLabel, i18n.getConfig()).format(i18nValue))
     );
   }
 }

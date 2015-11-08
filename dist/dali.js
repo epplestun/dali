@@ -124,7 +124,7 @@ var HTTP = (function () {
     value: function init() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? { method: 'GET', headers: {}, cache: false, async: false, timeout: 0 } : arguments[0];
 
-      function toQueryString(obj) {
+      var toQueryString = function toQueryString(obj) {
         var parts = [];
         for (var i in obj) {
           if (obj.hasOwnProperty(i)) {
@@ -132,14 +132,14 @@ var HTTP = (function () {
           }
         }
         return parts.join("&");
-      }
+      };
 
-      function appendQuery(url, query) {
+      var appendQuery = function appendQuery(url, query) {
         if (query == '') return url;
         return (url + '&' + query).replace(/[&?]{1,2}/, '?');
-      }
+      };
 
-      function createCORSRequest(method, url) {
+      var createCORSRequest = function createCORSRequest(method, url) {
         var xhr = new XMLHttpRequest();
 
         if ("withCredentials" in xhr) {
@@ -152,7 +152,7 @@ var HTTP = (function () {
         }
 
         return xhr;
-      }
+      };
 
       if (!options.url) {
         throw new Error("Url is needed");
@@ -951,6 +951,8 @@ var DOM = (function () {
 })();
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -964,7 +966,28 @@ var DataClass = (function () {
 
   _createClass(DataClass, [{
     key: 'render',
-    value: function render(element, data, value) {}
+    value: function render(element, data, value) {
+      var _this = this;
+
+      var classNames = value.split(',');
+
+      classNames.forEach(function (className) {
+        var _className$split = className.split(':');
+
+        var _className$split2 = _slicedToArray(_className$split, 2);
+
+        var elementClassName = _className$split2[0];
+        var elementValue = _className$split2[1];
+
+        elementClassName = elementClassName.trim().replace(/'/gm, "");
+
+        if (_this.evaluator.eval(data, elementValue)) {
+          element.classList.add(elementClassName);
+        } else {
+          element.classList.remove(elementClassName);
+        }
+      });
+    }
   }]);
 
   var _DataClass = DataClass;
@@ -974,8 +997,6 @@ var DataClass = (function () {
   })(DataClass) || DataClass;
   return DataClass;
 })();
-
-// TODO
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1164,31 +1185,43 @@ var DataModel = (function () {
 })();
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var DataStyle = (function () {
-  function DataStyle(evaluator) {
+  function DataStyle() {
     _classCallCheck(this, _DataStyle);
-
-    this.evaluator = evaluator;
   }
 
   _createClass(DataStyle, [{
     key: 'render',
-    value: function render(element, data, value) {}
+    value: function render(element, data, value) {
+      var styles = value.split(',');
+
+      styles.forEach(function (style) {
+        var _style$split = style.split(':');
+
+        var _style$split2 = _slicedToArray(_style$split, 2);
+
+        var elementStyle = _style$split2[0];
+        var elementValue = _style$split2[1];
+
+        elementStyle = elementStyle.trim().replace(/'/gm, "");
+
+        element.style[elementStyle.trim()] = data[elementValue.trim()];
+      });
+    }
   }]);
 
   var _DataStyle = DataStyle;
-  DataStyle = Inject(Evaluator)(DataStyle) || DataStyle;
   DataStyle = Directive({
     name: 'data-style'
   })(DataStyle) || DataStyle;
   return DataStyle;
 })();
-
-// TODO
 'use strict';
 
 log('Directive.js');
@@ -2304,7 +2337,7 @@ var DataI18n = (function () {
         }
       }
 
-      element.appendChild(document.createTextNode(i18n.from(i18nLabel, i18nConfig.getConfig()).format(i18nValue)));
+      element.appendChild(document.createTextNode(i18n.from(i18nLabel, i18n.getConfig()).format(i18nValue)));
     }
   }]);
 
@@ -2326,6 +2359,10 @@ var i18n = (function () {
     value: function from(input, config) {
       return new i18n(input, config);
     }
+  }, {
+    key: 'configs',
+    value: null,
+    enumerable: true
   }]);
 
   function i18n(input, config) {
@@ -2381,40 +2418,29 @@ var i18n = (function () {
         return i18nTranslate.from(map, this.input).translate(opts);
       }
     }
+  }], [{
+    key: 'getConfig',
+    value: function getConfig() {
+      return i18n.configs;
+    }
+  }, {
+    key: 'setConfig',
+    value: function setConfig(key, value) {
+      i18n.configs[key] = value;
+    }
   }]);
 
   return i18n;
 })();
-"use strict";
+'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+function i18nConfigHandlerDescriptor(target, value) {
+  i18n.configs = value;
+}
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var i18nConfig = (function () {
-  function i18nConfig() {
-    _classCallCheck(this, i18nConfig);
-  }
-
-  _createClass(i18nConfig, null, [{
-    key: "init",
-    value: function init(config) {
-      i18nConfig.config = config;
-    }
-  }, {
-    key: "setConfig",
-    value: function setConfig(config) {
-      i18nConfig.config = config;
-    }
-  }, {
-    key: "getConfig",
-    value: function getConfig() {
-      return i18nConfig.config;
-    }
-  }]);
-
-  return i18nConfig;
-})();
+function i18nConfig(arg) {
+  return decorate(i18nConfigHandlerDescriptor, arg);
+}
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
