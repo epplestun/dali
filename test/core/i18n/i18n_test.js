@@ -27,8 +27,7 @@ describe('i18n', () => {
     }
   };
 
-  beforeEach(() => {
-    config.timezone = 'Europe/Madrid';
+  before(() => {
     i18nConfig.init(config);
 
     var _attrToDataKey = function (val) {
@@ -86,6 +85,10 @@ describe('i18n', () => {
         }
       });
     }
+  });
+
+  beforeEach(() => {
+    config.timezone = 'Europe/Madrid';
   });  
 
   describe('i18nDate', () => {
