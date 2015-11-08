@@ -1,6 +1,6 @@
 export class HTTP {
   static init(options = {method: 'GET', headers: {}, cache: false, async: false, timeout: 0}) {
-    function toQueryString(obj) {
+    var toQueryString = (obj) => {
       var parts = [];
       for (var i in obj) {
         if (obj.hasOwnProperty(i)) {
@@ -10,12 +10,12 @@ export class HTTP {
       return parts.join("&");
     }
 
-    function appendQuery(url, query) {
+    var appendQuery = (url, query) => {
       if (query == '') return url;
       return (url + '&' + query).replace(/[&?]{1,2}/, '?');
     }
 
-    function createCORSRequest(method, url) {
+    var createCORSRequest = (method, url) => {
       var xhr = new XMLHttpRequest();
 
       if ("withCredentials" in xhr) {
@@ -51,11 +51,11 @@ export class HTTP {
       options.url = appendQuery(options.url, '_=' + +new Date());
     }
 
-    var promise = new Promise(function (resolve, reject) {
+    var promise = new Promise((resolve, reject) => {
       var request = createCORSRequest(options.method, options.url);
 
       if (options && options.headers) {
-        Object.keys(options.headers).forEach(function (key) {
+        Object.keys(options.headers).forEach((key) => {
           request.setRequestHeader(key, options.headers[key]);
         });
       }
@@ -71,13 +71,13 @@ export class HTTP {
           reject(new Error("Status code was " + request.status));
         }
       };
-      request.onerror = function () {
+      request.onerror = () => {
         reject(new Error("Can't XHR " + JSON.stringify(options.url)));
       };
 
       if (options.timeout > 0) {
-        var timeout = setTimeout(function () {
-          xhr.onreadystatechange = function () {
+        var timeout = setTimeout(() => {
+          xhr.onreadystatechange = () => {
           };
           xhr.abort();
           clearTimeout(timeout);

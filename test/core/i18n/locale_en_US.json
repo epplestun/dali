@@ -1,0 +1,7 @@
+{
+  app : {
+    title: 'Title',
+    total: 'Total: {{total, plural, =0 { You have no new messages } =1 { You have one new message } other { You have # new messages }}}',
+    gender: '{{friendGender, gender, male { Invite him } female { Invite her } other { Invite them }}}'
+  }
+}
