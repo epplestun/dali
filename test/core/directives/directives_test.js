@@ -2,6 +2,7 @@ import {Injector} from 'core/di/Injector';
 import {DataIf} from 'core/directives/DataIf';
 import {DataFor} from 'core/directives/DataFor';
 import {DataStyle} from 'core/directives/DataStyle';
+import {DataClass} from 'core/directives/DataClass';
 //import {DataModel} from 'core/directives/DataModel';
 
 var assert = require("assert");
@@ -14,15 +15,15 @@ describe('Directives', () => {
   describe('If', () => {
     describe('#render()', () => {
       let dataIf = Injector.get(DataIf),
-          value = 'isVisible';
+        value = 'isVisible';
 
       it('remove <p> element from <div>', () => {
         let data = {
-          isVisible : false
-        };        
+          isVisible: false
+        };
 
         let element = document.createElement('p'),
-            container = document.createElement('div');
+          container = document.createElement('div');
         container.appendChild(element);
 
         dataIf.render(element, data, value);
@@ -32,12 +33,12 @@ describe('Directives', () => {
 
       it('do not remove <p> element from <div>', () => {
         let data = {
-          isVisible : true
+          isVisible: true
         };
 
-            
+
         let element = document.createElement('p'),
-            container = document.createElement('div');
+          container = document.createElement('div');
         container.appendChild(element);
 
         dataIf.render(element, data, value);
@@ -50,8 +51,8 @@ describe('Directives', () => {
   describe('For', () => {
     describe('#render()', () => {
       let dataFor = Injector.get(DataFor),
-          value = 'item in items',
-          config = { name: 'data-for' };
+        value = 'item in items',
+        config = {name: 'data-for'};
 
       it('repeat <p> element three times', () => {
         let data = {
@@ -59,7 +60,7 @@ describe('Directives', () => {
         };
 
         let element = document.createElement('p'),
-            container = document.createElement('div');
+          container = document.createElement('div');
         container.appendChild(element);
 
         dataFor.render(element, data, value, config);
@@ -74,7 +75,7 @@ describe('Directives', () => {
 
         let element = document.createElement('p');
         element.innerHTML = '{{item}}';
-        
+
         let container = document.createElement('div');
         container.appendChild(element);
 
@@ -83,7 +84,7 @@ describe('Directives', () => {
         assert.equal(container.childNodes.length, data.items.length);
 
         data.items.forEach((value, index) => {
-          assert.equal(container.childNodes[index].innerHTML, value);  
+          assert.equal(container.childNodes[index].innerHTML, value);
         });
       });
     });
@@ -92,12 +93,12 @@ describe('Directives', () => {
   describe('Style', () => {
     describe('#render', () => {
       let dataStyle = Injector.get(DataStyle),
-          value = "'font-style' : prop1, 'color': prop2";
+        value = "'font-style' : prop1, 'color': prop2";
 
       it('apply style to the element', () => {
         let data = {
-          prop1 : 'italic',
-          prop2 : 'red'
+          prop1: 'italic',
+          prop2: 'red'
         };
 
         let element = document.createElement('p'),
@@ -112,17 +113,46 @@ describe('Directives', () => {
     })
   });
 
-  describe.skip('Class', () => {
+  describe('Class', () => {
     describe('#render', () => {
-      it('apply class name to the element');
+      let dataClass = Injector.get(DataClass);
+
+      it('apply class1 and class2 names to the element', () => {
+        let data = {
+            prop1: 10,
+            prop2: 5
+          },
+          value = "'class1' : prop1 > prop2, 'class2' : prop2 < prop1";
+
+        let element = document.createElement('p');
+
+        dataClass.render(element, data, value);
+
+        assert.equal(element.classList.contains('class1'), true);
+        assert.equal(element.classList.contains('class2'), true);
+      });
+
+      it('apply only class1 names to the element', () => {
+        let data = {
+            prop1: 10,
+            prop2: 5
+          },
+          value = "'class1' : prop1 > prop2, 'class2' : prop2 == prop1";
+        ;
+
+        let element = document.createElement('p');
+
+        dataClass.render(element, data, value);
+
+        assert.equal(element.classList.contains('class1'), true);
+        assert.equal(element.classList.contains('class2'), false);
+      });
     })
   });
 
-  describe.skip('Model', () => {
+  describe('Model', () => {
     describe('#render()', () => {
-      it('MODEL ->', () => {
-        assert.equal(true, false);
-      });
+      it('MODEL ->');
     });
   });
 });
