@@ -13,14 +13,17 @@ var babelOptions = [
 var babelMocha = require('babel/register')({
   resolveModuleSource: function(source, filename) {
     if(
-      source.startsWith('core') || 
-      source.startsWith('http') || 
-      source.startsWith('json')
+      source.startsWith('core')
     ) {
       source = '../../../src/' + source;
     }
 
-    //console.log(source, source.startsWith('core'));
+    if(
+      source.startsWith('http') ||
+      source.startsWith('json')
+    ) {
+      source = '../../src/' + source;
+    }
 
     return source;
   },

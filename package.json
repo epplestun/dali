@@ -36,6 +36,8 @@
     "jsdom": "^7.0.2",
     "mocha": "^2.3.3",
     "mocha-jsdom": "^1.0.0",
+    "sinon": "^1.17.2",
+    "sinon-as-promised": "^4.0.0",
     "sinon-es6": "0.0.3",
     "systemjs": "^0.18.17",
     "systemjs-builder": "^0.13.5"

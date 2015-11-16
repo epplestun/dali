@@ -23,7 +23,6 @@ export class HTTP {
       } else if (typeof XDomainRequest != "undefined") {
         xhr = new XDomainRequest();
         xhr.open(method, url);
-
       } else {
         xhr = null;
       }
