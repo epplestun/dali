@@ -19,7 +19,7 @@ var assertRequest = (response, done) => {
   done();
 };
 
-describe('HTTP', () => {
+describe.skip('HTTP', () => {
   beforeEach(() => {
     var okResponse = [
       200,
