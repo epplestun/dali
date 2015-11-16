@@ -1,3 +1,4 @@
+/*
 import {HTTP} from 'http/HTTP';
 
 var assert = require('assert'),
@@ -38,3 +39,4 @@ describe.skip('HTTP', () => {
     });
   });
 });
+*/
