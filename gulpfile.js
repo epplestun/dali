@@ -12,21 +12,22 @@ var babelOptions = [
 ];
 var babelMocha = require('babel/register')({
   resolveModuleSource: function(source, filename) {
-    //if(
-    //  source.startsWith('core')
-    //) {
-    //  source = '../../../src/' + source;
-    //}
-    //
-    //if(
-    //  source.startsWith('http') ||
-    //  source.startsWith('json')
-    //) {
-    //  source = '../../src/' + source;
-    //}
+    if(
+      source.startsWith('core')
+    ) {
+      source = '../../../src/' + source;
+    }
+
+    if(
+      source.startsWith('http') ||
+      source.startsWith('json')
+    ) {
+      source = '../../src/' + source;
+    }
+    return source;
 
 
-    return '../../src/' + source;
+    //return '../../src/' + source;
   },
   
   optional: babelOptions
