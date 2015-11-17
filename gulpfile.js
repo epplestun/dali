@@ -12,20 +12,21 @@ var babelOptions = [
 ];
 var babelMocha = require('babel/register')({
   resolveModuleSource: function(source, filename) {
-    if(
-      source.startsWith('core')
-    ) {
-      source = '../../../src/' + source;
-    }
+    //if(
+    //  source.startsWith('core')
+    //) {
+    //  source = '../../../src/' + source;
+    //}
+    //
+    //if(
+    //  source.startsWith('http') ||
+    //  source.startsWith('json')
+    //) {
+    //  source = '../../src/' + source;
+    //}
 
-    if(
-      source.startsWith('http') ||
-      source.startsWith('json')
-    ) {
-      source = '../../src/' + source;
-    }
 
-    return source;
+    return '../../src/' + source;
   },
   
   optional: babelOptions
@@ -52,8 +53,7 @@ gulp.task('lint', function() {
 
 gulp.task('test', function() {
   return gulp.src([
-    'test/core/**/*.js',
-    'test/http/*.js'
+    'test/**/*.js'
   ])
     .pipe(mocha({
       reporter: 'list',
