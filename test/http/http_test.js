@@ -5,20 +5,6 @@ var assert = require('assert'),
 
 require('sinon-as-promised');
 
-/*
-var assertResponse = (expected, actual) => {
-  let [code, method, headers, body] = actual;
-
-  assert.equal(expected.code, code);
-  assert.equal(expected.method.toUpperCase(), method.toUpperCase());
-  assert.equal(expected.type, headers['Content-type']);
-
-  return (callback) => {
-    callback.call(callback);
-  };
-};
-*/
-
 class AssertResponse {
   constructor(response) {
     let [code, method, headers, body] = response;
