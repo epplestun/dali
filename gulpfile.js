@@ -51,7 +51,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('test', function() {
-  return gulp.src(['test/**/*.js'])
+  return gulp.src(['test/http/*.js'])
     .pipe(mocha({
       reporter: 'list',
       timeout: 20000,
