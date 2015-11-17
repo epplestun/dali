@@ -1,4 +1,3 @@
-/*
 import {HTTP} from 'http/HTTP';
 
 var assert = require('assert'),
@@ -6,37 +5,98 @@ var assert = require('assert'),
 
 require('sinon-as-promised');
 
-var assertResponse = (code, type) => {
-  assert.equal(code, 200);
-  assert.equal(type, 'application/json');
+/*
+var assertResponse = (expected, actual) => {
+  let [code, method, headers, body] = actual;
 
-  return (response, callback) => {
+  assert.equal(expected.code, code);
+  assert.equal(expected.method.toUpperCase(), method.toUpperCase());
+  assert.equal(expected.type, headers['Content-type']);
+
+  return (callback) => {
     callback.call(callback);
   };
 };
+*/
 
-var assertRequest = (response, done) => {
-  console.log(response);
-  done();
-};
+class AssertResponse {
+  constructor(response) {
+    let [code, method, headers, body] = response;
 
-describe.skip('HTTP', () => {
+    this.code = code;
+    this.method = method;
+    this.headers = headers;
+    this.body = body;
+  }
+
+  toBe200() {
+    assert.equal(this.code, 200);
+    return this;
+  }
+
+  //toBe404() {
+  //  assert.equal(this.code, 404);
+  //  return this;
+  //}
+
+  toBeGET() {
+    assert.equal(this.method.toUpperCase(), 'GET');
+    return this;
+  }
+
+  toBePOST() {
+    assert.equal(this.method.toUpperCase(), 'POST');
+    return this;
+  }
+
+  toBeContentType(type) {
+    assert.equal(this.headers['Content-type'], type);
+    return this;
+  }
+
+  notificate(callback) {
+    callback.call(callback);
+  }
+}
+
+
+describe('HTTP', () => {
+  var getStub, postStub;
+
   beforeEach(() => {
-    var okResponse = [
-      200,
-      { 'Content-type': 'application/json' },
+    let okGetResponse = [
+      200, 'GET',
+      {
+        'Content-type': 'application/json'
+      },
       '{"hello":"world"}'
-    ];
+    ],
+      okPostResponse = [
+        200, 'POST',
+        {
+          'Content-type': 'application/json'
+        },
+        '{"hello":"world"}'
+      ];
 
-    sinon.stub(HTTP, 'get').resolves(okResponse);
+    getStub = sinon.stub(HTTP, 'get').resolves(okGetResponse);
+    postStub = sinon.stub(HTTP, 'post').resolves(okPostResponse);
+  });
+
+  afterEach(() => {
+    getStub.restore();
+    postStub.restore();
   });
 
   it('GET request', (done) => {
-    //server.respondWith('GET', '/hello', okResponse);
-
     HTTP.get('/hello').then((response) => {
-      assertResponse(200, 'application/json')(response, done);
+      new AssertResponse(response).toBe200().toBeGET().toBeContentType('application/json').notificate(done);
+    });
+  });
+
+  it('POST request', (done) => {
+    HTTP.post('/hello').then((response) => {
+      new AssertResponse(response).toBe200().toBePOST().toBeContentType('application/json').notificate(done);
     });
   });
 });
-*/
