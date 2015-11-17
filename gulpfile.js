@@ -54,7 +54,8 @@ gulp.task('lint', function() {
 
 gulp.task('test', function() {
   return gulp.src([
-    'test/http/*.js'
+    'test/http/*.js',
+    'test/core/**/*.js'
   ])
     .pipe(mocha({
       reporter: 'list',
