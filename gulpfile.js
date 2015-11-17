@@ -24,10 +24,8 @@ var babelMocha = require('babel/register')({
     ) {
       source = '../../src/' + source;
     }
+
     return source;
-
-
-    //return '../../src/' + source;
   },
   
   optional: babelOptions
@@ -54,7 +52,7 @@ gulp.task('lint', function() {
 
 gulp.task('test', function() {
   return gulp.src([
-    'test/http/*.js',
+    //'test/http/*.js',
     'test/core/**/*.js'
   ])
     .pipe(mocha({
