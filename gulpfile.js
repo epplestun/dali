@@ -11,28 +11,28 @@ var babelOptions = [
   "es7.functionBind"
 ];
 var babelMocha = require('babel/register')({
-  //resolveModuleSource: function (source, filename) {
-  //
-  //  console.log('source', source, filename);
-  //
-  //  if (
-  //    source.startsWith('core')
-  //  ) {
-  //    source = '../../../src/' + source;
-  //  }
-  //
-  //  if (
-  //    source.startsWith('http') ||
-  //    source.startsWith('json')
-  //  ) {
-  //    source = '../../src/' + source;
-  //  }
-  //
-  //  return source;
-  //},
-
   optional: babelOptions
 });
+
+//resolveModuleSource: function (source, filename) {
+//
+//  console.log('source', source, filename);
+//
+//  if (
+//    source.startsWith('core')
+//  ) {
+//    source = '../../../src/' + source;
+//  }
+//
+//  if (
+//    source.startsWith('http') ||
+//    source.startsWith('json')
+//  ) {
+//    source = '../../src/' + source;
+//  }
+//
+//  return source;
+//},
 
 
 gulp.task('clean', function (cb) {
@@ -85,12 +85,12 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
     "src/json/*.js",
     "src/core/i18n/**/*.js"
   ])
-  .pipe(babel({
-    optional: babelOptions,
-    modules: 'ignore'
-  }))
-  .pipe(concat('dali.js'))
-  .pipe(gulp.dest('dist'));
+    .pipe(babel({
+      optional: babelOptions,
+      modules: 'ignore'
+    }))
+    .pipe(concat('dali.js'))
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('default', ['build']);
