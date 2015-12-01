@@ -11,21 +11,21 @@ var babelOptions = [
   "es7.functionBind"
 ];
 var babelMocha = require('babel/register')({
-  resolveModuleSource: function (source) {
+  resolveModuleSource: function (source, filename) {
 
-    console.log(source);
+    console.log(source, filename);
 
     if (
       source.startsWith('core')
     ) {
-      source = '../../../src/' + source;
+      return '../../../src/' + source;
     }
 
     if (
       source.startsWith('http') ||
       source.startsWith('json')
     ) {
-      source = '../src/' + source;
+      return '../../src/' + source;
     }
 
     return source;
@@ -55,7 +55,7 @@ gulp.task('test', function () {
   return gulp.src([
     'test/**/*.js'
   ]).pipe(mocha({
-    //reporter: 'list',
+    reporter: 'list',
     //timeout: 20000,
     compilers: {
       js: babelMocha
