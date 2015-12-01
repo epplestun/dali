@@ -11,86 +11,80 @@ var babelOptions = [
   "es7.functionBind"
 ];
 var babelMocha = require('babel/register')({
-  resolveModuleSource: function(source, filename) {
-    if(
+  resolveModuleSource: function (source) {
+    if (
       source.startsWith('core')
     ) {
       source = '../../../src/' + source;
     }
 
-    /*
-    if(
+    if (
       source.startsWith('http') ||
       source.startsWith('json')
     ) {
       source = '../../src/' + source;
     }
-    */
 
     return source;
   },
-  
+
   optional: babelOptions
 });
 
 
-gulp.task('clean', function(cb) {
+gulp.task('clean', function (cb) {
   return del(['dist'], cb);
 });
 
-gulp.task('lint', function() {
-  return gulp.src(['src/**/*.js']) 
-      .pipe(eslint(
-        {
-          "parser": "babel-eslint",
-          "rules": {
-            "strict": 0,
-            "arrowFunctions": 0
-          }
-      }))
-      .pipe(eslint.format())
-      .pipe(eslint.failOnError());
+gulp.task('lint', function () {
+  return gulp.src(['src/**/*.js'])
+    .pipe(eslint({
+      "parser": "babel-eslint",
+      "rules": {
+        "strict": 0,
+        "arrowFunctions": 0
+      }
+    }))
+    .pipe(eslint.format())
+    .pipe(eslint.failOnError());
 });
 
-gulp.task('test', function() {
+gulp.task('test', function () {
   return gulp.src([
-    //'test/http/*.js',
-    'test/core/**/*.js'
-    //'test/**/*.js'
-  ])
-    .pipe(mocha({
-      reporter: 'list',
-      timeout: 20000,
-      compilers: {
-        js: babelMocha
-      }
-    }));
+    'test/http/*.js'
+  ]).pipe(mocha({
+    reporter: 'list',
+    timeout: 20000,
+    compilers: {
+      js: babelMocha
+    }
+  }));
 });
 
 gulp.task('build', ['clean', 'lint', 'test'], function () {
   return gulp.src([
-      "src/core/util/*.js",  
-      "src/http/*.js",    
-      "src/core/evaluator/*.js",
-      "src/core/component/*.js",
-      "src/core/async/*.js",
-      "src/core/di/*.js",
-      "src/core/dom/*.js",      
-      "src/core/directives/*.js",
-      "src/core/event/*.js",
-      "src/core/filters/*.js",
-      "src/core/module/*.js",
-      "src/core/render/*.js",
-      "src/core/runnable/*.js",        
-      "src/core/view/*.js",
-      "src/core/router/*.js",
-      "src/core/bootstrap.js",     
-      "src/json/*.js",
-      "src/core/i18n/**/*.js"
-    ])
-    .pipe(babel({ 
-    	optional: babelOptions,
-    	modules: 'ignore'
+    "src/core/util/*.js",
+    "src/http/*.js",
+    "src/core/evaluator/*.js",
+    "src/core/component/*.js",
+    "src/core/async/*.js",
+    "src/core/di/*.js",
+    "src/core/dom/*.js",
+    "src/core/directives/*.js",
+    "src/core/event/*.js",
+    "src/core/filters/*.js",
+    "src/core/module/*.js",
+    "src/core/render/*.js",
+    "src/core/runnable/*.js",
+    "src/core/view/*.js",
+    "src/core/router/*.js",
+    "src/core/bootstrap.js",
+    "src/json/*.js",
+    "src/core/i18n/**/*.js"
+  ])
+    .pipe(babel({
+      optional: babelOptions,
+      modules: 'ignore'
     }))
     .pipe(concat('dali.js'))
     .pipe(gulp.dest('dist'));
