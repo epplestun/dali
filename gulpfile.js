@@ -25,7 +25,7 @@ var babelMocha = require('babel/register')({
       source.startsWith('http') ||
       source.startsWith('json')
     ) {
-      source = '../../../src/' + source;
+      source = '../src/' + source;
     }
 
     return source;
