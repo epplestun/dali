@@ -18,12 +18,12 @@ var babelMocha = require('babel/register')({
       source = '../../../src/' + source;
     }
 
-    //if(
-    //  source.startsWith('http') ||
-    //  source.startsWith('json')
-    //) {
-    //  source = '../../src/' + source;
-    //}
+    if(
+      source.startsWith('http') ||
+      source.startsWith('json')
+    ) {
+      source = '../../src/' + source;
+    }
 
     return source;
   },
@@ -54,6 +54,7 @@ gulp.task('test', function() {
   return gulp.src([
     //'test/http/*.js',
     'test/core/**/*.js'
+    //'test/**/*.js'
   ])
     .pipe(mocha({
       reporter: 'list',
