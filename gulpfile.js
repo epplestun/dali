@@ -12,17 +12,20 @@ var babelOptions = [
 ];
 var babelMocha = require('babel/register')({
   resolveModuleSource: function (source) {
+
+    console.log(source);
+
     if (
       source.startsWith('core')
     ) {
-      source = '../../../src/' + source + '.js';
+      source = '../../../src/' + source;
     }
 
     if (
       source.startsWith('http') ||
       source.startsWith('json')
     ) {
-      source = '../../src/' + source + '.js';
+      source = '../../../src/' + source;
     }
 
     return source;
