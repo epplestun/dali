@@ -11,9 +11,7 @@ var babelOptions = [
   "es7.functionBind"
 ];
 var babelMocha = require('babel/register')({
-  resolveModuleSource: function (source, filename) {
-    //console.log('source', source, filename);
-
+  resolveModuleSource: function (source) {
     if (
       source.startsWith('core')
     ) {
