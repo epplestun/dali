@@ -12,20 +12,17 @@ var babelOptions = [
 ];
 var babelMocha = require('babel/register')({
   resolveModuleSource: function (source, filename) {
-
-    console.log(source, filename);
-
     if (
       source.startsWith('core')
     ) {
-      return '../../../src/' + source;
+      return '/home/travis/build/epplestun/dali/src/' + source;
     }
 
     if (
       source.startsWith('http') ||
       source.startsWith('json')
     ) {
-      return '../../src/' + source;
+      return '/home/travis/build/epplestun/dali/src/' + source;
     }
 
     return source;
