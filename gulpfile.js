@@ -11,28 +11,26 @@ var babelOptions = [
   "es7.functionBind"
 ];
 var babelMocha = require('babel/register')({
+  resolveModuleSource: function (source, filename) {
+    console.log('source', source, filename);
+
+    if (
+      source.startsWith('core')
+    ) {
+      source = '../../../src/' + source;
+    }
+
+    if (
+      source.startsWith('http') ||
+      source.startsWith('json')
+    ) {
+      source = '../../src/' + source;
+    }
+
+    return source;
+  },
   optional: babelOptions
 });
-
-//resolveModuleSource: function (source, filename) {
-//
-//  console.log('source', source, filename);
-//
-//  if (
-//    source.startsWith('core')
-//  ) {
-//    source = '../../../src/' + source;
-//  }
-//
-//  if (
-//    source.startsWith('http') ||
-//    source.startsWith('json')
-//  ) {
-//    source = '../../src/' + source;
-//  }
-//
-//  return source;
-//},
 
 
 gulp.task('clean', function (cb) {
