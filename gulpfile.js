@@ -51,7 +51,7 @@ gulp.task('lint', function () {
 
 gulp.task('test', function () {
   return gulp.src([
-    'test/http/*.js'
+    'test/**/*.js'
   ]).pipe(mocha({
     reporter: 'list',
     timeout: 20000,
@@ -82,12 +82,12 @@ gulp.task('build', ['clean', 'lint', 'test'], function () {
     "src/json/*.js",
     "src/core/i18n/**/*.js"
   ])
-    .pipe(babel({
-      optional: babelOptions,
-      modules: 'ignore'
-    }))
-    .pipe(concat('dali.js'))
-    .pipe(gulp.dest('dist'));
+  .pipe(babel({
+    optional: babelOptions,
+    modules: 'ignore'
+  }))
+  .pipe(concat('dali.js'))
+  .pipe(gulp.dest('dist'));
 });
 
 gulp.task('default', ['build']);
