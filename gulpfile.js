@@ -36,7 +36,6 @@ var babelMocha = require('babel/register')({
   optional: babelOptions
 });
 
-
 gulp.task('clean', function (cb) {
   return del(['dist'], cb);
 });

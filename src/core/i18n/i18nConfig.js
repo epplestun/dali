@@ -3,7 +3,6 @@ import {i18n} from 'core/i18n/i18n';
 import {HTTP} from 'http/HTTP';
 
 function i18nConfigHandlerDescriptor(target, value) {
-
   if(value.hasOwnProperty('loader')) {
     let locale = value.locale.replace('-', '_');
 

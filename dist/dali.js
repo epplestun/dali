@@ -2435,7 +2435,20 @@ var i18n = (function () {
 'use strict';
 
 function i18nConfigHandlerDescriptor(target, value) {
-  i18n.configs = value;
+  if (value.hasOwnProperty('loader')) {
+    (function () {
+      var locale = value.locale.replace('-', '_');
+
+      HTTP.get(value.loader).then(function (translations) {
+        value.translations = {};
+        value.translations[locale] = translations;
+
+        i18n.configs = value;
+      });
+    })();
+  } else {
+    i18n.configs = value;
+  }
 }
 
 function i18nConfig(arg) {
