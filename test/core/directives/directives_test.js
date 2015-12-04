@@ -2,7 +2,7 @@ import {Injector} from 'core/di/Injector';
 import {DataIf} from 'core/directives/DataIf';
 import {DataFor} from 'core/directives/DataFor';
 import {DataStyle} from 'core/directives/DataStyle';
-import {DataClass} from 'core/directives/DataClass';
+import {DataClass} from 'core/directives/DataKlass';
 //import {DataModel} from 'core/directives/DataModel';
 
 var assert = require("assert");

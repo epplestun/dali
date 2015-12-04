@@ -5,7 +5,7 @@ import {i18nTranslate} from 'core/i18n/i18nTranslate';
 export class i18n {
   static configs = null;
 
-  static from(input, config) {    
+  static from(input, config) {
     return new i18n(input, config);
   }
 
@@ -63,3 +63,5 @@ export class i18n {
     }
   }
 }
+
+i18n.TRANSLATION_LOADED = 'TRANSLATION_LOADED';

@@ -949,54 +949,6 @@ var DOM = (function () {
 
   return DOM;
 })();
-'use strict';
-
-var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var DataClass = (function () {
-  function DataClass(evaluator) {
-    _classCallCheck(this, _DataClass);
-
-    this.evaluator = evaluator;
-  }
-
-  _createClass(DataClass, [{
-    key: 'render',
-    value: function render(element, data, value) {
-      var _this = this;
-
-      var classNames = value.split(',');
-
-      classNames.forEach(function (className) {
-        var _className$split = className.split(':');
-
-        var _className$split2 = _slicedToArray(_className$split, 2);
-
-        var elementClassName = _className$split2[0];
-        var elementValue = _className$split2[1];
-
-        elementClassName = elementClassName.trim().replace(/'/gm, "");
-
-        if (_this.evaluator.eval(data, elementValue)) {
-          element.classList.add(elementClassName);
-        } else {
-          element.classList.remove(elementClassName);
-        }
-      });
-    }
-  }]);
-
-  var _DataClass = DataClass;
-  DataClass = Inject(Evaluator)(DataClass) || DataClass;
-  DataClass = Directive({
-    name: 'data-class'
-  })(DataClass) || DataClass;
-  return DataClass;
-})();
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1130,6 +1082,54 @@ var DataIf = (function () {
     name: 'data-if'
   })(DataIf) || DataIf;
   return DataIf;
+})();
+'use strict';
+
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var DataClass = (function () {
+  function DataClass(evaluator) {
+    _classCallCheck(this, _DataClass);
+
+    this.evaluator = evaluator;
+  }
+
+  _createClass(DataClass, [{
+    key: 'render',
+    value: function render(element, data, value) {
+      var _this = this;
+
+      var classNames = value.split(',');
+
+      classNames.forEach(function (className) {
+        var _className$split = className.split(':');
+
+        var _className$split2 = _slicedToArray(_className$split, 2);
+
+        var elementClassName = _className$split2[0];
+        var elementValue = _className$split2[1];
+
+        elementClassName = elementClassName.trim().replace(/'/gm, "");
+
+        if (_this.evaluator.eval(data, elementValue)) {
+          element.classList.add(elementClassName);
+        } else {
+          element.classList.remove(elementClassName);
+        }
+      });
+    }
+  }]);
+
+  var _DataClass = DataClass;
+  DataClass = Inject(Evaluator)(DataClass) || DataClass;
+  DataClass = Directive({
+    name: 'data-class'
+  })(DataClass) || DataClass;
+  return DataClass;
 })();
 'use strict';
 
@@ -2163,10 +2163,12 @@ var RouterLink = (function () {
 log('bootstrap.js');
 
 function bootstrap(target) {
-  Injector.get(target).run();
-  Router.run();
-  Components.run();
-  Binder.run();
+  EventBus.subscribe(i18n.TRANSLATION_LOADED, function () {
+    Injector.get(target).run();
+    Router.run();
+    Components.run();
+    Binder.run();
+  });
 }
 'use strict';
 
@@ -2432,6 +2434,8 @@ var i18n = (function () {
 
   return i18n;
 })();
+
+i18n.TRANSLATION_LOADED = 'TRANSLATION_LOADED';
 'use strict';
 
 function i18nConfigHandlerDescriptor(target, value) {
@@ -2441,13 +2445,15 @@ function i18nConfigHandlerDescriptor(target, value) {
 
       HTTP.get(value.loader).then(function (translations) {
         value.translations = {};
-        value.translations[locale] = translations;
+        value.translations[locale] = typeof translations === 'object' ? translations : JSON.parse(translations);
 
         i18n.configs = value;
+        EventBus.publish(i18n.TRANSLATION_LOADED);
       });
     })();
   } else {
     i18n.configs = value;
+    EventBus.publish(i18n.TRANSLATION_LOADED);
   }
 }
 
