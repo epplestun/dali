@@ -1,4 +1,4 @@
-import {Inject} from 'core/di/Inject';
+import {Inject} from '../../../src/core/di/Inject';
 
 class TargetChild {
 }

@@ -1,4 +1,4 @@
-import {Component} from 'core/component/Component';
+import {Component} from '../../../src/core/component/Component';
 
 @Component({
   name: 'test-app'

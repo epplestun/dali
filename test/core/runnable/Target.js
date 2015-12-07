@@ -1,4 +1,4 @@
-import {Runnable} from 'core/runnable/Runnable';
+import {Runnable} from '../../../src/core/runnable/Runnable';
 
 @Runnable
 export class Target {
