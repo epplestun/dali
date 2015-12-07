@@ -83,8 +83,8 @@ export class Binder {
     if(!!instance) {
       Binder.bindInstance(instance, instanceName);
     } else {
-      for(var instanceName in Injector.instances) {
-        Binder.bindInstance(njector.instances[instanceName], instanceName);
+      for(var name in Injector.instances) {
+        Binder.bindInstance(Injector.instances[name], instanceName);
       }
     }
   }
