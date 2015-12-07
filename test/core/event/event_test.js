@@ -1,10 +1,10 @@
-import {EventBus} from 'core/event/EventBus';
-import {EventNameNormalizer} from 'core/event/EventNameNormalizer';
-import {EventBinder} from 'core/event/EventBinder';
+import {EventBus} from '../../../src/core/event/EventBus';
+import {EventNameNormalizer} from '../../../src/core/event/EventNameNormalizer';
+import {EventBinder} from '../../../src/core/event/EventBinder';
 import {Target} from './Target';
 
 var assert = require('assert'),
-    sinon = require('sinon-es6'),
+    sinon = require('sinon'),
     jsdom = require('mocha-jsdom');
 
 describe('EventBus', () => {
@@ -15,7 +15,7 @@ describe('EventBus', () => {
       token2 = null;
 
   beforeEach(() => {
-    token1 = EventBus.subscribe(topic1, callback),
+    token1 = EventBus.subscribe(topic1, callback);
     token2 = EventBus.subscribe(topic2, callback);
   });
 

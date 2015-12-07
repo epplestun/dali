@@ -1,12 +1,12 @@
-import {Injector} from 'core/di/Injector';
-import {DataIf} from 'core/directives/DataIf';
-import {DataFor} from 'core/directives/DataFor';
-import {DataStyle} from 'core/directives/DataStyle';
-import {DataClass} from 'core/directives/DataKlass';
+import {Injector} from '../../../src/core/di/Injector';
+import {DataIf} from '../../../src/core/directives/DataIf';
+import {DataFor} from '../../../src/core/directives/DataFor';
+import {DataStyle} from '../../../src/core/directives/DataStyle';
+import {DataClass} from '../../../src/core/directives/DataKlass';
 //import {DataModel} from 'core/directives/DataModel';
 
-var assert = require("assert");
-var jsdom = require('mocha-jsdom');
+var assert = require("assert"),
+  jsdom = require('mocha-jsdom');
 
 describe('Directives', () => {
 
@@ -138,7 +138,6 @@ describe('Directives', () => {
             prop2: 5
           },
           value = "'class1' : prop1 > prop2, 'class2' : prop2 == prop1";
-        ;
 
         let element = document.createElement('p');
 

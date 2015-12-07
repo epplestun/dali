@@ -1,5 +1,5 @@
-import {Inject} from 'core/di/Inject';
-import {Injector} from 'core/di/Injector';
+import {Inject} from '../../../src/core/di/Inject';
+import {Injector} from '../../../src/core/di/Injector';
 import {Target} from './Target';
 
 var assert = require("assert");

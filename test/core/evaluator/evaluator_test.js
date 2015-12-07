@@ -1,4 +1,4 @@
-import {Evaluator} from 'core/evaluator/Evaluator';
+import {Evaluator} from '../../../src/core/evaluator/Evaluator';
 
 var assert = require("assert"),
     evaluator = new Evaluator();

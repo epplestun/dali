@@ -20,7 +20,7 @@ export class Components {
     return DataComponents.get(name);
   }
 
-  static parse(node, attrs, component) {
+  static parse(node, component) {
     Views.parse(node, component);
   }
 

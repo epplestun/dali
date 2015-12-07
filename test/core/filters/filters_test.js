@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    sinon = require('sinon-es6'),
+    sinon = require('sinon'),
     jsdom = require('mocha-jsdom');
 
 describe('Filter', () => {

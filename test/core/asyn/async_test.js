@@ -1,4 +1,4 @@
-import {Async} from 'core/async/Async';
+import {Async} from '../../../src/core/async/Async';
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised"); 

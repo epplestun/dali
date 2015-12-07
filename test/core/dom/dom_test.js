@@ -1,7 +1,7 @@
-import {DOM} from 'core/dom/dom';
+import {DOM} from '../../../src/core/dom/dom';
 
 var assert = require('assert'),
-  sinon = require('sinon-es6'),
+  sinon = require('sinon'),
   jsdom = require('mocha-jsdom');
 
 describe('DOM', () => {
@@ -57,4 +57,4 @@ describe('DOM', () => {
       assert.equal(fragment instanceof DocumentFragment, true);
     });
   });
-})
+});

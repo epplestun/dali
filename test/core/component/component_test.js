@@ -1,22 +1,29 @@
-import {DOM} from 'core/dom/dom';
-import {Views} from 'core/view/Views';
-import {Component} from 'core/component/Component';
-import {Components} from 'core/component/Components';
+import {DOM} from '../../../src/core/dom/dom';
+import {Views} from '../../../src/core/view/Views';
+import {Component} from '../../../src/core/component/Component';
+import {Components} from '../../../src/core/component/Components';
 import {TestApp} from './TestApp';
 
 var assert = require('assert'),
-  sinon = require('sinon-es6'),
-  jsdom = require('mocha-jsdom'),
-  originalDOMParse = DOM.parse,
-  originalViewsParse = Views.parse;
+  sinon = require('sinon'),
+  jsdom = require('mocha-jsdom');
+
+require('sinon-as-promised');
 
 describe('Components', () => {
+  var domParseSpy, viewsParseSpy;
 
   jsdom();
 
+  beforeEach(() => {
+    domParseSpy = sinon.spy(DOM, 'parse');
+    viewsParseSpy = sinon.spy(Views, 'parse');
+  });
+
   afterEach(() => {
-    DOM.parse = originalDOMParse;
-    Views.parse = originalViewsParse;
+    domParseSpy.restore();
+    viewsParseSpy.restore();
+    //done();
   });
 
   describe('#normalize()', () => {
@@ -54,9 +61,7 @@ describe('Components', () => {
 
   describe('#parse()', () => {
     it('should be call parse method of Views', () => {
-      Views.parse = sinon.spy();
-
-      Components.parse(document.createElement('div'), null, TestApp);
+      Components.parse(document.createElement('div'), Components.get(TestApp.name));
 
       assert.equal(Views.parse.called, true);
     });
@@ -64,8 +69,6 @@ describe('Components', () => {
 
   describe('#run()', () => {
     it('should be call parse method of DOM', () => {
-      DOM.parse = sinon.spy();
-
       Components.run(document.createElement('div'));
 
       assert.equal(DOM.parse.called, true);

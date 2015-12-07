@@ -3,7 +3,7 @@ import {
   last,
   ucfirst,
   guid
-} from 'core/util/util';
+} from '../../../src/core/util/util';
 
 var assert = require("assert");
 

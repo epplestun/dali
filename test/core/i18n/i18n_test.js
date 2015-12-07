@@ -1,8 +1,8 @@
-import {i18n} from 'core/i18n/i18n';
-import {i18nConfig} from 'core/i18n/i18nConfig';
-import {Injector} from 'core/di/Injector';
-import {DataI18n} from 'core/i18n/Datai18n';
-import {HTTP} from 'http/HTTP';
+import {i18n} from '../../../src/core/i18n/i18n';
+import {i18nConfig} from '../../../src/core/i18n/i18nConfig';
+import {Injector} from '../../../src/core/di/Injector';
+import {DataI18n} from '../../../src/core/i18n/Datai18n';
+import {HTTP} from '../../../src/http/HTTP';
 
 var assert = require('assert'),
   sinon = require('sinon'),

@@ -80,8 +80,8 @@ export class DOM {
               node.appendChild(element);
             }
             
-            let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
-            Components.parse(element, attrs, Components.get(componentName));
+            //let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
+            Components.parse(element, Components.get(componentName));
           } else {
             throw new Error('Error, no instance for component: ' + componentName);
           }

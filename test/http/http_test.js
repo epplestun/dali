@@ -1,4 +1,4 @@
-import {HTTP} from 'http/HTTP';
+import {HTTP} from '../../src/http/HTTP';
 import {AssertResponse} from './AssertResponse';
 
 var assert = require('assert'),
