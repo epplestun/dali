@@ -1498,7 +1498,9 @@ var EventNameNormalizer = (function () {
   _createClass(EventNameNormalizer, null, [{
     key: 'normalize',
     value: function normalize(target, eventName) {
-      return target.name.toUpperCase() + '_' + eventName;
+      if (!!target && !!target.name) {
+        return target.name.toUpperCase() + '_' + eventName;
+      }
     }
   }]);
 
