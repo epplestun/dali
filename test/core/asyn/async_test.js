@@ -1,13 +1,13 @@
 import {Async} from '../../../src/core/async/Async';
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised"); 
+var chai = require('chai'),
+  chaiAsPromised = require('chai-as-promised');
+
 chai.use(chaiAsPromised);
 chai.should();
 
 describe('Async', () => {
-  @Async
-  class MyTask {
+  @Async class MyTask {
     execute(a, b) {
       return a + b;
     }

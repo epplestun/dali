@@ -12,6 +12,10 @@ describe('Directives', () => {
 
   jsdom();
 
+  before((done) => {
+    done();
+  });
+
   describe('If', () => {
     describe('#render()', () => {
       let dataIf = Injector.get(DataIf),

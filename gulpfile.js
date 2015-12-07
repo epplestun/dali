@@ -10,6 +10,32 @@ var babelOptions = [
   "es7.exportExtensions",
   "es7.functionBind"
 ];
+var babelMocha = require('babel/register')({
+  //resolveModuleSource: function (source) {
+  //
+  //  //return __dirname + '/src/' + source;
+  //
+  //
+  //  if (
+  //    source.startsWith('core')
+  //  ) {
+  //    //return '/home/travis/build/epplestun/dali/src/' + source;
+  //    return __dirname + '/src/' + source;
+  //  }
+  //
+  //  if (
+  //    source.startsWith('http') ||
+  //    source.startsWith('json')
+  //  ) {
+  //    //return '/home/travis/build/epplestun/dali/src/' + source;
+  //    return __dirname + '/src/' + source;
+  //  }
+  //
+  //  return source;
+  //},
+  optional: babelOptions
+});
+
 gulp.task('clean', function (cb) {
   return del(['dist'], cb);
 });
@@ -34,9 +60,7 @@ gulp.task('test', function () {
     reporter: 'list',
     //timeout: 20000,
     compilers: {
-      js: require('babel/register')({
-        optional: babelOptions
-      })
+      js: babelMocha
     }
   }));
 });
