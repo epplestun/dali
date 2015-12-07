@@ -1,7 +1,7 @@
-import {DOM} from 'core/dom/dom';
-import {Views} from 'core/view/Views';
-import {first} from 'core/util/util';
-import {DataComponents} from 'core/component/DataComponents';
+import {DOM} from '../dom/dom';
+import {Views} from '../view/Views';
+import {first} from '../util/util';
+import {DataComponents} from './DataComponents';
 
 export class Components {
   static components() {

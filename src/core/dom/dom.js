@@ -1,4 +1,4 @@
-import {Components} from 'core/component/Components';
+import {Components} from '../component/Components';
 
 export class DOM {
 

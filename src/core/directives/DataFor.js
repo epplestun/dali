@@ -1,7 +1,7 @@
-import {Render} from 'core/render/Render';
-import {Directive} from 'core/directives/Directive';
-import {Directives} from 'core/directives/Directives';
-import {DOM} from 'core/dom/dom';
+import {Render} from '../render/Render';
+import {Directive} from './Directive';
+import {Directives} from './Directives';
+import {DOM} from '../dom/dom';
 
 @Directive({
   name : 'data-for'
@@ -12,7 +12,7 @@ export class DataFor {
     let parentNode = element.parentNode;
     parentNode.removeChild(element);
 
-    let [iterator, , list, track, by, trackBy] = value.match(/([$a-zA-Z0-9]+)/g);
+    let [iterator, , list, , , trackBy] = value.match(/([$a-zA-Z0-9]+)/g);
     data[list].forEach((item, index) => {
       var contextData = {};
       contextData[iterator] = item;

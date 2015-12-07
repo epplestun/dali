@@ -96,9 +96,8 @@ export function cloneFunc( func ) {
     name : m[1] || '',
     args : m[2].replace(/\s+/g,'').split(','),
     body : m[3] || ''
-  }
-  var clone = Function.prototype.constructor.apply(this, [].concat(conf.args, conf.body));
-  return clone;
+  };
+  return Function.prototype.constructor.apply(this, [].concat(conf.args, conf.body));
 }
 
 log('util.js');

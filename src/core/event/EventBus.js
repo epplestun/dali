@@ -51,7 +51,7 @@ export class EventBus {
           setTimeout(throwException(e), 0);
         }
       }
-    };
+    }
 
     notify();
 

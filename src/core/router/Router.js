@@ -1,4 +1,4 @@
-import {EventBus} from 'core/event/EventBus';
+import {EventBus} from '../event/EventBus';
 
 export class Router {
   static routes = [];
@@ -16,7 +16,7 @@ export class Router {
       }
     });
 
-    return routes.length === 1 ? true : false;
+    return routes.length === 1;
   }
 
   static route() {

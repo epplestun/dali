@@ -1,5 +1,5 @@
-import {Injector} from 'core/di/Injector';
-import {EventBus} from 'core/event/EventBus';
+import {Injector} from '../di/Injector';
+import {EventBus} from '../event/EventBus';
 
 function setPrimitive(value) {
   if (!isNaN(value)) {
@@ -29,7 +29,7 @@ export class EventBinder {
         if (attrName.charAt(0) === '_') {
           let eventName = attrName.substring(1);
 
-          element.addEventListener(eventName, (e) => {
+          element.addEventListener(eventName, () => {
             let data = element.contextData;
             let methodName = attrValue.match(/^(.*)\(/mi)[1];
             let args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
@@ -51,7 +51,7 @@ export class EventBinder {
         }
 
         if (attrName === 'data-model') {
-          element.addEventListener('input', (e) => {
+          element.addEventListener('input', () => {
             instance[attrValue] = element.value;
           }, false);
         }

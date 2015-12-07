@@ -1,5 +1,5 @@
-import {log} from 'core/util/util';
-import {DataDirectives} from 'core/directives/DataDirectives';
+import {log} from '../util/util';
+import {DataDirectives} from './DataDirectives';
 
 log('Directive.js');
 

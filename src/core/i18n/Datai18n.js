@@ -1,7 +1,7 @@
-import {Inject} from 'core/di/Inject';
-import {Directive} from 'core/directives/Directive';
-import {i18nConfig} from 'core/i18n/i18nConfig';
-import {i18n} from 'core/i18n/i18n';
+import {Inject} from '../di/Inject';
+import {Directive} from '../directives/Directive';
+import {i18nConfig} from './i18nConfig';
+import {i18n} from './i18n';
 
 @Directive({
   name : 'data-i18n'

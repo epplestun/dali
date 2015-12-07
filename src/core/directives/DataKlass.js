@@ -1,6 +1,6 @@
-import {Inject} from 'core/di/Inject';
-import {Directive} from 'core/directives/Directive';
-import {Evaluator} from 'core/evaluator/Evaluator';
+import {Inject} from '../di/Inject';
+import {Directive} from './Directive';
+import {Evaluator} from '../evaluator/Evaluator';
 
 @Directive({
   name: 'data-class'

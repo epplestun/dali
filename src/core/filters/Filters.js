@@ -1,4 +1,4 @@
-import {DataFilters} from 'core/filters/DataFilters';
+import {DataFilters} from './DataFilters';
 
 export class Filters {
   static get(name) {

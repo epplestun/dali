@@ -1,6 +1,6 @@
-import {i18nDate} from 'core/i18n/i18nDate';
-import {i18nNumber} from 'core/i18n/i18nNumber';
-import {i18nTranslate} from 'core/i18n/i18nTranslate';
+import {i18nDate} from './i18nDate';
+import {i18nNumber} from './i18nNumber';
+import {i18nTranslate} from './i18nTranslate';
 
 export class i18n {
   static configs = null;
@@ -40,17 +40,15 @@ export class i18n {
 
   format(opts) {
     if(!!this.isDate(this.input)) {
-      let formatter = opts;
-      let options = i18nDate.fromFormat(formatter, this.config);
+      let options = i18nDate.fromFormat(opts, this.config);
 
       return this.input.toLocaleString(this.config.locale, options);
     }
 
     if(!!this.isNumber(this.input)) {
-      let formatter = opts;
-      let options = i18nNumber.fromFormat(formatter, this.config);
+      let options = i18nNumber.fromFormat(opts, this.config);
 
-      if(formatter === i18nNumber.PERCENT) {
+      if(opts === i18nNumber.PERCENT) {
         this.input /= 100;
       }
 

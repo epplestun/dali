@@ -1,14 +1,15 @@
-import {first} from 'core/util/util';
-import {Injector} from 'core/di/Injector';
-import {EventBus, EventNameNormalizer} from 'core/event/EventBus';
-import {Views} from 'core/view/Views';
-import {Directive} from 'core/directives/Directive';
+import {first} from '../util/util';
+import {Injector} from '../di/Injector';
+import {EventBus} from '../event/EventBus';
+import {EventNameNormalizer} from '../event/EventNameNormalizer';
+import {Views} from '../view/Views';
+import {Directive} from './Directive';
 
 @Directive({
   name : 'data-model'
 })
 export class DataModel {
-  render(element, data, value, config, target) { 
+  render(element, data, value, config, target) {
     let eventName = EventNameNormalizer.normalize(
       target, EventBus.MODEL_CHANGE_DETECTED
     );

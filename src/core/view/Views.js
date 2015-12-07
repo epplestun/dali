@@ -1,21 +1,21 @@
-import {Render} from 'core/render/Render';
-import {DOM} from 'core/dom/dom';
-import {EventBus} from 'core/event/EventBus';
-import {EventNameNormalizer} from 'core/event/EventNameNormalizer';
-import {EventBinder} from 'core/event/EventBinder';
-import {HTTP} from 'http/HTTP';
-import {Injector} from 'core/di/Injector';
-import {Directives} from 'core/directives/Directives';
+import {Render} from '../render/Render';
+import {DOM} from '../dom/dom';
+import {EventBus} from '../event/EventBus';
+import {EventNameNormalizer} from '../event/EventNameNormalizer';
+import {EventBinder} from '../event/EventBinder';
+import {HTTP} from '../../http/HTTP';
+import {Injector} from '../di/Injector';
+import {Directives} from '../directives/Directives';
 
 export class Views {
   static views = {};
 
   static parseModel(key, target) {
-    let view = Views.views[target.name]
+    let view = Views.views[target.name],
         node = view.nodeCached,
-        template = view.templateCached,
-        instance = Injector.instances[target.name],
-        value = instance[key];
+        //template = view.templateCached,
+        instance = Injector.instances[target.name];
+        //value = instance[key];
 
     DOM.walk(node, () => {
       DOM.cache.forEach((cacheNode) => {
@@ -128,7 +128,7 @@ export class Views {
     if (!!component) {
       let view = Views.views[component.target.name],
           target = component.target,
-          instance = Injector.instances[target.name];;
+          instance = Injector.instances[target.name];
 
       Views.resolve(view, node, target, instance);
     }

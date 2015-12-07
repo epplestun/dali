@@ -1,10 +1,10 @@
-import {log} from 'core/util/util';
-import {Injector} from 'core/di/Injector';
-import {Router} from 'core/router/Router';
-import {Components} from 'core/component/Components';
-import {Binder} from 'core/view/Bindable';
-import {i18n} from 'core/i18n/i18n';
-import {EventBus} from 'core/event/EventBus';
+import {log} from './util/util';
+import {Injector} from './di/Injector';
+import {Router} from './router/Router';
+import {Components} from './component/Components';
+import {Binder} from './view/Bindable';
+import {i18n} from './i18n/i18n';
+import {EventBus} from './event/EventBus';
 
 log('bootstrap.js');
 

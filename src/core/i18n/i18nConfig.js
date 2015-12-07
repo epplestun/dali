@@ -1,7 +1,7 @@
-import {decorate} from 'core/util/util';
-import {i18n} from 'core/i18n/i18n';
-import {HTTP} from 'http/HTTP';
-import {EventBus} from 'core/event/EventBus';
+import {decorate} from '../util/util';
+import {i18n} from './i18n';
+import {HTTP} from '../../http/HTTP';
+import {EventBus} from '../event/EventBus';
 
 function i18nConfigHandlerDescriptor(target, value) {
   if (value.hasOwnProperty('loader')) {

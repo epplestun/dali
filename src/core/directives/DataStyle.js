@@ -1,5 +1,5 @@
-import {Inject} from 'core/di/Inject';
-import {Directive} from 'core/directives/Directive';
+import {Inject} from '../di/Inject';
+import {Directive} from './Directive';
 
 @Directive({
   name : 'data-style'

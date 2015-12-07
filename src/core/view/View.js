@@ -1,6 +1,6 @@
-import {log} from 'core/util/util';
-import {decorate} from 'core/util/util';
-import {Views} from 'core/view/Views';
+import {log} from '../util/util';
+import {decorate} from '../util/util';
+import {Views} from './Views';
 
 log('View.js');
 

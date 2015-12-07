@@ -1,11 +1,11 @@
-import {log, guid} from 'core/util/util';
-import {EventBus} from 'core/event/EventBus';
-import {Router} from 'core/router/Router';
-import {Component} from 'core/component/Component';
-import {View} from 'core/view/View';
-import {Views} from 'core/view/Views';
-import {Injector} from 'core/di/Injector';
-import {Binder} from 'core/view/Bindable';
+import {log, guid} from '../util/util';
+import {EventBus} from '../event/EventBus';
+import {Router} from './Router';
+import {Component} from '../component/Component';
+import {View} from '../view/View';
+import {Views} from '../view/Views';
+import {Injector} from '../di/Injector';
+import {Binder} from '../view/Bindable';
 
 log('RouterContent.js');
 
@@ -23,6 +23,9 @@ export class RouterContent {
   }
   
   change(event, route) {
+
+    console.log('RouterContent.change', event);
+
     if(!!route.value.hasOwnProperty('title')) {
       document.title = route.value.title;
     }

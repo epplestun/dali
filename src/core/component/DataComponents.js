@@ -1,4 +1,4 @@
-import {ucfirst} from 'core/util/util';
+import {ucfirst} from '../util/util';
 
 export class DataComponents {
   static data = {};

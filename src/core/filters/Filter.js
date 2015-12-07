@@ -1,5 +1,5 @@
-import {log} from 'core/util/util';
-import {DataFilters} from 'core/filters/DataFilters';
+import {log} from '../util/util';
+import {DataFilters} from 'DataFilters';
 
 log('Filter.js');
 

@@ -1,5 +1,6 @@
-import {EventBus, EventNameNormalizer} from 'core/event/EventBus';
-import {Injector} from 'core/di/Injector';
+import {EventBus} from '../event/EventBus';
+import {EventNameNormalizer} from '../event/EventNameNormalizer';
+import {Injector} from '../di/Injector';
 
 export function Bindable(target, key) {
   if(target.bindableFields) {
@@ -83,9 +84,7 @@ export class Binder {
       Binder.bindInstance(instance, instanceName);
     } else {
       for(var instanceName in Injector.instances) {
-        let instance = Injector.instances[instanceName];
-
-        Binder.bindInstance(instance, instanceName);
+        Binder.bindInstance(njector.instances[instanceName], instanceName);
       }
     }
   }

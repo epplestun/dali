@@ -1,4 +1,4 @@
-import {log} from 'core/util/util';
+import {log} from '../util/util';
 
 log('Module.js');
 

@@ -1,4 +1,4 @@
-import {Injector} from 'core/di/Injector';
+import {Injector} from '../di/Injector';
 
 function normalizeFilterName(name) {
   return name.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {

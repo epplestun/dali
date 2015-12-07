@@ -1,6 +1,6 @@
-import {DataDirectives} from 'core/directives/DataDirectives';
-import {Components} from 'core/component/Components';
-import {DOM} from 'core/dom/dom';
+import {DataDirectives} from './DataDirectives';
+import {Components} from '../component/Components';
+import {DOM} from '../dom/dom';
 
 export class Directives {
   static has(name) {

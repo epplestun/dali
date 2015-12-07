@@ -16,7 +16,7 @@ export class i18nTranslate {
     else if (is.length === 0)
       return obj;
     else
-      return this.index(obj[is[0]],is.slice(1), value);
+      return this.index(obj[is[0]], is.slice(1), value);
   }
 
   isZero(input) {

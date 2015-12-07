@@ -1,5 +1,5 @@
-import {merge} from 'core/util/util';
-import {i18nDateFormatter} from 'core/i18n/i18nDateFormatter';
+import {merge} from '../util/util';
+import {i18nDateFormatter} from './i18nDateFormatter';
 
 export class i18nDate {
 
@@ -25,11 +25,7 @@ export class i18nDate {
       options.timeZone = config.timezone;
     }
 
-    if(!!options.hour12) {
-      options.hour12 = true;
-    } else {
-      options.hour12 = false;
-    }      
+    options.hour12 = !!options.hour12;
     
     if(!!format) {
       return i18nDate.createFromFormat(format, options);

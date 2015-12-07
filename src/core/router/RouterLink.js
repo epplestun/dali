@@ -1,5 +1,5 @@
-import {Render} from 'core/render/Render';
-import {Directive} from 'core/directive/Directive';
+import {Render} from '../render/Render';
+import {Directive} from '../directive/Directive';
 
 @Directive({
   name : 'router-link'

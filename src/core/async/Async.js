@@ -1,5 +1,5 @@
-import {decorate, cloneFunc} from 'core/util/util';
-import {WorkerMock} from 'core/mocks/WorkerMock';
+import {decorate, cloneFunc} from '../util/util';
+import {WorkerMock} from '../mocks/WorkerMock';
 
 function isNode() {
   return 'object' === typeof process && Object.prototype.toString.call(process) === '[object process]';
@@ -30,7 +30,7 @@ export function Async(target) {
         }
       }
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         worker.addEventListener('message', (e) => {
           resolve(e.data);
         }, false);

@@ -11,28 +11,6 @@ var babelOptions = [
   "es7.functionBind"
 ];
 var babelMocha = require('babel/register')({
-  //resolveModuleSource: function (source) {
-  //
-  //  //return __dirname + '/src/' + source;
-  //
-  //
-  //  if (
-  //    source.startsWith('core')
-  //  ) {
-  //    //return '/home/travis/build/epplestun/dali/src/' + source;
-  //    return __dirname + '/src/' + source;
-  //  }
-  //
-  //  if (
-  //    source.startsWith('http') ||
-  //    source.startsWith('json')
-  //  ) {
-  //    //return '/home/travis/build/epplestun/dali/src/' + source;
-  //    return __dirname + '/src/' + source;
-  //  }
-  //
-  //  return source;
-  //},
   optional: babelOptions
 });
 

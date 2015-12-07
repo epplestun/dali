@@ -103,8 +103,7 @@ function cloneFunc(func) {
     args: m[2].replace(/\s+/g, '').split(','),
     body: m[3] || ''
   };
-  var clone = Function.prototype.constructor.apply(this, [].concat(conf.args, conf.body));
-  return clone;
+  return Function.prototype.constructor.apply(this, [].concat(conf.args, conf.body));
 }
 
 log('util.js');
@@ -361,7 +360,7 @@ var Components = (function () {
     }
   }, {
     key: 'parse',
-    value: function parse(node, attrs, component) {
+    value: function parse(node, component) {
       Views.parse(node, component);
     }
   }, {
@@ -451,7 +450,7 @@ function Async(target) {
         }
       }
 
-      return new Promise(function (resolve, reject) {
+      return new Promise(function (resolve) {
         worker.addEventListener('message', function (e) {
           resolve(e.data);
         }, false);
@@ -911,8 +910,8 @@ var DOM = (function () {
                 node.appendChild(element);
               }
 
-              var attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
-              Components.parse(element, attrs, Components.get(componentName));
+              //let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
+              Components.parse(element, Components.get(componentName));
             } else {
               throw new Error('Error, no instance for component: ' + componentName);
             }
@@ -1016,8 +1015,6 @@ var DataFor = (function () {
 
       var iterator = _value$match2[0];
       var list = _value$match2[2];
-      var track = _value$match2[3];
-      var by = _value$match2[4];
       var trackBy = _value$match2[5];
 
       data[list].forEach(function (item, index) {
@@ -1355,7 +1352,7 @@ var EventBinder = (function () {
           if (attrName.charAt(0) === '_') {
             var eventName = attrName.substring(1);
 
-            element.addEventListener(eventName, function (e) {
+            element.addEventListener(eventName, function () {
               var data = element.contextData;
               var methodName = attrValue.match(/^(.*)\(/mi)[1];
               var args = attrValue.match(/^\s*[^\(]*\(\s*([^\)]*)\)/m)[1];
@@ -1379,7 +1376,7 @@ var EventBinder = (function () {
           }
 
           if (attrName === 'data-model') {
-            element.addEventListener('input', function (e) {
+            element.addEventListener('input', function () {
               instance[attrValue] = element.value;
             }, false);
           }
@@ -1466,7 +1463,7 @@ var EventBus = (function () {
             setTimeout(throwException(e), 0);
           }
         }
-      };
+      }
 
       notify();
 
@@ -1778,9 +1775,7 @@ var Binder = (function () {
         Binder.bindInstance(instance, instanceName);
       } else {
         for (var instanceName in Injector.instances) {
-          var _instance = Injector.instances[instanceName];
-
-          Binder.bindInstance(_instance, instanceName);
+          Binder.bindInstance(njector.instances[instanceName], instanceName);
         }
       }
     }
@@ -1852,8 +1847,12 @@ var Views = (function () {
   _createClass(Views, null, [{
     key: 'parseModel',
     value: function parseModel(key, target) {
-      var view = Views.views[target.name];
-      node = view.nodeCached, template = view.templateCached, instance = Injector.instances[target.name], value = instance[key];
+      var view = Views.views[target.name],
+          node = view.nodeCached,
+
+      //template = view.templateCached,
+      instance = Injector.instances[target.name];
+      //value = instance[key];
 
       DOM.walk(node, function () {
         DOM.cache.forEach(function (cacheNode) {
@@ -1958,9 +1957,9 @@ var Views = (function () {
       if (!!component) {
         var view = Views.views[component.target.name],
             target = component.target,
-            _instance = Injector.instances[target.name];;
+            instance = Injector.instances[target.name];
 
-        Views.resolve(view, node, target, _instance);
+        Views.resolve(view, node, target, instance);
       }
     }
   }, {
@@ -2001,7 +2000,7 @@ var Router = (function () {
         }
       });
 
-      return routes.length === 1 ? true : false;
+      return routes.length === 1;
     }
   }, {
     key: 'route',
@@ -2100,6 +2099,9 @@ var RouterContent = (function () {
   _createClass(RouterContent, [{
     key: 'change',
     value: function change(event, route) {
+
+      console.log('RouterContent.change', event);
+
       if (!!route.value.hasOwnProperty('title')) {
         document.title = route.value.title;
       }
@@ -2398,17 +2400,15 @@ var i18n = (function () {
     key: 'format',
     value: function format(opts) {
       if (!!this.isDate(this.input)) {
-        var formatter = opts;
-        var options = i18nDate.fromFormat(formatter, this.config);
+        var options = i18nDate.fromFormat(opts, this.config);
 
         return this.input.toLocaleString(this.config.locale, options);
       }
 
       if (!!this.isNumber(this.input)) {
-        var formatter = opts;
-        var options = i18nNumber.fromFormat(formatter, this.config);
+        var options = i18nNumber.fromFormat(opts, this.config);
 
-        if (formatter === i18nNumber.PERCENT) {
+        if (opts === i18nNumber.PERCENT) {
           this.input /= 100;
         }
 
@@ -2496,11 +2496,7 @@ var i18nDate = (function () {
         options.timeZone = config.timezone;
       }
 
-      if (!!options.hour12) {
-        options.hour12 = true;
-      } else {
-        options.hour12 = false;
-      }
+      options.hour12 = !!options.hour12;
 
       if (!!format) {
         return i18nDate.createFromFormat(format, options);

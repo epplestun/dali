@@ -1,6 +1,6 @@
-import {first} from 'core/util/util';
-import {Directives} from 'core/directives/Directives';
-import {Filters} from 'core/filters/Filters';
+import {first} from '../util/util';
+import {Directives} from '../directives/Directives';
+import {Filters} from '../filters/Filters';
 
 export class Render {
   
@@ -28,7 +28,7 @@ export class Render {
       js ? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
         (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
       return add;
-    }
+    };
 
     while (match = re.exec(html)) {
       if(match[1].indexOf('|') > -1) {

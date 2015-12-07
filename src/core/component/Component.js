@@ -1,5 +1,5 @@
-import {log} from 'core/util/util';
-import {DataComponents} from 'core/component/DataComponents';
+import {log} from '../util/util';
+import {DataComponents} from '../component/DataComponents';
 
 log('Component.js');
 

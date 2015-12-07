@@ -1,4 +1,4 @@
-import {Injector} from 'core/di/Injector';
+import {Injector} from '../di/Injector';
 
 export class DataDirectives {
   static data = {};

@@ -1,6 +1,6 @@
-import {log} from 'core/util/util';
-import {decorate} from 'core/util/util';
-import {Router} from 'core/router/Router';
+import {log} from '../util/util';
+import {decorate} from '../util/util';
+import {Router} from './Router';
 
 log('RouterConfig.js');
 
