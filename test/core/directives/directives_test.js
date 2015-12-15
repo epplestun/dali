@@ -5,8 +5,8 @@ import {DataStyle} from '../../../src/core/directives/DataStyle';
 import {DataClass} from '../../../src/core/directives/DataKlass';
 //import {DataModel} from 'core/directives/DataModel';
 
-var assert = require("assert"),
-  jsdom = require('mocha-jsdom');
+import assert from "assert";
+import jsdom from 'mocha-jsdom';
 
 describe('Directives', () => {
 

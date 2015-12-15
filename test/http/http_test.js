@@ -1,10 +1,7 @@
 import {HTTP} from '../../src/http/HTTP';
 import {AssertResponse} from './AssertResponse';
-
-var assert = require('assert'),
-    sinon = require('sinon');
-
-require('sinon-as-promised');
+import assert from 'assert';
+import sinon from 'sinon';
 
 describe('HTTP', () => {
   var getStub, postStub;

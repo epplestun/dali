@@ -1,6 +1,6 @@
-var assert = require('assert'),
-    sinon = require('sinon'),
-    jsdom = require('mocha-jsdom');
+import assert from 'assert';
+import sinon from 'sinon';
+import jsdom from 'mocha-jsdom';
 
 describe('Filter', () => {
   it('...');

@@ -1,6 +1,5 @@
 import {Target} from './Target';
-
-var assert = require("assert");
+import assert from 'assert';
 
 describe('Runnable', () => {
   describe('#run()', () => {

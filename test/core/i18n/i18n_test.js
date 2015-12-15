@@ -3,12 +3,10 @@ import {i18nConfig} from '../../../src/core/i18n/i18nConfig';
 import {Injector} from '../../../src/core/di/Injector';
 import {DataI18n} from '../../../src/core/i18n/Datai18n';
 import {HTTP} from '../../../src/http/HTTP';
-
-var assert = require('assert'),
-  sinon = require('sinon'),
-  jsdom = require('mocha-jsdom');
-
-require('sinon-as-promised');
+import assert from 'assert';
+import sinon from 'sinon';
+import jsdom from 'mocha-jsdom';
+import sinonAsPromised from 'sinon-as-promised';
 
 let okGetResponse = {
   app: {
@@ -29,7 +27,6 @@ var getStub = sinon.stub(HTTP, 'get').resolves(okGetResponse);
 }
 
 getStub.restore();
-
 
 describe('i18n', () => {
   beforeEach(() => {

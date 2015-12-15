@@ -1,7 +1,7 @@
 import {Evaluator} from '../../../src/core/evaluator/Evaluator';
+import assert from "assert";
 
-var assert = require("assert"),
-    evaluator = new Evaluator();
+var evaluator = new Evaluator();
 
 describe('Evaluator', () => {
   describe('#eval()', () => {

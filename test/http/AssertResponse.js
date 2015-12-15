@@ -1,4 +1,4 @@
-var assert = require('assert');
+import assert from 'assert';
 
 export class AssertResponse {
   constructor(response) {

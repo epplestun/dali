@@ -1,8 +1,7 @@
 import {Inject} from '../../../src/core/di/Inject';
 import {Injector} from '../../../src/core/di/Injector';
 import {Target} from './Target';
-
-var assert = require("assert");
+import assert from "assert";
 
 describe('Injector', () => {
   describe('#hasInstance()', () => {

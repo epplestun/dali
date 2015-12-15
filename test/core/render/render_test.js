@@ -1,7 +1,6 @@
 import {Render} from '../../../src/core/render/Render';
 import {DataFor} from '../../../src/core/directives/DataFor';
-
-var assert = require("assert");
+import assert from "assert";
 
 describe('Render', () => {
   describe('#normalize()', () => {

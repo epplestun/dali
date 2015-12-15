@@ -4,8 +4,7 @@ import {
   ucfirst,
   guid
 } from '../../../src/core/util/util';
-
-var assert = require("assert");
+import assert from 'assert';
 
 describe('Utils', () => {
   describe('#first()', () => {

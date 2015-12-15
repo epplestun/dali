@@ -3,12 +3,9 @@ import {Views} from '../../../src/core/view/Views';
 import {Component} from '../../../src/core/component/Component';
 import {Components} from '../../../src/core/component/Components';
 import {TestApp} from './TestApp';
-
-var assert = require('assert'),
-  sinon = require('sinon'),
-  jsdom = require('mocha-jsdom');
-
-require('sinon-as-promised');
+import assert from 'assert';
+import sinon  from 'sinon';
+import jsdom from 'mocha-jsdom';
 
 describe('Components', () => {
   var domParseSpy, viewsParseSpy;

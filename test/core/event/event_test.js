@@ -2,10 +2,9 @@ import {EventBus} from '../../../src/core/event/EventBus';
 import {EventNameNormalizer} from '../../../src/core/event/EventNameNormalizer';
 import {EventBinder} from '../../../src/core/event/EventBinder';
 import {Target} from './Target';
-
-var assert = require('assert'),
-    sinon = require('sinon'),
-    jsdom = require('mocha-jsdom');
+import assert from 'assert';
+import sinon from 'sinon';
+import jsdom from 'mocha-jsdom';
 
 describe('EventBus', () => {
   let topic1 = 'my_test_topic_1',
