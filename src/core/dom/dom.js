@@ -99,14 +99,14 @@ export class DOM {
   }
 
   static fragment(node) {
-    let fragment = document.createDocumentFragment();
+    let domFragment = document.createDocumentFragment();
     
     if(!!node) {
       while(node.firstChild) {
-        fragment.appendChild(node.firstChild);
+        domFragment.appendChild(node.firstChild);
       }
     }
 
-    return fragment;
+    return domFragment;
   }
 }
