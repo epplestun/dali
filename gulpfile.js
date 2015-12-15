@@ -36,7 +36,7 @@ gulp.task('test', function () {
     'test/**/*.js'
   ]).pipe(mocha({
     reporter: 'list',
-    //timeout: 20000,
+    timeout: 20000,
     compilers: {
       js: babelMocha
     }
