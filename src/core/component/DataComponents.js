@@ -6,7 +6,9 @@ export class DataComponents {
   static normalize(name) {
     return name.toLowerCase().replace(/\W+(.)/g, function (x, chr) {
       return chr.toUpperCase();
-    })::ucfirst();
+    })
+  ::
+    ucfirst();
   }
 
   static add(name, component, config) {

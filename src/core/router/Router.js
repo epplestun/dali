@@ -35,7 +35,7 @@ export class Router {
 
   static routeToDefault() {
     Router.routes.forEach((route) => {
-      if(!!route.value.hasOwnProperty('default')) {
+      if (!!route.value.hasOwnProperty('default')) {
         window.location.hash = route.value.url;
       }
     });
@@ -57,4 +57,4 @@ export class Router {
   }
 }
 
-Router.ROUTE_CHANGED = "ROUTE_CHANGED";
+Router.ROUTE_CHANGED = 'ROUTE_CHANGED';

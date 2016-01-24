@@ -1,11 +1,12 @@
 import {Components} from '../component/Components';
+import {Injector} from '../di/Injector';
 
 export class DOM {
 
   static cache = [];
 
   static attrs(node) {
-    if(!!node) {
+    if (!!node) {
       let nodeAttrs = Array.prototype.slice.call(node.attributes);
 
       return nodeAttrs.map((attribute) => {
@@ -19,27 +20,27 @@ export class DOM {
   }
 
   static walk(node, callback) {
-    if(!!node) {
+    if (!!node) {
       do {
         callback(node);
 
         if (!!node && node.hasChildNodes()) {
           DOM.walk(node.firstChild, callback);
         }
-      } while (node = node.nextSibling);
+      } while (!!(node = node.nextSibling));
     }
 
     return DOM;
   }
 
   static clean(node) {
-    if(!!node) {
-      for(var n = 0; n < node.childNodes.length; n++) {
+    if (!!node) {
+      for (var n = 0; n < node.childNodes.length; n++) {
         var child = node.childNodes[n];
-        if(child.nodeType === 8 || (child.nodeType === 3 && !/\S/.test(child.nodeValue))) {
+        if (child.nodeType === 8 || (child.nodeType === 3 && !/\S/.test(child.nodeValue))) {
           node.removeChild(child);
           n--;
-        } else if(child.nodeType === 1) {
+        } else if (child.nodeType === 1) {
           DOM.clean(child);
         }
       }
@@ -51,8 +52,8 @@ export class DOM {
   static childs(node) {
     let childNodes = [];
 
-    if(!!node) {
-      DOM.walk(node, function(n) {
+    if (!!node) {
+      DOM.walk(node, function (n) {
         childNodes.push(n);
       });
       childNodes.shift();
@@ -62,7 +63,7 @@ export class DOM {
   }
 
   static parse(node) {
-    if(!!node) {
+    if (!!node) {
       let childNodes = DOM.childs(node);
 
       while (node.firstChild) {
@@ -72,21 +73,21 @@ export class DOM {
       childNodes.forEach((element) => {
         let componentName = Components.normalize(element);
 
-        if(!!Components.exists(componentName)) {
-          if(!!Injector.hasInstance(componentName)) {
-            if(element.parentNode) {
+        if (!!Components.exists(componentName)) {
+          if (!!Injector.hasInstance(componentName)) {
+            if (element.parentNode) {
               element.parentNode.appendChild(element);
             } else {
               node.appendChild(element);
             }
-            
-            //let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
+
+            // let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
             Components.parse(element, Components.get(componentName));
           } else {
             throw new Error('Error, no instance for component: ' + componentName);
           }
         } else {
-          if(element.parentNode) {
+          if (element.parentNode) {
             element.parentNode.appendChild(element);
           } else {
             node.appendChild(element);
@@ -100,9 +101,9 @@ export class DOM {
 
   static fragment(node) {
     let domFragment = document.createDocumentFragment();
-    
-    if(!!node) {
-      while(node.firstChild) {
+
+    if (!!node) {
+      while (node.firstChild) {
         domFragment.appendChild(node.firstChild);
       }
     }

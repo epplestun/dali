@@ -2,7 +2,7 @@ import {Inject} from '../di/Inject';
 import {Directive} from './Directive';
 
 @Directive({
-  name : 'data-style'
+  name: 'data-style'
 })
 export class DataStyle {
   render(element, data, value) {

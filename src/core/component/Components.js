@@ -1,6 +1,5 @@
 import {DOM} from '../dom/dom';
 import {Views} from '../view/Views';
-import {first} from '../util/util';
 import {DataComponents} from './DataComponents';
 
 export class Components {
@@ -25,10 +24,10 @@ export class Components {
   }
 
   static run(element) {
-    if(!!element) {
+    if (!!element) {
       DOM.parse(element);
     } else {
-      document.addEventListener("DOMContentLoaded", (event) => {
+      document.addEventListener('DOMContentLoaded', (event) => {
         DOM.parse(event.target.body);
       });
     }

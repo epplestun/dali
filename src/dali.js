@@ -1,1 +1,1 @@
-export {bootstrap} from 'core/bootstrap';
+export {bootstrap} from './core/bootstrap';

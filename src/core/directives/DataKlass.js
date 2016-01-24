@@ -18,7 +18,7 @@ export class DataClass {
       let [elementClassName, elementValue] = className.split(':');
       elementClassName = elementClassName.trim().replace(/'/gm, "");
 
-      if(this.evaluator.eval(data, elementValue)) {
+      if (this.evaluator.eval(data, elementValue)) {
         element.classList.add(elementClassName);
       } else {
         element.classList.remove(elementClassName);

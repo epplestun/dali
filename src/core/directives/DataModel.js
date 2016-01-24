@@ -6,7 +6,7 @@ import {Views} from '../view/Views';
 import {Directive} from './Directive';
 
 @Directive({
-  name : 'data-model'
+  name: 'data-model'
 })
 export class DataModel {
   render(element, data, value, config, target) {
@@ -36,7 +36,9 @@ export class DataModel {
     instance[value] = element.value;
 
     EventBus.subscribe(eventName, (e, data) => {
-      let key = Object.keys(data)::first();
+      let key = Object.keys(data)
+      ::
+      first();
       Views.parseModel(key, target);
     });
   }

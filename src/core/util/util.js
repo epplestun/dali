@@ -3,7 +3,7 @@ if (!Object.assign) {
     enumerable: false,
     configurable: true,
     writable: true,
-    value: function(target) {
+    value: function (target) {
       'use strict';
       if (target === undefined || target === null) {
         throw new TypeError('Cannot convert first argument to object');
@@ -50,11 +50,11 @@ export function isDescriptor(desc) {
 export function decorate(handleDescriptor, entryArgs) {
   if (isDescriptor(entryArgs[entryArgs.length - 1])) {
     return handleDescriptor(...entryArgs, []);
-  } else {
-    return function () {
-      return handleDescriptor(...arguments, entryArgs);
-    };
   }
+
+  return function () {
+    return handleDescriptor(...arguments, entryArgs);
+  };
 }
 
 export function first() {
@@ -71,13 +71,13 @@ export function ucfirst() {
 }
 
 export function log() {
-  //console.log(arguments);
+  // console.log(arguments);
 }
 
 export function guid() {
   function _p8(s) {
-    var p = (Math.random().toString(16) + "000000000").substr(2,8);
-    return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+    var p = (Math.random().toString(16) + '000000000').substr(2, 8);
+    return s ? '-' + p.substr(0, 4) + '-' + p.substr(4, 4) : p;
   }
 
   return _p8() + _p8(true) + _p8(true) + _p8();
@@ -87,16 +87,19 @@ export function merge(obj1, obj2) {
   return Object.assign(obj1, obj2);
 }
 
-export function cloneFunc( func ) {
-  var reFn = /^function\s*([^\s(]*)\s*\(([^)]*)\)[^{]*\{([^]*)\}$/gi
-    , s = func.toString().replace(/^\s|\s$/g, '')
-    , m = reFn.exec(s);
+export function cloneFunc(func) {
+  var reFn = /^function\s*([^\s(]*)\s*\(([^)]*)\)[^{]*\{([^]*)\}$/gi,
+    s = func.toString().replace(/^\s|\s$/g, ''),
+    m = reFn.exec(s);
+
   if (!m || !m.length) return;
+
   var conf = {
-    name : m[1] || '',
-    args : m[2].replace(/\s+/g,'').split(','),
-    body : m[3] || ''
+    name: m[1] || '',
+    args: m[2].replace(/\s+/g, '').split(','),
+    body: m[3] || ''
   };
+
   return Function.prototype.constructor.apply(this, [].concat(conf.args, conf.body));
 }
 

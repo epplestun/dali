@@ -12,25 +12,25 @@ export class Views {
 
   static parseModel(key, target) {
     let view = Views.views[target.name],
-        node = view.nodeCached,
-        //template = view.templateCached,
-        instance = Injector.instances[target.name];
-        //value = instance[key];
+      node = view.nodeCached,
+    // template = view.templateCached,
+      instance = Injector.instances[target.name];
+    // value = instance[key];
 
     DOM.walk(node, () => {
       DOM.cache.forEach((cacheNode) => {
         let regexp = new RegExp(Render.START_DELIMITER + key + Render.END_DELIMITER, 'gm');
 
-        if(cacheNode.data instanceof Array) {
+        if (cacheNode.data instanceof Array) {
           cacheNode.data.forEach(attr => {
-            if(!!regexp.test(attr.value)) {
+            if (!!regexp.test(attr.value)) {
               cacheNode.node.setAttribute(attr.name, instance[key]);
             }
           });
         } else {
-          if(!!regexp.test(cacheNode.data)) {
+          if (!!regexp.test(cacheNode.data)) {
             cacheNode.node.nodeValue = instance[key];
-          }  
+          }
         }
       });
     });
@@ -42,7 +42,7 @@ export class Views {
 
     let nodeParsed = Directives.parse(wrapper, data, target);
 
-    if(!!node) {
+    if (!!node) {
       while (node.firstChild) {
         node.removeChild(node.firstChild);
       }
@@ -52,17 +52,17 @@ export class Views {
       DOM.walk(node, (n) => {
         let regexp = new RegExp(Render.START_DELIMITER + '.*' + Render.END_DELIMITER, 'gm');
 
-        if(n.nodeType === 1 && n.hasAttributes()) {
+        if (n.nodeType === 1 && n.hasAttributes()) {
           DOM.attrs(n).forEach(attr => {
-            if(!!regexp.test(attr.value)) {
+            if (!!regexp.test(attr.value)) {
               DOM.cache.push({
                 node: n,
                 data: DOM.attrs(n).slice()
-              }); 
+              });
             }
           });
-        } else if(n.data) {          
-          if(!!regexp.test(n.data)) {
+        } else if (n.data) {
+          if (!!regexp.test(n.data)) {
             DOM.cache.push({
               node: n,
               data: n.data.slice()
@@ -73,7 +73,7 @@ export class Views {
       });
 
       DOM.parse(node).walk(node, (element) => {
-        if(element.nodeType === 1) {
+        if (element.nodeType === 1) {
           let attrs = !!element.hasAttributes() ? DOM.attrs(element) : [];
           EventBinder.bind(element, attrs, target);
         }
@@ -112,13 +112,13 @@ export class Views {
       } else if (!!view.hasOwnProperty(Views.TEMPLATE) && !view.hasOwnProperty(Views.TEMPLATE_URL)) {
         promise = Promise.resolve(view[Views.TEMPLATE]);
       } else {
-        throw new Exception("View need templateUrl or template attributes");
+        throw new Exception('View need templateUrl or template attributes');
       }
 
       promise.then((template) => {
         view.templateCached = template;
         view.nodeCached = node;
-        
+
         Views.parseView(node, template, instance, target);
       });
     }
@@ -127,13 +127,13 @@ export class Views {
   static parse(node, component) {
     if (!!component) {
       let view = Views.views[component.target.name],
-          target = component.target,
-          instance = Injector.instances[target.name];
+        target = component.target,
+        instance = Injector.instances[target.name];
 
       Views.resolve(view, node, target, instance);
     }
   }
 }
 
-Views.TEMPLATE_URL = "templateUrl";
-Views.TEMPLATE = "template";
+Views.TEMPLATE_URL = 'templateUrl';
+Views.TEMPLATE = 'template';

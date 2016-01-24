@@ -1,5 +1,5 @@
 import {log} from '../util/util';
-import {DataComponents} from '../component/DataComponents';
+import {DataComponents} from './DataComponents';
 
 log('Component.js');
 

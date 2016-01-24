@@ -4,4 +4,4 @@ export class EventNameNormalizer {
       return target.name.toUpperCase() + '_' + eventName;
     }
   }
-} 
+}

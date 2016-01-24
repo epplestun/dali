@@ -21,19 +21,19 @@ export class RouterContent {
   constructor() {
     EventBus.subscribe(Router.ROUTE_CHANGED, this.change);
   }
-  
+
   change(event, route) {
 
     console.log('RouterContent.change', event);
 
-    if(!!route.value.hasOwnProperty('title')) {
+    if (!!route.value.hasOwnProperty('title')) {
       document.title = route.value.title;
     }
 
     let element = document.getElementById(ROUTER_CONTENT_UUID),
-        view = Views.views[route.target.name],
-        target = route.target,
-        instance = Injector.instantiate(route.target);
+      view = Views.views[route.target.name],
+      target = route.target,
+      instance = Injector.instantiate(route.target);
 
     Views.resolve(view, element, target, instance);
 

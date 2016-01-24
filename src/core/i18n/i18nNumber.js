@@ -4,13 +4,13 @@ export class i18nNumber {
       style: i18nNumber.DECIMAL
     };
 
-    if(format === i18nNumber.CURRENCY) {
+    if (format === i18nNumber.CURRENCY) {
       options.style = i18nNumber.CURRENCY;
       options.currency = config.currency;
     }
 
-    if(format === i18nNumber.PERCENT) {
-      options.style = i18nNumber.PERCENT;      
+    if (format === i18nNumber.PERCENT) {
+      options.style = i18nNumber.PERCENT;
     }
 
     return options;

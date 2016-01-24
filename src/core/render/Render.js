@@ -3,18 +3,18 @@ import {Directives} from '../directives/Directives';
 import {Filters} from '../filters/Filters';
 
 export class Render {
-  
+
   static normalize(html) {
     let coreDirectives = [];
-    for(let directive in Directives.getDirectives()) {
-      //console.log(directive, Directives.get(directive).config);
+    for (let directive in Directives.getDirectives()) {
+      // console.log(directive, Directives.get(directive).config);
       coreDirectives.push(directive.replace(Directives.PREFIX, ''));
     }
 
     let pattern = '\\*(' + coreDirectives.join('|') + ')';
-    let regExp = new RegExp(pattern, "gm");
+    let regExp = new RegExp(pattern, 'gm');
 
-    return  html.replace(regExp, (p1, p2) => Directives.PREFIX + p2);
+    return html.replace(regExp, (p1, p2) => Directives.PREFIX + p2);
   }
 
   static render(html, options) {
@@ -26,29 +26,29 @@ export class Render {
 
     var add = function (line, js) {
       js ? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
-        (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+        (code += line !== '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
       return add;
     };
 
-    while (match = re.exec(html)) {
-      if(match[1].indexOf('|') > -1) {
+    while (!!(match = re.exec(html))) {
+      if (match[1].indexOf('|') > -1) {
         let filters = match[1].split('|').map((filter) => filter.trim());
         let value = filters.shift();
 
         filters = filters.map((name) => {
-          if(name.indexOf(':') === -1) {
+          if (name.indexOf(':') === -1) {
             return {
-              filter : Filters.get(name).render,
+              filter: Filters.get(name).render,
               value: null
             };
-          } else {
-            let filterValue = name.substring(name.indexOf(':') + 1);
-            let filterName = name.substring(0, name.indexOf(':'));
-            return {
-              filter: Filters.get(filterName).render,
-              value: filterValue
-            };
           }
+          let filterValue = name.substring(name.indexOf(':') + 1),
+            filterName = name.substring(0, name.indexOf(':'));
+
+          return {
+            filter: Filters.get(filterName).render,
+            value: filterValue
+          };
         });
 
         let filterName = filters::first();
@@ -66,13 +66,13 @@ export class Render {
     add(html.substr(cursor, html.length - cursor));
     code += 'return r.join("");';
 
-    //console.log(code);
-    //console.log(html);
-    //console.log(new Function(code.replace(/[\r\t\n]/g, '')).apply(options));
+    // console.log(code);
+    // console.log(html);
+    // console.log(new Function(code.replace(/[\r\t\n]/g, '')).apply(options));
 
     return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
   }
 }
 
-Render.START_DELIMITER = "{{";
-Render.END_DELIMITER = "}}";
+Render.START_DELIMITER = '{{';
+Render.END_DELIMITER = '}}';

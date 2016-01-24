@@ -27,9 +27,10 @@ export class Injector {
       });
     }
 
-    let proto = target.prototype;
-    let instance = (Object(proto) === proto) ? Object.create(proto) : {};
-    let result = Function.prototype.apply.call(target, instance, dependencies);
+    let proto = target.prototype,
+      instance = (Object(proto) === proto) ? Object.create(proto) : {},
+      result = Function.prototype.apply.call(target, instance, dependencies);
+
     return Object(result) === result ? result : instance;
   }
 

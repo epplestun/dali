@@ -19,19 +19,19 @@ export class i18nDate {
    */
 
   static fromFormat(format, config) {
-    let options = {};  
+    let options = {};
 
-    if(!!config.timezone) {
-      options.timeZone = config.timezone;
+    if (!!config['timezone']) {
+      options.timeZone = config['timezone'];
     }
 
     options.hour12 = !!options.hour12;
-    
-    if(!!format) {
+
+    if (!!format) {
       return i18nDate.createFromFormat(format, options);
-    } else {
-      return options;
     }
+
+    return options;
   }
 
   static createFromFormat(format, options) {

@@ -4,7 +4,7 @@ import {Directives} from './Directives';
 import {DOM} from '../dom/dom';
 
 @Directive({
-  name : 'data-for'
+  name: 'data-for'
 })
 export class DataFor {
   render(element, data, value, config) {
@@ -31,8 +31,8 @@ export class DataFor {
       parentNode.appendChild(wrapper.firstChild);
 
       DOM.parse(parentNode).walk(parentNode, (element) => {
-        if(element.nodeType === 1) {
-          if(!element.contextData) {
+        if (element.nodeType === 1) {
+          if (!element.contextData) {
             element.contextData = contextData;
           }
         }

@@ -39,23 +39,23 @@ export class i18n {
   }
 
   format(opts) {
-    if(!!this.isDate(this.input)) {
+    if (!!this.isDate(this.input)) {
       let options = i18nDate.fromFormat(opts, this.config);
 
       return this.input.toLocaleString(this.config.locale, options);
     }
 
-    if(!!this.isNumber(this.input)) {
+    if (!!this.isNumber(this.input)) {
       let options = i18nNumber.fromFormat(opts, this.config);
 
-      if(opts === i18nNumber.PERCENT) {
+      if (opts === i18nNumber.PERCENT) {
         this.input /= 100;
       }
 
       return this.input.toLocaleString(this.config.locale, options);
     }
 
-    if(!!this.isString(this.input)) {
+    if (!!this.isString(this.input)) {
       let map = this.config.translations[this.locale(this.config.locale)];
       return i18nTranslate.from(map, this.input).translate(opts);
     }

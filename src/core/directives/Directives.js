@@ -1,5 +1,4 @@
 import {DataDirectives} from './DataDirectives';
-import {Components} from '../component/Components';
 import {DOM} from '../dom/dom';
 
 export class Directives {
@@ -34,7 +33,7 @@ export class Directives {
 
   static parse(node, data, target) {
     var childNodes = Array.prototype.slice.call(
-      node.getElementsByTagName("*")
+      node.getElementsByTagName('*')
     ).filter((element) => element.nodeType === 1);
 
     childNodes.forEach((element) => {
@@ -61,14 +60,14 @@ export class Directives {
       let {directive, value, target} = input;
 
       directive.instance.render(
-        element, 
-        data, 
-        value, 
-        directive.config, 
+        element,
+        data,
+        value,
+        directive.config,
         target
       );
     });
   }
 }
 
-Directives.PREFIX = "data-";
+Directives.PREFIX = 'data-';

@@ -4,22 +4,22 @@ import {i18nConfig} from './i18nConfig';
 import {i18n} from './i18n';
 
 @Directive({
-  name : 'data-i18n'
+  name: 'data-i18n'
 })
 export class DataI18n {
   render(element, data, value) {
     let i18nLabel = element.dataset.i18n,
-        i18nValue = element.dataset.i18nValue;
+      i18nValue = element.dataset.i18nValue;
 
-    if(!!i18nValue) {
+    if (!!i18nValue) {
       i18nValue = JSON.parse(i18nValue);
     }
 
-    if(!!data && !!value) {
+    if (!!data && !!value) {
       i18nValue = "LT";
-      
-      if(value.indexOf('|') > -1) {
-        let [v, f] = value.split('|').map((s) => { 
+
+      if (value.indexOf('|') > -1) {
+        let [v, f] = value.split('|').map((s) => {
           return s.trim();
         });
 

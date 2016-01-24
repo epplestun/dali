@@ -17,10 +17,10 @@ export function Async(target) {
       var args = [].slice.call(arguments);
       var worker;
 
-      if(isNode()) {
+      if (isNode()) {
         worker = new WorkerMock(execute);
       } else {
-        if(hasWorkerSupport()) {
+        if (hasWorkerSupport()) {
           var code = "var command = " + execute.toString() + ";";
           code += "onmessage = function(e) { var result = command.apply(command, e.data.args); postMessage(result); self.close(); }";
 

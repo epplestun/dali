@@ -11,44 +11,44 @@ import {llll} from './date/DayOfWeekShortMonthNameShortDayYearTime'; // DayOfWee
 
 export class i18nDateFormatter {
   static from(format) {
-    if(format === 'LT') {
-      return new LT();  
-    }    
-
-    if(format === 'LTS') {
-      return new LTS();  
+    if (format === 'LT') {
+      return new LT();
     }
 
-    if(format === 'L') {
-      return new L();  
+    if (format === 'LTS') {
+      return new LTS();
     }
 
-    if(format === 'l') {
-      return new l();  
+    if (format === 'L') {
+      return new L();
     }
 
-    if(format === 'LL') {
-      return new LL();  
+    if (format === 'l') {
+      return new l();
     }
 
-    if(format === 'll') {
-      return new ll();  
-    } 
-
-    if(format === 'LLL') {
-      return new LLL();  
+    if (format === 'LL') {
+      return new LL();
     }
 
-    if(format === 'lll') {
-      return new lll();  
-    }   
-
-    if(format === 'LLLL') {
-      return new LLLL();  
+    if (format === 'll') {
+      return new ll();
     }
 
-    if(format === 'llll') {
-      return new llll();  
-    }   
+    if (format === 'LLL') {
+      return new LLL();
+    }
+
+    if (format === 'lll') {
+      return new lll();
+    }
+
+    if (format === 'LLLL') {
+      return new LLLL();
+    }
+
+    if (format === 'llll') {
+      return new llll();
+    }
   }
 }

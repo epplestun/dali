@@ -1,6 +1,6 @@
-self.addEventListener('message', function(e) {
+self.addEventListener('message', function (e) {
   var xhr = new XMLHttpRequest();
-  xhr.addEventListener("load", function() {
+  xhr.addEventListener("load", function () {
     self.postMessage(this.responseText);
   });
   xhr.overrideMimeType("text/json; charset=UTF8");

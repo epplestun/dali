@@ -3,7 +3,7 @@ import {EventNameNormalizer} from '../event/EventNameNormalizer';
 import {Injector} from '../di/Injector';
 
 export function Bindable(target, key) {
-  if(target.bindableFields) {
+  if (target.bindableFields) {
     target.bindableFields.push(key);
   } else {
     target.bindableFields = [key];
@@ -31,17 +31,17 @@ export class Binder {
             return this.length;
           }
         });
-      } catch(e) {
-        
+      } catch (e) {
+
       }
     });
 
-    //Binder.bindOther(target, key, eventName);
+    // Binder.bindOther(target, key, eventName);
   }
 
   static bindOther(target, key, eventName) {
     let value = target[key],
-        privateProperty = key + '_' + (+new Date());
+      privateProperty = key + '_' + (+new Date());
 
     Object.defineProperty(target, privateProperty, {
       enumerable: false,
@@ -50,11 +50,11 @@ export class Binder {
     });
 
     Object.defineProperty(target, key, {
-      set: function(newValue) {
+      set: function (newValue) {
         this[privateProperty] = newValue;
         EventBus.publish(eventName);
       },
-      get: function() {
+      get: function () {
         return this[privateProperty];
       }
     });
@@ -63,27 +63,27 @@ export class Binder {
   }
 
   static bindInstance(instance, instanceName) {
-    if(!!instance.bindableFields) {
+    if (!!instance.bindableFields) {
       let target = {
-        name : instanceName
+        name: instanceName
       };
       let eventName = EventNameNormalizer.normalize(target, EventBus.CHANGE_DETECTED);
 
       instance.bindableFields.forEach((key) => {
-        if(instance[key] instanceof Array) {
+        if (instance[key] instanceof Array) {
           Binder.bindArray(instance, key, eventName);
         } else {
-          Binder.bindOther(instance, key, eventName);  
+          Binder.bindOther(instance, key, eventName);
         }
       });
     }
   }
 
   static run(instance, instanceName) {
-    if(!!instance) {
+    if (!!instance) {
       Binder.bindInstance(instance, instanceName);
     } else {
-      for(var name in Injector.instances) {
+      for (var name in Injector.instances) {
         Binder.bindInstance(Injector.instances[name], instanceName);
       }
     }
