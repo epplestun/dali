@@ -1,6 +1,6 @@
 {
   "name": "dalijs",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "ES6 framework",
   "keywords": [
     "javascript",
@@ -19,7 +19,7 @@
     "url": "https://github.com/epplestun/dali/issues"
   },
   "homepage": "https://github.com/epplestun/dali",
-  "main": "lib/dali.js",
+  "main": "lib/dali.min.js",
   "scripts": {
     "build": "webpack --mode=build",
     "dev": "webpack --progress --colors --watch --mode=dev",
